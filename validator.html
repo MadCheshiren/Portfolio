@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Validator - Student Project</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .error-message {
+      animation: shake 0.3s ease-in-out;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-green-50 to-emerald-50 min-h-screen p-4">
+  
+  <div class="max-w-md mx-auto pt-8">
+    <!-- Back Link -->
+    <a href="index.html#projects" class="text-green-600 text-sm hover:underline mb-4 inline-block">
+      ← Back to Portfolio
+    </a>
+
+    <!-- Main Card -->
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+      
+      <!-- Header -->
+      <h1 class="text-2xl font-bold text-gray-800 mb-1">Form Validator</h1>
+      <p class="text-sm text-gray-500 mb-6">Learning form validation for QA testing</p>
+
+      <!-- Form -->
+      <form id="validator-form" class="space-y-4">
+        
+        <!-- Name Field -->
+        <div>
+          <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+          <input 
+            type="text" 
+            id="name" 
+            name="name"
+            placeholder="Enter your name"
+            class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200"
+          >
+          <p id="name-error" class="text-red-500 text-xs mt-1 hidden"></p>
+        </div>
+
+        <!-- Email Field -->
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email"
+            placeholder="your@email.com"
+            class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200"
+          >
+          <p id="email-error" class="text-red-500 text-xs mt-1 hidden"></p>
+        </div>
+
+        <!-- Phone Field -->
+        <div>
+          <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+          <input 
+            type="tel" 
+            id="phone" 
+            name="phone"
+            placeholder="123-456-7890"
+            class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200"
+          >
+          <p id="phone-error" class="text-red-500 text-xs mt-1 hidden"></p>
+        </div>
+
+        <!-- Password Field -->
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password"
+            placeholder="Min 8 characters"
+            class="w-full px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-200"
+          >
+          <p id="password-error" class="text-red-500 text-xs mt-1 hidden"></p>
+          <!-- Password Strength Indicator -->
+          <div class="flex gap-1 mt-2">
+            <div id="strength-1" class="h-1 flex-1 bg-gray-200 rounded"></div>
+            <div id="strength-2" class="h-1 flex-1 bg-gray-200 rounded"></div>
+            <div id="strength-3" class="h-1 flex-1 bg-gray-200 rounded"></div>
+            <div id="strength-4" class="h-1 flex-1 bg-gray-200 rounded"></div>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit"
+          class="w-full bg-green-600 text-white py-2.5 rounded-xl hover:bg-green-700 transition-colors font-medium"
+        >
+          Validate Form
+        </button>
+      </form>
+
+      <!-- Success Message -->
+      <div id="success-message" class="hidden mt-4 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm text-center">
+        ✓ All fields passed validation!
+      </div>
+
+      <!-- Validation Summary -->
+      <div id="validation-summary" class="hidden mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
+        <p class="font-semibold mb-2">Validation Errors:</p>
+        <ul id="error-list" class="list-disc list-inside space-y-1"></ul>
+      </div>
+
+    </div>
+
+    <!-- Learning Notes -->
+    <p class="text-center text-xs text-gray-400 mt-4">
+      Built with HTML, Tailwind CSS & vanilla JavaScript
+    </p>
+  </div>
+
+  <script>
+    // === STEP 1: Get references to form elements ===
+    // This is how we access the HTML elements in JavaScript
+    const form = document.getElementById('validator-form');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const phoneInput = document.getElementById('phone');
+    const passwordInput = document.getElementById('password');
+    
+    // Error message elements
+    const nameError = document.getElementById('name-error');
+    const emailError = document.getElementById('email-error');
+    const phoneError = document.getElementById('phone-error');
+    const passwordError = document.getElementById('password-error');
+    
+    // Success and summary elements
+    const successMessage = document.getElementById('success-message');
+    const validationSummary = document.getElementById('validation-summary');
+    const errorList = document.getElementById('error-list');
+
+    // === STEP 2: Validation Functions ===
+    // Each function checks one field and returns true/false
+    
+    // Check if name is not empty and has at least 2 characters
+    function validateName(name) {
+      return name.trim().length >= 2;
+    }
+
+    // Check if email has @ symbol and a dot after it
+    // This is a simple check - real email validation is more complex
+    function validateEmail(email) {
+      const hasAtSymbol = email.includes('@');
+      const hasDot = email.includes('.');
+      const atBeforeDot = email.indexOf('@') < email.lastIndexOf('.');
+      return hasAtSymbol && hasDot && atBeforeDot;
+    }
+
+    // Check if phone matches pattern: 123-456-7890 or 1234567890
+    function validatePhone(phone) {
+      // Remove dashes and spaces, then check if it's 10 digits
+      const cleanPhone = phone.replace(/[-\s]/g, '');
+      return cleanPhone.length === 10 && /^\d+$/.test(cleanPhone);
+    }
+
+    // Check password strength (0-4 score)
+    function checkPasswordStrength(password) {
+      let score = 0;
+      
+      // +1 for length >= 8
+      if (password.length >= 8) score++;
+      // +1 for having uppercase letter
+      if (/[A-Z]/.test(password)) score++;
+      // +1 for having lowercase letter
+      if (/[a-z]/.test(password)) score++;
+      // +1 for having number
+      if (/\d/.test(password)) score++;
+      
+      return score;
+    }
+
+    // Check if password meets minimum requirements
+    function validatePassword(password) {
+      return password.length >= 8;
+    }
+
+    // === STEP 3: Show/Hide Error Messages ===
+    function showError(element, message) {
+      element.textContent = message;
+      element.classList.remove('hidden');
+      element.classList.add('error-message');
+    }
+
+    function hideError(element) {
+      element.classList.add('hidden');
+      element.classList.remove('error-message');
+    }
+
+    // === STEP 4: Update Password Strength Visual ===
+    function updatePasswordStrength(password) {
+      const strength = checkPasswordStrength(password);
+      const bars = [
+        document.getElementById('strength-1'),
+        document.getElementById('strength-2'),
+        document.getElementById('strength-3'),
+        document.getElementById('strength-4')
+      ];
+      
+      // Reset all bars to gray
+      bars.forEach(bar => {
+        bar.className = 'h-1 flex-1 bg-gray-200 rounded';
+      });
+      
+      // Color bars based on strength
+      if (strength >= 1) bars[0].className = 'h-1 flex-1 bg-red-400 rounded';
+      if (strength >= 2) bars[1].className = 'h-1 flex-1 bg-yellow-400 rounded';
+      if (strength >= 3) bars[2].className = 'h-1 flex-1 bg-green-400 rounded';
+      if (strength >= 4) bars[3].className = 'h-1 flex-1 bg-green-600 rounded';
+    }
+
+    // === STEP 5: Real-time Validation ===
+    // This validates as the user types (good UX)
+    
+    nameInput.addEventListener('input', () => {
+      if (validateName(nameInput.value)) {
+        hideError(nameError);
+        nameInput.classList.remove('border-red-500');
+        nameInput.classList.add('border-green-500');
+      } else {
+        nameInput.classList.remove('border-green-500');
+        nameInput.classList.add('border-red-500');
+      }
+    });
+
+    emailInput.addEventListener('input', () => {
+      if (validateEmail(emailInput.value)) {
+        hideError(emailError);
+        emailInput.classList.remove('border-red-500');
+        emailInput.classList.add('border-green-500');
+      } else {
+        emailInput.classList.remove('border-green-500');
+        emailInput.classList.add('border-red-500');
+      }
+    });
+
+    phoneInput.addEventListener('input', () => {
+      if (validatePhone(phoneInput.value)) {
+        hideError(phoneError);
+        phoneInput.classList.remove('border-red-500');
+        phoneInput.classList.add('border-green-500');
+      } else {
+        phoneInput.classList.remove('border-green-500');
+        phoneInput.classList.add('border-red-500');
+      }
+    });
+
+    passwordInput.addEventListener('input', () => {
+      updatePasswordStrength(passwordInput.value);
+      if (validatePassword(passwordInput.value)) {
+        hideError(passwordError);
+        passwordInput.classList.remove('border-red-500');
+        passwordInput.classList.add('border-green-500');
+      } else {
+        passwordInput.classList.remove('border-green-500');
+        passwordInput.classList.add('border-red-500');
+      }
+    });
+
+    // === STEP 6: Form Submission Handler ===
+    // This runs when user clicks "Validate Form"
+    form.addEventListener('submit', (e) => {
+      // Prevent form from actually submitting (we're just validating)
+      e.preventDefault();
+      
+      // Clear previous results
+      successMessage.classList.add('hidden');
+      validationSummary.classList.add('hidden');
+      errorList.innerHTML = '';
+      
+      // Collect all errors
+      const errors = [];
+      
+      // Validate each field
+      if (!validateName(nameInput.value)) {
+        errors.push('Name must be at least 2 characters');
+        showError(nameError, 'Name must be at least 2 characters');
+        nameInput.classList.add('border-red-500');
+      } else {
+        hideError(nameError);
+        nameInput.classList.remove('border-red-500');
+      }
+      
+      if (!validateEmail(emailInput.value)) {
+        errors.push('Please enter a valid email (e.g., user@email.com)');
+        showError(emailError, 'Please enter a valid email');
+        emailInput.classList.add('border-red-500');
+      } else {
+        hideError(emailError);
+        emailInput.classList.remove('border-red-500');
+      }
+      
+      if (!validatePhone(phoneInput.value)) {
+        errors.push('Phone must be 10 digits (e.g., 123-456-7890)');
+        showError(phoneError, 'Phone must be 10 digits');
+        phoneInput.classList.add('border-red-500');
+      } else {
+        hideError(phoneError);
+        phoneInput.classList.remove('border-red-500');
+      }
+      
+      if (!validatePassword(passwordInput.value)) {
+        errors.push('Password must be at least 8 characters');
+        showError(passwordError, 'Password must be at least 8 characters');
+        passwordInput.classList.add('border-red-500');
+      } else {
+        hideError(passwordError);
+        passwordInput.classList.remove('border-red-500');
+      }
+      
+      // Show results
+      if (errors.length === 0) {
+        // All passed!
+        successMessage.classList.remove('hidden');
+      } else {
+        // Show error summary
+        validationSummary.classList.remove('hidden');
+        errors.forEach(error => {
+          const li = document.createElement('li');
+          li.textContent = error;
+          errorList.appendChild(li);
+        });
+      }
+    });
+  </script>
+
+</body>
+</html>

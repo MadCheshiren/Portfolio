@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Task Manager - Student Project</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Simple fade animation */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .task-item {
+      animation: fadeIn 0.2s ease;
+    }
+    .task-item.completed span {
+      text-decoration: line-through;
+      color: #9ca3af;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-50 to-purple-50 min-h-screen p-4">
+  
+  <div class="max-w-md mx-auto pt-8">
+    <!-- Back Link -->
+    <a href="index.html#projects" class="text-indigo-600 text-sm hover:underline mb-4 inline-block">
+      ← Back to Portfolio
+    </a>
+
+    <!-- Main Card -->
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+      
+      <!-- Header -->
+      <h1 class="text-2xl font-bold text-gray-800 mb-1">Task Manager</h1>
+      <p class="text-sm text-gray-500 mb-6">My first JavaScript project</p>
+
+      <!-- Input Form -->
+      <div class="flex gap-2 mb-6">
+        <input 
+          type="text" 
+          id="taskInput" 
+          placeholder="Add a new task..." 
+          class="flex-1 px-4 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-indigo-500"
+        >
+        <button 
+          id="addBtn" 
+          class="bg-indigo-600 text-white px-4 py-2 rounded-xl hover:bg-indigo-700 transition-colors"
+        >
+          Add
+        </button>
+      </div>
+
+      <!-- Task List -->
+      <ul id="taskList" class="space-y-2">
+        <!-- Tasks will appear here -->
+      </ul>
+
+      <!-- Empty State -->
+      <p id="emptyState" class="text-center text-gray-400 py-8">
+        No tasks yet. Add one above!
+      </p>
+
+      <!-- Simple Stats -->
+      <div class="border-t border-gray-100 mt-6 pt-4 flex justify-between text-sm text-gray-500">
+        <span id="totalTasks">0 tasks</span>
+        <button id="clearBtn" class="text-red-500 hover:underline hidden">Clear all</button>
+      </div>
+
+    </div>
+
+    <!-- Student Note -->
+    <p class="text-center text-xs text-gray-400 mt-4">
+      Built with HTML, Tailwind CSS & vanilla JavaScript
+    </p>
+  </div>
+
+  <script>
+    // Simple To-Do App
+    const taskInput = document.getElementById('taskInput');
+    const addBtn = document.getElementById('addBtn');
+    const taskList = document.getElementById('taskList');
+    const emptyState = document.getElementById('emptyState');
+    const totalTasks = document.getElementById('totalTasks');
+    const clearBtn = document.getElementById('clearBtn');
+
+    let tasks = [];
+
+    // Add task
+    function addTask() {
+      const text = taskInput.value.trim();
+      if (!text) return;
+
+      const task = {
+        id: Date.now(),
+        text: text,
+        completed: false
+      };
+
+      tasks.push(task);
+      taskInput.value = '';
+      render();
+    }
+
+    // Toggle complete
+    function toggleTask(id) {
+      const task = tasks.find(t => t.id === id);
+      if (task) {
+        task.completed = !task.completed;
+        render();
+      }
+    }
+
+    // Delete task
+    function deleteTask(id) {
+      tasks = tasks.filter(t => t.id !== id);
+      render();
+    }
+
+    // Clear all
+    function clearAll() {
+      tasks = [];
+      render();
+    }
+
+    // Render tasks
+    function render() {
+      taskList.innerHTML = '';
+
+      if (tasks.length === 0) {
+        emptyState.style.display = 'block';
+        clearBtn.classList.add('hidden');
+      } else {
+        emptyState.style.display = 'none';
+        clearBtn.classList.remove('hidden');
+
+        tasks.forEach(task => {
+          const li = document.createElement('li');
+          li.className = `task-item flex items-center gap-3 p-3 bg-gray-50 rounded-xl ${task.completed ? 'completed' : ''}`;
+          
+          li.innerHTML = `
+            <input 
+              type="checkbox" 
+              ${task.completed ? 'checked' : ''} 
+              onchange="toggleTask(${task.id})"
+              class="w-5 h-5 accent-indigo-600 cursor-pointer"
+            >
+            <span class="flex-1">${task.text}</span>
+            <button 
+              onclick="deleteTask(${task.id})" 
+              class="text-red-400 hover:text-red-600 text-sm"
+            >
+              Delete
+            </button>
+          `;
+          
+          taskList.appendChild(li);
+        });
+      }
+
+      totalTasks.textContent = `${tasks.length} task${tasks.length !== 1 ? 's' : ''}`;
+    }
+
+    // Event listeners
+    addBtn.addEventListener('click', addTask);
+    taskInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addTask();
+    });
+    clearBtn.addEventListener('click', clearAll);
+  </script>
+
+</body>
+</html>

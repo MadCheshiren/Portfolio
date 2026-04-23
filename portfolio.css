@@ -1,0 +1,363 @@
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Custom Cursor */
+@media (hover: hover) and (pointer: fine) {
+  body,
+  body * {
+    cursor: none !important;
+  }
+
+  .cursor-dot,
+  .cursor-outline {
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  .cursor-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #6366f1;
+  }
+
+  .cursor-outline {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #6366f1;
+    transition: width 0.2s, height 0.2s;
+  }
+
+  body.hovering .cursor-outline {
+    width: 60px;
+    height: 60px;
+    background-color: rgba(99, 102, 241, 0.1);
+    border-color: transparent;
+  }
+}
+
+@media (hover: none) {
+
+  .cursor-dot,
+  .cursor-outline {
+    display: none !important;
+  }
+}
+
+/* 3D Tilt Effect */
+.tilt-card {
+  transform-style: preserve-3d;
+  transform: perspective(1000px);
+  transition: transform 0.15s ease-out;
+}
+
+.tilt-content {
+  transform: translateZ(20px);
+}
+
+/* Morphing Blobs */
+.blob {
+  position: fixed;
+  filter: blur(80px);
+  opacity: 0.6;
+  animation: blob 7s infinite;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.blob-1 {
+  top: 10%;
+  left: 10%;
+  width: 300px;
+  height: 300px;
+  background: #818cf8;
+  animation-delay: 0s;
+}
+
+.blob-2 {
+  top: 50%;
+  right: 10%;
+  width: 350px;
+  height: 350px;
+  background: #c084fc;
+  animation-delay: 2s;
+}
+
+.blob-3 {
+  bottom: 10%;
+  left: 20%;
+  width: 250px;
+  height: 250px;
+  background: #34d399;
+  animation-delay: 4s;
+}
+
+.dark .blob-1 {
+  background: #4338ca;
+}
+
+.dark .blob-2 {
+  background: #7e22ce;
+}
+
+.dark .blob-3 {
+  background: #059669;
+}
+
+/* Glass & UI */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1), transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.dark .glass {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Nav Links */
+.nav-link-item,
+.nav-icon {
+  position: relative;
+  transition: all 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-link-item:hover,
+.nav-icon:hover {
+  transform: translateY(-2px);
+}
+
+.nav-link-item.active {
+  background: rgba(99, 102, 241, 0.15);
+  color: #6366f1;
+}
+
+.dark .nav-link-item.active {
+  background: rgba(99, 102, 241, 0.25);
+  color: #818cf8;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 120%;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  padding: 4px 8px;
+  background: #1e293b;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  z-index: 60;
+}
+
+.dark .tooltip {
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.nav-link-item:hover .tooltip,
+.nav-icon:hover .tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.floating-dock {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 50;
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  transition: all 0.3s ease;
+}
+
+.dark .floating-dock {
+  background: rgba(30, 41, 59, 0.75);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.floating-btn {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background: transparent;
+  border: none;
+}
+
+.floating-btn:hover {
+  background: #e2e8f0;
+  transform: scale(1.05);
+}
+
+.dark .floating-btn:hover {
+  background: #334155;
+}
+
+.skill-bar {
+  height: 0.5rem;
+  border-radius: 999px;
+  background: #cbd5e1;
+  overflow: hidden;
+}
+
+.dark .skill-bar {
+  background: #334155;
+}
+
+.skill-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.timeline-line {
+  position: absolute;
+  left: 1rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: #e2e8f0;
+}
+
+.dark .timeline-line {
+  background: #334155;
+}
+
+input,
+textarea,
+button {
+  font-family: inherit;
+}
+
+.project-card.hidden-card {
+  display: none;
+}
+
+.project-card {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes floatNav {
+
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+
+  50% {
+    transform: translateX(-50%) translateY(-4px);
+  }
+}
+
+.nav-float {
+  animation: floatNav 6s ease-in-out infinite;
+}
+
+.nav-float:hover {
+  animation-play-state: paused;
+}
+
+/* Terminal Styles */
+.terminal-window {
+  background: #0f172a;
+  color: #e2e8f0;
+  font-family: 'Courier New', monospace;
+}
+
+.terminal-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #10b981;
+  width: 100%;
+  font-family: inherit;
+}
+
+/* VN Game Styles */
+.vn-choice-btn {
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: #cbd5e1;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: left;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.vn-choice-btn:hover {
+  background: rgba(99, 102, 241, 0.2);
+  border-color: #6366f1;
+  color: #fff;
+  transform: translateX(4px);
+}
+
+/* VN Modal */
+#vn-modal {
+  overscroll-behavior: contain;
+  display: flex;
+}
+
+#vn-modal.hidden {
+  display: none;
+}
+
+/* Modal focus styles */
+#vn-modal:focus {
+  outline: none;
+}
