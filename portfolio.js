@@ -2,6 +2,63 @@ document.addEventListener('DOMContentLoaded', () => {
   // Year
   document.getElementById('year').textContent = new Date().getFullYear();
 
+  // Throttle function for scroll events
+  function throttle(func, limit) {
+    let inThrottle;
+    return function(...args) {
+      if (!inThrottle) {
+        func.apply(this, args);
+        inThrottle = true;
+        setTimeout(() => inThrottle = false, limit);
+      }
+    };
+  }
+
+  // Core Web Vitals Monitoring
+  function sendToAnalytics({ metric, value }) {
+    console.log(`[Performance] ${metric}: ${value.toFixed(2)}ms`);
+  }
+
+  // Largest Contentful Paint (LCP)
+  if ('PerformanceObserver' in window) {
+    try {
+      new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          sendToAnalytics({ metric: 'LCP', value: entry.startTime });
+        }
+      }).observe({ type: 'largest-contentful-paint', buffered: true });
+    } catch (e) {
+      console.log('LCP observer not supported');
+    }
+
+    // Cumulative Layout Shift (CLS)
+    try {
+      let clsValue = 0;
+      new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          if (!entry.hadRecentInput) {
+            clsValue += entry.value;
+          }
+        }
+        sendToAnalytics({ metric: 'CLS', value: clsValue });
+      }).observe({ type: 'layout-shift', buffered: true });
+    } catch (e) {
+      console.log('CLS observer not supported');
+    }
+
+    // Interaction to Next Paint (INP)
+    try {
+      new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          const inp = entry.processingEnd - entry.processingStart;
+          sendToAnalytics({ metric: 'INP', value: inp });
+        }
+      }).observe({ type: 'event', buffered: true });
+    } catch (e) {
+      console.log('INP observer not supported');
+    }
+  }
+
   // Theme Toggle
   const themeToggle = document.getElementById('theme-toggle');
   const html = document.documentElement;
@@ -33,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Scroll to Top
   const scrollTopBtn = document.getElementById('scroll-top');
   scrollTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-  window.addEventListener('scroll', () => {
+  window.addEventListener('scroll', throttle(() => {
     if (window.scrollY > 300) {
       scrollTopBtn.style.opacity = '1';
       scrollTopBtn.style.pointerEvents = 'auto';
@@ -41,25 +98,25 @@ document.addEventListener('DOMContentLoaded', () => {
       scrollTopBtn.style.opacity = '0';
       scrollTopBtn.style.pointerEvents = 'none';
     }
-  });
+  }, 100));
   scrollTopBtn.style.opacity = '0';
   scrollTopBtn.style.pointerEvents = 'none';
 
   // Navbar background on scroll
   const navbar = document.getElementById('navbar');
-  window.addEventListener('scroll', () => {
+  window.addEventListener('scroll', throttle(() => {
     if (window.scrollY > 20) {
       navbar.classList.add('shadow-lg');
     } else {
       navbar.classList.remove('shadow-lg');
     }
-  });
+  }, 100));
 
   // Active Nav Link Highlight
   const sections = document.querySelectorAll('section');
   const navLinks = document.querySelectorAll('.nav-link-item');
 
-  window.addEventListener('scroll', () => {
+  window.addEventListener('scroll', throttle(() => {
     let current = '';
     sections.forEach(section => {
       const sectionTop = section.offsetTop;
@@ -74,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
         link.classList.add('active');
       }
     });
-  });
+  }, 100));
 
   // Contact Form Handler
   const form = document.getElementById('contact-form');
@@ -107,16 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.disabled = false;
   });
 
-  // Resume Download Simulation
-  const resumeBtn = document.getElementById('download-resume');
-  resumeBtn.addEventListener('click', () => {
-    const originalText = resumeBtn.innerHTML;
-    resumeBtn.innerHTML = `<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Preparing...`;
-    setTimeout(() => {
-      resumeBtn.innerHTML = originalText;
-      alert('Resume download simulation: In production, this would download your PDF resume.');
-    }, 1500);
-  });
 
   // Project Filtering
   const filterBtns = document.querySelectorAll('.filter-btn');

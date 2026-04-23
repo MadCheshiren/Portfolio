@@ -11,6 +11,9 @@
   <meta property="og:description" content="Web developer portfolio with interactive projects and a visual novel.">
   <meta property="og:type" content="website">
   <title>Professional Portfolio</title>
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preload" href="portfolio.css" as="style">
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5/index.css">
   <link rel="stylesheet" href="portfolio.css">
@@ -144,14 +147,14 @@
           <a href="#projects"
             class="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-accent hover:bg-accent-hover text-white font-semibold shadow-glow hover:shadow-lg transition-all">View
             Projects</a>
-          <button id="download-resume"
+          <a href="Kirren_Michael_Fraginal_Resume.pdf" download
             class="w-full sm:w-auto px-8 py-3.5 rounded-2xl glass hover:bg-white/80 dark:hover:bg-slate-800/80 font-semibold transition-all flex items-center justify-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
             </svg>
             Download Resume
-          </button>
+          </a>
         </div>
       </div>
     </section>
@@ -161,7 +164,10 @@
       <div class="max-w-6xl mx-auto">
         <div class="grid md:grid-cols-2 gap-12 items-center reveal">
           <div class="aspect-square max-w-md mx-auto glass rounded-3xl flex items-center justify-center shadow-soft">
-            <img src="profile.jpg" alt="Profile Image" width="400" height="400" class="w-full h-full object-cover rounded-3xl">
+            <picture>
+              <source srcset="profile.webp" type="image/webp">
+              <img src="profile.jpg" alt="Profile Image" width="400" height="400" loading="lazy" decoding="async" class="w-full h-full object-cover rounded-3xl">
+            </picture>
           </div>
           <div class="space-y-6">
             <h2 class="text-3xl md:text-4xl font-bold">About Me</h2>
@@ -519,6 +525,11 @@
   </div>
 
   <script src="portfolio.js" defer></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(err => console.log('Service Worker registration failed:', err));
+    }
+  </script>
 </body>
 
 </html>
