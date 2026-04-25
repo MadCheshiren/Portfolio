@@ -20,6 +20,8 @@ A modern, responsive professional portfolio website featuring a glassmorphic UI,
 - **CSS3** — Glassmorphism, 3D transforms, animations, responsive design
 - **JavaScript (ES6+)** — DOM manipulation, IntersectionObserver, Fetch API, async/await
 - **Tailwind CSS** — Utility-first CSS framework (CDN)
+- **GSAP (GreenSock)** — 3D tilt animations for project cards
+- **Spline 3D Runtime** — Interactive 3D background (lazy-loaded)
 - **Formspree** — Contact form backend
 
 ## Getting Started
