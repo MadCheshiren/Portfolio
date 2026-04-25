@@ -35,56 +35,60 @@ This is a responsive, single-page portfolio website built with HTML, CSS, and Ja
 - Respects system preference on first visit
 - Smooth transitions between themes
 
-### 3. **Custom Cursor Effect**
-- Custom cursor dot and outline for desktop users
-- Cursor expands when hovering over interactive elements
-- Automatically disabled on touch devices
+### 3. **Spline 3D Background**
+- Interactive 3D background using Spline runtime
+- Lazy-loaded when hero section becomes visible for performance
+- Replaced morphing blob animations for better visual appeal
+- WebGL-based rendering with GPU acceleration
 
-### 4. **Animated Background**
-- Morphing blob animations using CSS keyframes
-- Different colors for dark and light themes
-- Subtle parallax effect creating visual depth
-
-### 5. **Scroll Animations**
+### 4. **Scroll Animations**
 - Fade-in animations when scrolling to sections
 - Animated skill bars that fill when visible
 - Smooth reveal effects for content
 
-### 6. **Project Showcase**
+### 5. **Project Showcase**
 - Filterable project cards (All, Frontend, Fullstack, UI/UX, Game)
-- 3D tilt effect on project cards (desktop only)
+- 3D tilt effect on project cards using GSAP (desktop only)
 - Project cards with hover effects and smooth transitions
 
-### 7. **Interactive Terminal**
+### 6. **Interactive Terminal**
 - Modal-based terminal interface
 - Commands: help, about, skills, contact, resume, clear, exit
 - Easter egg feature for visitors to explore
 
-### 8. **Visual Novel Game**
+### 7. **Visual Novel Game**
 - Interactive text-based game about developer life
 - Multiple choice story progression
 - Emoji-based visual elements
 - Modal-based game interface
 
-### 9. **Contact Form**
+### 8. **Contact Form**
 - Functional contact form using Formspree
 - Form validation with visual feedback
 - Success/error message display
 - Social media links (GitHub, LinkedIn, Email)
 
-### 10. **Resume Download**
+### 9. **Resume Download**
 - Direct download link to PDF resume
 - Located in hero section for easy access
 
-### 11. **Scroll to Top Button**
+### 10. **Scroll to Top Button**
 - Floating button appears after scrolling down
 - Smooth scroll back to top of page
 
-### 12. **Performance Optimizations**
+### 11. **Performance Optimizations**
+- Lazy loading for Spline 3D background (loads when hero section visible)
 - Lazy loading for images
 - WebP image format with JPEG fallback
 - Resource hints (preconnect) for faster loading
 - Throttled scroll event listeners for smooth performance
+- Service Worker for PWA capabilities
+
+### 12. **Accessibility Features**
+- Keyboard navigation support
+- ARIA labels for screen readers
+- Focus management for modals
+- `prefers-reduced-motion` support for users with motion sensitivity
 
 ---
 
@@ -103,23 +107,27 @@ This is a responsive, single-page portfolio website built with HTML, CSS, and Ja
 | **Tailwind CSS** | Utility-first CSS framework for rapid styling |
 | **Custom CSS** | Portfolio-specific styles, animations, and effects |
 | **CSS Variables** | Theme colors and dynamic styling |
-| **CSS Animations** | Blob animations, fade-ins, and transitions |
+| **CSS Animations** | Fade-ins, transitions, and navbar floating animation |
 | **Backdrop Filter** | Glass morphism effects |
 
-### JavaScript Features
-| Feature | Purpose |
-|---------|---------|
+### JavaScript Libraries & Features
+| Technology | Purpose |
+|------------|---------|
+| **GSAP (GreenSock)** | 3D tilt animations for project cards |
+| **Spline 3D Runtime** | Interactive 3D background (lazy-loaded) |
 | **DOM Manipulation** | Dynamic content updates and interactions |
 | **Event Listeners** | User interaction handling |
-| **Intersection Observer** | Scroll-triggered animations |
+| **Intersection Observer** | Scroll-triggered animations and lazy loading |
 | **LocalStorage** | Theme preference persistence |
 | **Fetch API** | Form submission handling |
 | **CSS Class Toggling** | Theme switching and UI states |
+| **Service Worker** | PWA capabilities for offline support |
 
 ### External Services & APIs
 | Service | Purpose |
 |---------|---------|
 | **Formspree** | Contact form backend handling |
+| **Spline** | 3D scene hosting and runtime |
 | **GitHub** | Project hosting and social link |
 | **LinkedIn** | Professional networking link |
 
@@ -146,11 +154,13 @@ Portfolio/
 ├── index.html              # Main portfolio page
 ├── portfolio.css           # Custom styles and animations
 ├── portfolio.js            # Interactive functionality
+├── scene.splinecode        # Spline 3D scene file
 ├── todo.html               # Task Manager project demo
 ├── validator.html          # Form Validator project demo
 ├── profile.jpg             # Profile image (JPEG fallback)
 ├── profile.webp            # Profile image (optimized format)
 ├── Kirren_Michael_Fraginal_Resume.pdf  # Downloadable resume
+├── sw.js                   # Service Worker for PWA
 ├── vercel.json             # Deployment configuration
 ├── README.md               # Basic project info
 ├── PERFORMANCE_OPTIMIZATION_GUIDE.md     # Performance docs
@@ -250,4 +260,4 @@ Through building this portfolio, the following skills were demonstrated and prac
 
 ---
 
-*Last Updated: April 2025*
+*Last Updated: April 2026*
