@@ -1,6 +1,7 @@
 /*
  * Portfolio Website - Main JavaScript File
  * Handles all interactive features and functionality
+ * Last updated: April 2026
  */
 
 // ==========================================
