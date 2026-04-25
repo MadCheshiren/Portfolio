@@ -50,15 +50,25 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Normalize URL - remove hash fragments for cache matching
+  const url = new URL(event.request.url);
+  const normalizedUrl = url.origin + url.pathname;
+  const normalizedRequest = new Request(normalizedUrl, {
+    method: event.request.method,
+    headers: event.request.headers,
+    mode: event.request.mode,
+    credentials: event.request.credentials
+  });
+
   event.respondWith(
-    caches.match(event.request).then(cached => {
+    caches.match(normalizedRequest).then(cached => {
       // Return cached version if available
       if (cached) {
         // Update cache in background (stale-while-revalidate)
-        fetch(event.request).then(response => {
+        fetch(normalizedRequest).then(response => {
           if (response.ok) {
             caches.open(CACHE_NAME).then(cache => {
-              cache.put(event.request, response.clone());
+              cache.put(normalizedRequest, response.clone());
             });
           }
         }).catch(() => {});
@@ -68,13 +78,13 @@ self.addEventListener('fetch', (event) => {
       // Otherwise fetch from network
       return fetch(event.request).then(response => {
         if (!response || !response.ok) return response;
-        
-        // Cache new requests dynamically
+
+        // Cache new requests dynamically (use normalized URL)
         const responseClone = response.clone();
         caches.open(CACHE_NAME).then(cache => {
-          cache.put(event.request, responseClone);
+          cache.put(normalizedRequest, responseClone);
         });
-        
+
         return response;
       }).catch(() => {
         // Offline fallback could go here
