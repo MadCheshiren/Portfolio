@@ -46,45 +46,6 @@
   display: none;
 }
 
-.blob-1 {
-  top: 10%;
-  left: 10%;
-  width: 300px;
-  height: 300px;
-  background: #818cf8;
-  animation-delay: 0s;
-}
-
-.blob-2 {
-  top: 50%;
-  right: 10%;
-  width: 350px;
-  height: 350px;
-  background: #c084fc;
-  animation-delay: 2s;
-}
-
-.blob-3 {
-  bottom: 10%;
-  left: 20%;
-  width: 250px;
-  height: 250px;
-  background: #34d399;
-  animation-delay: 4s;
-}
-
-.dark .blob-1 {
-  background: #4338ca;
-}
-
-.dark .blob-2 {
-  background: #7e22ce;
-}
-
-.dark .blob-3 {
-  background: #059669;
-}
-
 /* Glass & UI */
 .reveal {
   opacity: 0;
