@@ -31,17 +31,6 @@
             'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
             'glow': '0 0 20px rgba(255, 90, 31, 0.5)'
           },
-          animation: {
-            'blob': 'blob 7s infinite',
-          },
-          keyframes: {
-            blob: {
-              '0%': { transform: 'translate(0px, 0px) scale(1)' },
-              '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-              '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-              '100%': { transform: 'translate(0px, 0px) scale(1)' },
-            },
-          }
         }
       }
     }
@@ -52,15 +41,6 @@
 
   <!-- Spline 3D Background - Full Page -->
   <canvas id="spline-canvas" class="fixed inset-0 w-full h-full -z-10"></canvas>
-
-  <!-- Custom Cursor (Disabled for Spline 3D performance) -->
-  <div class="cursor-dot"></div>
-  <div class="cursor-outline"></div>
-
-  <!-- Morphing Blobs Background -->
-  <div class="blob blob-1 rounded-full"></div>
-  <div class="blob blob-2 rounded-full"></div>
-  <div class="blob blob-3 rounded-full"></div>
 
   <!-- Floating Pill Navbar -->
   <nav id="navbar" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 px-2 py-2 md:px-4 md:py-2.5 rounded-full glass shadow-lg flex items-center gap-1 md:gap-3 transition-all duration-300 nav-float">
@@ -472,31 +452,54 @@
     if (canvas && heroSection) {
       let splineLoaded = false;
       let splineApp = null;
+      let resizeTimeout = null;
 
       // Detect mobile/touch device for quality adjustments
       const isMobile = window.matchMedia('(pointer: coarse)').matches ||
                        window.matchMedia('(hover: none)').matches ||
                        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
+      // Check for low-power mode or weak GPU
+      const prefersLowPower = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
       // Set optimized resolution for all devices (cap DPR for performance)
-      canvas.style.width = '100%';
-      canvas.style.height = '100%';
-      const maxDpr = isMobile ? 1.5 : 2.0; // Lower for mobile, reasonable for desktop
-      const dpr = Math.min(window.devicePixelRatio, maxDpr);
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
+      function setCanvasSize() {
+        const maxDpr = isMobile ? 1.5 : 2.0; // Lower for mobile, reasonable for desktop
+        const dpr = prefersLowPower ? 1.0 : Math.min(window.devicePixelRatio, maxDpr);
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.width = window.innerWidth * dpr;
+        canvas.height = window.innerHeight * dpr;
+        return dpr;
+      }
+
+      let dpr = setCanvasSize();
+
+      // Throttled resize handler
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+          dpr = setCanvasSize();
+          if (splineApp && splineApp.setSize) {
+            splineApp.setSize(window.innerWidth, window.innerHeight, dpr);
+          }
+        }, 250);
+      }, { passive: true });
 
       // Lazy load Spline when hero section is visible
       const splineObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting && !splineLoaded) {
             splineLoaded = true;
-            console.log('[Spline] Hero visible, loading... (mobile:', isMobile, '| dpr:', dpr + ')');
+            console.log('[Spline] Hero visible, loading... (mobile:', isMobile, '| dpr:', dpr, '| lowPower:', prefersLowPower + ')');
 
             // Dynamically import Spline runtime
             import('https://unpkg.com/@splinetool/runtime@1.9.82/build/runtime.js')
               .then(({ Application }) => {
-                splineApp = new Application(canvas);
+                // Initialize with power preference for battery saving
+                splineApp = new Application(canvas, {
+                  powerPreference: prefersLowPower ? 'low-power' : 'high-performance',
+                });
 
                 // Set optimized pixel ratio
                 if (splineApp.setSize) {
@@ -528,13 +531,17 @@
                   entries.forEach(entry => {
                     if (splineApp) {
                       if (entry.isIntersecting) {
+                        // Resume rendering
+                        console.log('[Spline] Resuming (visible)');
                         if (splineApp.start) splineApp.start();
                       } else {
+                        // Pause rendering when not visible
+                        console.log('[Spline] Pausing (not visible)');
                         if (splineApp.stop) splineApp.stop();
                       }
                     }
                   });
-                }, { threshold: 0 });
+                }, { threshold: 0.1 }); // 10% visibility threshold
 
                 visibilityObserver.observe(heroSection);
               })

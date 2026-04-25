@@ -9,15 +9,6 @@
   }
 }
 
-/* Custom Cursor - DISABLED for Spline 3D performance */
-/* The Spline WebGL renderer competes with custom cursor for GPU resources */
-/* Using native system cursor for optimal performance */
-
-.cursor-dot,
-.cursor-outline {
-  display: none !important;
-}
-
 /* 3D Tilt Effect */
 .tilt-card {
   transform-style: preserve-3d;
@@ -42,6 +33,7 @@
   transition: opacity 0.5s ease;
   will-change: transform;
   contain: strict;
+  content-visibility: auto;
 }
 
 /* Hide Spline on very low-end devices if needed */
@@ -49,11 +41,6 @@
   #spline-canvas {
     display: none !important;
   }
-}
-
-/* Hide morphing blobs - replaced by Spline 3D background */
-.blob {
-  display: none;
 }
 
 /* Glass & UI */

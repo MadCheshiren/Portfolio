@@ -245,17 +245,6 @@ function init3DTiltEffect() {
 }
 
 // ==========================================
-// CUSTOM CURSOR (Desktop Only)
-// ==========================================
-
-function initCustomCursor() {
-  // DISABLED: Custom cursor removed due to Spline 3D GPU performance conflict
-  // The Spline WebGL renderer competes with cursor animations causing lag
-  // Using native cursor for better performance
-  return;
-}
-
-// ==========================================
 // INTERACTIVE TERMINAL
 // ==========================================
 
@@ -518,7 +507,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initContactForm();
   initProjectFiltering();
   init3DTiltEffect();
-  initCustomCursor();
   initTerminal();
   initVisualNovel();
 });
