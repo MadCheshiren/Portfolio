@@ -1,37 +1,63 @@
-document.addEventListener('DOMContentLoaded', () => {
-  // Year
-  document.getElementById('year').textContent = new Date().getFullYear();
+/*
+ * Portfolio Website - Main JavaScript File
+ * Handles all interactive features and functionality
+ */
 
-  // Throttle function for scroll events
-  function throttle(func, limit) {
-    let inThrottle;
-    return function(...args) {
-      if (!inThrottle) {
-        func.apply(this, args);
-        inThrottle = true;
-        setTimeout(() => inThrottle = false, limit);
-      }
-    };
-  }
+// ==========================================
+// UTILITY FUNCTIONS
+// ==========================================
 
-  // Theme Toggle
+/**
+ * Throttle function to limit how often a function can fire
+ * Used for scroll events to improve performance
+ */
+function throttle(func, limit) {
+  let inThrottle;
+  return function(...args) {
+    if (!inThrottle) {
+      func.apply(this, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  };
+}
+
+// ==========================================
+// THEME MANAGEMENT
+// ==========================================
+
+function initThemeToggle() {
   const themeToggle = document.getElementById('theme-toggle');
   const html = document.documentElement;
   const savedTheme = localStorage.getItem('theme');
+  
+  // Check saved preference or system preference
   if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     html.classList.add('dark');
   }
+  
   themeToggle.addEventListener('click', () => {
     html.classList.toggle('dark');
     localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
   });
+}
 
-  // Scroll Reveal & Skill Bars
-  const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+// ==========================================
+// SCROLL & NAVIGATION
+// ==========================================
+
+function initScrollAnimations() {
+  // Reveal animations for sections
+  const observerOptions = { 
+    threshold: 0.1, 
+    rootMargin: '0px 0px -50px 0px' 
+  };
+  
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('active');
+        // Animate skill bars when visible
         entry.target.querySelectorAll('.skill-fill').forEach(bar => {
           bar.style.width = bar.dataset.width;
         });
@@ -41,10 +67,16 @@ document.addEventListener('DOMContentLoaded', () => {
   }, observerOptions);
 
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+}
 
-  // Scroll to Top
+function initScrollToTop() {
   const scrollTopBtn = document.getElementById('scroll-top');
-  scrollTopBtn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  
+  scrollTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+  
+  // Show/hide button based on scroll position
   window.addEventListener('scroll', throttle(() => {
     if (window.scrollY > 300) {
       scrollTopBtn.style.opacity = '1';
@@ -54,11 +86,15 @@ document.addEventListener('DOMContentLoaded', () => {
       scrollTopBtn.style.pointerEvents = 'none';
     }
   }, 100));
+  
+  // Initial state
   scrollTopBtn.style.opacity = '0';
   scrollTopBtn.style.pointerEvents = 'none';
+}
 
-  // Navbar background on scroll
+function initNavbarEffects() {
   const navbar = document.getElementById('navbar');
+  
   window.addEventListener('scroll', throttle(() => {
     if (window.scrollY > 20) {
       navbar.classList.add('shadow-lg');
@@ -66,8 +102,9 @@ document.addEventListener('DOMContentLoaded', () => {
       navbar.classList.remove('shadow-lg');
     }
   }, 100));
+}
 
-  // Active Nav Link Highlight
+function initActiveNavLinks() {
   const sections = document.querySelectorAll('section');
   const navLinks = document.querySelectorAll('.nav-link-item');
 
@@ -80,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
         current = section.getAttribute('id');
       }
     });
+    
     navLinks.forEach(link => {
       link.classList.remove('active');
       if (link.getAttribute('href').slice(1) === current) {
@@ -87,14 +125,21 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }, 100));
+}
 
-  // Contact Form Handler
+// ==========================================
+// CONTACT FORM
+// ==========================================
+
+function initContactForm() {
   const form = document.getElementById('contact-form');
   const status = document.getElementById('form-status');
+  
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = form.querySelector('button[type="submit"]');
     const originalText = btn.textContent;
+    
     btn.textContent = 'Sending...';
     btn.disabled = true;
 
@@ -104,11 +149,15 @@ document.addEventListener('DOMContentLoaded', () => {
         body: new FormData(form),
         headers: { 'Accept': 'application/json' }
       });
+      
       if (response.ok) {
         btn.textContent = 'Sent!';
         status.classList.remove('hidden');
         form.reset();
-        setTimeout(() => { status.classList.add('hidden'); btn.textContent = originalText; }, 3000);
+        setTimeout(() => { 
+          status.classList.add('hidden'); 
+          btn.textContent = originalText; 
+        }, 3000);
       } else {
         throw new Error('Failed');
       }
@@ -116,26 +165,22 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.textContent = 'Error';
       setTimeout(() => { btn.textContent = originalText; }, 2000);
     }
+    
     btn.disabled = false;
   });
+}
 
-  // Resume Download Simulation
-  const resumeBtn = document.getElementById('download-resume');
-  resumeBtn.addEventListener('click', () => {
-    const originalText = resumeBtn.innerHTML;
-    resumeBtn.innerHTML = `<svg class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Preparing...`;
-    setTimeout(() => {
-      resumeBtn.innerHTML = originalText;
-      alert('Resume download simulation: In production, this would download your PDF resume.');
-    }, 1500);
-  });
+// ==========================================
+// PROJECT FILTERING
+// ==========================================
 
-  // Project Filtering
+function initProjectFiltering() {
   const filterBtns = document.querySelectorAll('.filter-btn');
   const projectCards = document.querySelectorAll('.project-card');
 
   filterBtns.forEach(btn => {
     btn.addEventListener('click', () => {
+      // Update button styles
       filterBtns.forEach(b => {
         b.classList.remove('bg-accent', 'text-white', 'shadow-glow');
         b.classList.add('glass');
@@ -143,6 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.classList.remove('glass');
       btn.classList.add('bg-accent', 'text-white', 'shadow-glow');
 
+      // Filter cards
       const filterValue = btn.getAttribute('data-filter');
       projectCards.forEach(card => {
         if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
@@ -153,46 +199,86 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   });
+}
 
-  // 1. 3D Tilt Effect on Project Cards (desktop only)
-  if (window.matchMedia('(hover: hover)').matches) {
-    document.querySelectorAll('.tilt-card').forEach(card => {
-      card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        const rotateX = ((y - centerY) / centerY) * -10;
-        const rotateY = ((x - centerX) / centerX) * 10;
-        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+// ==========================================
+// 3D CARD EFFECTS (Desktop Only)
+// ==========================================
+
+function init3DTiltEffect() {
+  // Only enable on devices with hover (desktop)
+  if (!window.matchMedia('(hover: hover)').matches) return;
+  
+  document.querySelectorAll('.tilt-card').forEach(card => {
+    // Use GSAP for smoother animations with force3D for GPU acceleration
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = ((y - centerY) / centerY) * -10;
+      const rotateY = ((x - centerX) / centerX) * 10;
+      
+      gsap.to(card, {
+        rotateX: rotateX,
+        rotateY: rotateY,
+        duration: 0.3,
+        ease: 'power2.out',
+        transformPerspective: 1000,
+        force3D: true
       });
-      card.addEventListener('mouseleave', () => {
-        card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg)';
+    });
+    
+    card.addEventListener('mouseleave', () => {
+      gsap.to(card, {
+        rotateX: 0,
+        rotateY: 0,
+        duration: 0.5,
+        ease: 'power2.out',
+        transformPerspective: 1000,
+        force3D: true
       });
     });
-  }
+  });
+}
 
-  // 2. Custom Magnetic Cursor (desktop only)
-  if (window.matchMedia('(hover: hover)').matches) {
-    const cursorDot = document.querySelector('.cursor-dot');
-    const cursorOutline = document.querySelector('.cursor-outline');
-    const hoverTargets = document.querySelectorAll('a, button, input, textarea, .tilt-card');
+// ==========================================
+// CUSTOM CURSOR (Desktop Only)
+// ==========================================
 
-    window.addEventListener('mousemove', (e) => {
-      cursorDot.style.left = `${e.clientX}px`;
-      cursorDot.style.top = `${e.clientY}px`;
-      cursorOutline.style.left = `${e.clientX}px`;
-      cursorOutline.style.top = `${e.clientY}px`;
-    });
+function initCustomCursor() {
+  // Only enable on devices with hover (desktop)
+  if (!window.matchMedia('(hover: hover)').matches) return;
+  
+  const cursorDot = document.querySelector('.cursor-dot');
+  const cursorOutline = document.querySelector('.cursor-outline');
+  const hoverTargets = document.querySelectorAll('a, button, input, textarea, .tilt-card');
 
-    hoverTargets.forEach(target => {
-      target.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
-      target.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
-    });
-  }
+  // Use gsap.quickTo for performant cursor following with left/top positioning
+  const xToDot = gsap.quickTo(cursorDot, 'left', { duration: 0.01, ease: 'none' });
+  const yToDot = gsap.quickTo(cursorDot, 'top', { duration: 0.01, ease: 'none' });
+  const xToOutline = gsap.quickTo(cursorOutline, 'left', { duration: 0.15, ease: 'power2.out' });
+  const yToOutline = gsap.quickTo(cursorOutline, 'top', { duration: 0.15, ease: 'power2.out' });
 
-  // 3. Interactive Terminal
+  window.addEventListener('mousemove', (e) => {
+    xToDot(e.clientX);
+    yToDot(e.clientY);
+    xToOutline(e.clientX);
+    yToOutline(e.clientY);
+  }, { passive: true });
+
+  hoverTargets.forEach(target => {
+    target.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+    target.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+  });
+}
+
+// ==========================================
+// INTERACTIVE TERMINAL
+// ==========================================
+
+function initTerminal() {
   const terminalModal = document.getElementById('terminal-modal');
   const terminalToggle = document.getElementById('terminal-toggle');
   const closeTerminal = document.getElementById('close-terminal');
@@ -213,6 +299,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   terminalToggle.addEventListener('click', openTerminal);
   closeTerminal.addEventListener('click', closeTerminalFn);
+  
   terminalModal.addEventListener('click', (e) => {
     if (e.target === terminalModal) closeTerminalFn();
   });
@@ -258,7 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
       case 'skills':
         addOutput('[Skills]', 'text-purple-400');
-        addOutput('HTML & CSS, JavaScript (ES6+), Tailwind CSS, UI/UX Design, Accessibility (a11y)');
+        addOutput('HTML & CSS, JavaScript (ES6+), Tailwind CSS, UI/UX Design, Accessibility (a11y), Creative Writing');
         break;
       case 'contact':
         addOutput('[Contact]', 'text-green-400');
@@ -268,20 +355,25 @@ document.addEventListener('DOMContentLoaded', () => {
         break;
       case 'resume':
         addOutput('Preparing resume download...', 'text-yellow-300');
-        setTimeout(() => addOutput('Resume downloaded! (Simulation)', 'text-green-400'), 1000);
+        setTimeout(() => addOutput('Resume downloaded!', 'text-green-400'), 1000);
         break;
       case 'clear':
         terminalOutput.innerHTML = '';
         break;
       case 'exit':
-        terminalModal.classList.add('hidden');
+        closeTerminalFn();
         break;
       default:
         if (cmd !== '') addOutput(`Command not found: ${cmd}. Type 'help' for options.`, 'text-red-400');
     }
   }
+}
 
-  // 4. Visual Novel Engine
+// ==========================================
+// VISUAL NOVEL GAME
+// ==========================================
+
+function initVisualNovel() {
   const vnModal = document.getElementById('vn-modal');
   const openVnBtn = document.getElementById('open-vn');
   const closeVnBtn = document.getElementById('close-vn');
@@ -291,7 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
     lastFocusedElement = document.activeElement;
     vnModal.classList.remove('hidden');
     vnModal.focus();
-    initVisualNovel();
+    startVisualNovelGame();
   }
 
   function closeVN() {
@@ -302,10 +394,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (openVnBtn && vnModal) {
     openVnBtn.addEventListener('click', openVN);
   }
-  
-  if (window.matchMedia('(hover: hover)').matches) {
-  vnModal.focus();
-}
 
   if (closeVnBtn && vnModal) {
     closeVnBtn.addEventListener('click', closeVN);
@@ -322,18 +410,77 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
-});
+}
 
-async function initVisualNovel() {
-  // Embed story data directly to avoid fetch() issues with file:// protocol
+async function startVisualNovelGame() {
+  // Story data embedded directly
   const storyData = [
-    { "id": 1, "speaker": "Narrator", "text": "It is 7:00 AM. Your alarm goes off. You have a big deployment due today.", "emoji": "⏰", "choices": [{ "text": "☕ Drink Coffee first", "next": 2 }, { "text": "💻 Jump straight into code", "next": 3 }] },
-    { "id": 2, "speaker": "You", "text": "The coffee is hot. You feel energized and ready to tackle any bug.", "emoji": "☕", "choices": [{ "text": "Start coding...", "next": 3 }] },
-    { "id": 3, "speaker": "System", "text": "ERROR: npm install failed. 404 Not Found.", "emoji": "💀", "choices": [{ "text": "Delete node_modules and retry", "next": 4 }, { "text": "Panic and cry", "next": 5 }] },
-    { "id": 4, "speaker": "You", "text": "That actually worked. The packages are installing successfully.", "emoji": "📦", "choices": [{ "text": "Push to production", "next": 6 }, { "text": "Write tests first", "next": 7 }] },
-    { "id": 5, "speaker": "Narrator", "text": "You take a deep breath. Remember: It's just code.", "emoji": "😢", "choices": [{ "text": "Try deleting node_modules", "next": 4 }] },
-    { "id": 6, "speaker": "Narrator", "text": "Yolo! You pushed it. The site is... actually working! You are a hero.", "emoji": "🚀", "choices": [{ "text": "Restart Story", "next": 1 }] },
-    { "id": 7, "speaker": "Narrator", "text": "You found a critical bug in testing! You saved the company millions.", "emoji": "🛡️", "choices": [{ "text": "Restart Story", "next": 1 }] }
+    { 
+      id: 1, 
+      speaker: "Narrator", 
+      text: "It is 7:00 AM. Your alarm goes off. You have a big deployment due today.", 
+      emoji: "⏰", 
+      choices: [
+        { text: "☕ Drink Coffee first", next: 2 }, 
+        { text: "💻 Jump straight into code", next: 3 }
+      ] 
+    },
+    { 
+      id: 2, 
+      speaker: "You", 
+      text: "The coffee is hot. You feel energized and ready to tackle any bug.", 
+      emoji: "☕", 
+      choices: [
+        { text: "Start coding...", next: 3 }
+      ] 
+    },
+    { 
+      id: 3, 
+      speaker: "System", 
+      text: "ERROR: npm install failed. 404 Not Found.", 
+      emoji: "💀", 
+      choices: [
+        { text: "Delete node_modules and retry", next: 4 }, 
+        { text: "Panic and cry", next: 5 }
+      ] 
+    },
+    { 
+      id: 4, 
+      speaker: "You", 
+      text: "That actually worked. The packages are installing successfully.", 
+      emoji: "📦", 
+      choices: [
+        { text: "Push to production", next: 6 }, 
+        { text: "Write tests first", next: 7 }
+      ] 
+    },
+    { 
+      id: 5, 
+      speaker: "Narrator", 
+      text: "You take a deep breath. Remember: It's just code.", 
+      emoji: "😢", 
+      choices: [
+        { text: "Try deleting node_modules", next: 4 }
+      ] 
+    },
+    { 
+      id: 6, 
+      speaker: "Narrator", 
+      text: "Yolo! You pushed it. The site is... actually working! You are a hero.", 
+      emoji: "🚀", 
+      choices: [
+        { text: "Restart Story", next: 1 }
+      ] 
+    },
+    { 
+      id: 7, 
+      speaker: "Narrator", 
+      text: "You found a critical bug in testing! You saved the company millions.", 
+      emoji: "🛡️", 
+      choices: [
+        { text: "Restart Story", next: 1 }
+      ] 
+    }
   ];
 
   const sceneEl = document.getElementById('vn-scene');
@@ -372,3 +519,25 @@ async function initVisualNovel() {
 
   loadScene(1);
 }
+
+// ==========================================
+// INITIALIZATION
+// ==========================================
+
+document.addEventListener('DOMContentLoaded', () => {
+  // Set current year in footer
+  document.getElementById('year').textContent = new Date().getFullYear();
+  
+  // Initialize all features
+  initThemeToggle();
+  initScrollAnimations();
+  initScrollToTop();
+  initNavbarEffects();
+  initActiveNavLinks();
+  initContactForm();
+  initProjectFiltering();
+  init3DTiltEffect();
+  initCustomCursor();
+  initTerminal();
+  initVisualNovel();
+});
