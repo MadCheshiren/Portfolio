@@ -1,5 +1,5 @@
 // Service Worker for Portfolio - Caches assets for offline access and faster repeat visits
-const CACHE_NAME = 'portfolio-v1';
+const CACHE_NAME = 'portfolio-v3';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -8,7 +8,7 @@ const ASSETS_TO_CACHE = [
   '/profile.jpg',
   '/profile.webp',
   '/Kirren_Michael_Fraginal_Resume.pdf',
-  '/scene.splinecode' // Spline 3D scene file
+  '/scene.splinecode' // Hero Spline scene file
 ];
 
 // Install: Cache core assets
