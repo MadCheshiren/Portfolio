@@ -248,30 +248,10 @@ function init3DTiltEffect() {
 // ==========================================
 
 function initCustomCursor() {
-  // Only enable on devices with hover (desktop)
-  if (!window.matchMedia('(hover: hover)').matches) return;
-  
-  const cursorDot = document.querySelector('.cursor-dot');
-  const cursorOutline = document.querySelector('.cursor-outline');
-  const hoverTargets = document.querySelectorAll('a, button, input, textarea, .tilt-card');
-
-  // Use gsap.quickTo for performant cursor following with left/top positioning
-  const xToDot = gsap.quickTo(cursorDot, 'left', { duration: 0.01, ease: 'none' });
-  const yToDot = gsap.quickTo(cursorDot, 'top', { duration: 0.01, ease: 'none' });
-  const xToOutline = gsap.quickTo(cursorOutline, 'left', { duration: 0.15, ease: 'power2.out' });
-  const yToOutline = gsap.quickTo(cursorOutline, 'top', { duration: 0.15, ease: 'power2.out' });
-
-  window.addEventListener('mousemove', (e) => {
-    xToDot(e.clientX);
-    yToDot(e.clientY);
-    xToOutline(e.clientX);
-    yToOutline(e.clientY);
-  }, { passive: true });
-
-  hoverTargets.forEach(target => {
-    target.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
-    target.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
-  });
+  // DISABLED: Custom cursor removed due to Spline 3D GPU performance conflict
+  // The Spline WebGL renderer competes with cursor animations causing lag
+  // Using native cursor for better performance
+  return;
 }
 
 // ==========================================
