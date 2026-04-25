@@ -464,43 +464,90 @@
     </div>
   </div>
 
-  <!-- Spline 3D Runtime - Lazy Loaded -->
+  <!-- Spline 3D Runtime - Lazy Loaded with Performance Optimizations -->
   <script type="module">
     const canvas = document.getElementById('spline-canvas');
     const heroSection = document.getElementById('home');
-    
+
     if (canvas && heroSection) {
       let splineLoaded = false;
-      
+      let splineApp = null;
+
+      // Detect mobile/touch device for quality adjustments
+      const isMobile = window.matchMedia('(pointer: coarse)').matches ||
+                       window.matchMedia('(hover: none)').matches ||
+                       /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+      // Set optimized resolution for all devices (cap DPR for performance)
+      canvas.style.width = '100%';
+      canvas.style.height = '100%';
+      const maxDpr = isMobile ? 1.5 : 2.0; // Lower for mobile, reasonable for desktop
+      const dpr = Math.min(window.devicePixelRatio, maxDpr);
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
+
       // Lazy load Spline when hero section is visible
       const splineObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting && !splineLoaded) {
             splineLoaded = true;
-            console.log('[Spline] Hero visible, loading...');
-            
+            console.log('[Spline] Hero visible, loading... (mobile:', isMobile, '| dpr:', dpr + ')');
+
             // Dynamically import Spline runtime
             import('https://unpkg.com/@splinetool/runtime@1.9.82/build/runtime.js')
               .then(({ Application }) => {
-                const app = new Application(canvas);
-                
-                // Load from local file first (better caching)
-                return app.load('./scene.splinecode');
+                splineApp = new Application(canvas);
+
+                // Set optimized pixel ratio
+                if (splineApp.setSize) {
+                  splineApp.setSize(window.innerWidth, window.innerHeight, dpr);
+                }
+
+                // Load from local file
+                return splineApp.load('./scene.splinecode');
               })
               .then(() => {
                 console.log('[Spline] Loaded successfully');
                 canvas.classList.add('spline-loaded');
+
+                // Pause rendering when tab is hidden (saves battery/performance on all devices)
+                document.addEventListener('visibilitychange', () => {
+                  if (splineApp) {
+                    if (document.hidden) {
+                      // Stop rendering when tab is not visible
+                      if (splineApp.stop) splineApp.stop();
+                    } else {
+                      // Resume when visible
+                      if (splineApp.start) splineApp.start();
+                    }
+                  }
+                });
+
+                // Stop rendering when section is not visible (IntersectionObserver)
+                const visibilityObserver = new IntersectionObserver((entries) => {
+                  entries.forEach(entry => {
+                    if (splineApp) {
+                      if (entry.isIntersecting) {
+                        if (splineApp.start) splineApp.start();
+                      } else {
+                        if (splineApp.stop) splineApp.stop();
+                      }
+                    }
+                  });
+                }, { threshold: 0 });
+
+                visibilityObserver.observe(heroSection);
               })
               .catch(err => {
                 console.error('[Spline] Failed to load:', err);
               });
-            
+
             // Stop observing after loading
             splineObserver.disconnect();
           }
         });
-      }, { threshold: 0.1 });
-      
+      }, { threshold: 0.1, rootMargin: '100px' });
+
       splineObserver.observe(heroSection);
     }
   </script>

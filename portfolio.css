@@ -35,10 +35,20 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: -10;
-  display: block;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  will-change: transform;
+  contain: strict;
+}
+
+/* Hide Spline on very low-end devices if needed */
+@media (prefers-reduced-motion: reduce) {
+  #spline-canvas {
+    display: none !important;
+  }
 }
 
 /* Hide morphing blobs - replaced by Spline 3D background */
