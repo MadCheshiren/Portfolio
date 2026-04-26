@@ -40,7 +40,7 @@ function initScrollAnimations() {
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+  }, { threshold: 0.05, rootMargin: '50px 0px 0px 0px' });
 
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 }
@@ -48,6 +48,7 @@ function initScrollAnimations() {
 // Scroll to Top Button
 function initScrollToTop() {
   const btn = document.getElementById('scroll-top');
+  if (!btn) return;
   
   btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   
@@ -63,6 +64,7 @@ function initScrollToTop() {
 // Navbar Scroll Effects
 function initNavbarEffects() {
   const navbar = document.getElementById('navbar');
+  if (!navbar) return;
   window.addEventListener('scroll', throttle(() => {
     navbar.classList.toggle('shadow-lg', window.scrollY > 20);
   }, 100));
@@ -72,6 +74,7 @@ function initNavbarEffects() {
 function initActiveNavLinks() {
   const sections = document.querySelectorAll('section');
   const links = document.querySelectorAll('.nav-link-item');
+  if (!sections.length || !links.length) return;
 
   window.addEventListener('scroll', throttle(() => {
     let current = '';
@@ -91,6 +94,7 @@ function initActiveNavLinks() {
 function initContactForm() {
   const form = document.getElementById('contact-form');
   const status = document.getElementById('form-status');
+  if (!form) return;
   
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -129,6 +133,7 @@ function initContactForm() {
 function initProjectFiltering() {
   const btns = document.querySelectorAll('.filter-btn');
   const cards = document.querySelectorAll('.project-card');
+  if (!btns.length || !cards.length) return;
 
   btns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -176,6 +181,7 @@ function initTerminal() {
   const closeBtn = document.getElementById('close-terminal');
   const input = document.getElementById('terminal-input');
   const output = document.getElementById('terminal-output');
+  if (!modal || !toggle || !input || !output) return;
   let lastFocus = null;
 
   function open() {
@@ -282,35 +288,32 @@ function initTerminal() {
   }
 }
 
-// Visual Novel Story Data
-const story = [
-  { id: 1, speaker: 'Narrator', text: 'It is 7:00 AM. Your alarm goes off. You have a big deployment due today.', emoji: '⏰', 
-    choices: [{ text: '☕ Drink Coffee first', next: 2 }, { text: '💻 Jump straight into code', next: 3 }] },
-  { id: 2, speaker: 'You', text: 'The coffee is hot. You feel energized and ready to tackle any bug.', emoji: '☕', 
-    choices: [{ text: 'Start coding...', next: 3 }] },
-  { id: 3, speaker: 'System', text: 'ERROR: npm install failed. 404 Not Found.', emoji: '💀', 
-    choices: [{ text: 'Delete node_modules and retry', next: 4 }, { text: 'Panic and cry', next: 5 }] },
-  { id: 4, speaker: 'You', text: 'That actually worked. The packages are installing successfully.', emoji: '📦', 
-    choices: [{ text: 'Push to production', next: 6 }, { text: 'Write tests first', next: 7 }] },
-  { id: 5, speaker: 'Narrator', text: "You take a deep breath. Remember: It's just code.", emoji: '😢', 
-    choices: [{ text: 'Try deleting node_modules', next: 4 }] },
-  { id: 6, speaker: 'Narrator', text: 'Yolo! You pushed it. The site is... actually working! You are a hero.', emoji: '🚀', 
-    choices: [{ text: 'Restart Story', next: 1 }] },
-  { id: 7, speaker: 'Narrator', text: 'You found a critical bug in testing! You saved the company millions.', emoji: '🛡️', 
-    choices: [{ text: 'Restart Story', next: 1 }] }
-];
-
-// Visual Novel Game Modal
+// Visual Novel Game Modal - Lazy Load Story Data
 function initVisualNovel() {
   const modal = document.getElementById('vn-modal');
   const openBtn = document.getElementById('open-vn');
   const closeBtn = document.getElementById('close-vn');
+  if (!modal || !openBtn) return;
+  
   let lastFocus = null;
+  let story = null;
 
-  function open() {
+  async function loadStory() {
+    if (story) return story;
+    try {
+      const response = await fetch('story.json');
+      story = await response.json();
+      return story;
+    } catch {
+      return [];
+    }
+  }
+
+  async function open() {
     lastFocus = document.activeElement;
     modal.classList.remove('hidden');
     modal.focus();
+    await loadStory();
     loadScene(1);
   }
 
@@ -319,9 +322,9 @@ function initVisualNovel() {
     if (lastFocus) lastFocus.focus();
   }
 
-  openBtn?.addEventListener('click', open);
+  openBtn.addEventListener('click', open);
   closeBtn?.addEventListener('click', close);
-  modal?.addEventListener('click', (e) => e.target === modal && close());
+  modal.addEventListener('click', (e) => e.target === modal && close());
   document.addEventListener('keydown', (e) => e.key === 'Escape' && !modal.classList.contains('hidden') && close());
 
   const sceneEl = document.getElementById('vn-scene');
@@ -333,6 +336,7 @@ function initVisualNovel() {
   if (!sceneEl || !speakerEl || !textEl || !choicesEl || !emojiEl) return;
 
   function loadScene(id) {
+    if (!story) return;
     const s = story.find(x => x.id === id);
     if (!s) return;
 

@@ -10,7 +10,8 @@ const ASSETS_TO_CACHE = [
   '/profile.jpg',
   '/profile.webp',
   '/Kirren_Michael_Fraginal_Resume.pdf',
-  '/background.mp4'
+  '/background.mp4',
+  '/story.json'
 ];
 
 // Install Event - Cache core assets
