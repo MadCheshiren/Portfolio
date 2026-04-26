@@ -1,28 +1,34 @@
-# My Portfolio
+# Portfolio Website
 
-This is my personal portfolio site I built while learning web development.
+Personal portfolio built with HTML, Tailwind CSS, and JavaScript.
 
-## What's Here
+## Features
 
-- **Home page** - Shows my projects and info about me
-- **Task Manager** - A simple todo app I made
-- **Form Validator** - Form validation practice
-- **Dev Life** - A little text game about being a developer
+- Entrance animation with Tegaki handwriting
+- Video background with splash moment reveal
+- Dark/light theme toggle
+- Project showcase with 3D tilt effects
+- Interactive terminal
+- Visual novel game
+- Contact form
 
-## Deploy
+## Projects
 
-I used Vercel but you can use whatever:
+- **Task Manager** - Todo app (todo.html)
+- **Form Validator** - Validation demo (validator.html)
+- **Dev Life** - Text game (in main page)
 
-1. Push to GitHub
-2. Connect to Vercel
-3. Done
+## Tech Stack
 
-## Files
+- HTML5
+- Tailwind CSS
+- JavaScript (ES6+)
+- GSAP for animations
 
-- `index.html` - Main page
-- `todo.html` - Task manager project
-- `validator.html` - Form validator project  
-- `portfolio.css` - Styles
-- `portfolio.js` - JavaScript stuff
+## Deployment
 
-Built with HTML, Tailwind CSS, and vanilla JS.
+Deploy to Vercel, Netlify, or any static host.
+
+---
+
+Built by Kirren Michael Fraginal
