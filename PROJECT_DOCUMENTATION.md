@@ -12,13 +12,6 @@
 
 This is a responsive, single-page portfolio website built with HTML, CSS, and JavaScript. It features a modern design with smooth animations, dark/light theme toggle, and interactive elements. The portfolio includes three main projects that demonstrate different aspects of web development skills: a Task Manager application, a Visual Novel game, and a Form Validator.
 
-### Main Goals
-- Showcase personal projects and technical skills
-- Provide a professional online presence
-- Demonstrate frontend development capabilities
-- Create an engaging user experience with interactive elements
-- Allow visitors to download resume and contact the developer
-
 ---
 
 ## Features
@@ -35,11 +28,11 @@ This is a responsive, single-page portfolio website built with HTML, CSS, and Ja
 - Respects system preference on first visit
 - Smooth transitions between themes
 
-### 3. **Spline 3D Background**
-- Interactive 3D background using Spline runtime
-- Lazy-loaded when hero section becomes visible for performance
-- Replaced morphing blob animations for better visual appeal
-- WebGL-based rendering with GPU acceleration
+### 3. **Video Background**
+- Full-screen background video in hero section
+- Pauses when tab is hidden to save battery
+- Resumes when tab becomes active again
+- Graceful fallback if video fails to load
 
 ### 4. **Scroll Animations**
 - Fade-in animations when scrolling to sections
