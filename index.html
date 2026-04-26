@@ -479,10 +479,13 @@
       }
 
       let size = setCanvasSize();
+      let scrollThrottle = null;
+      let wasPausedByScroll = false;
 
       function heroIsVisible() {
         const heroBounds = heroSection.getBoundingClientRect();
-        return heroBounds.bottom > 0 && heroBounds.top < window.innerHeight * 0.8;
+        // Hero is visible if its bottom is below viewport top AND its top is above viewport bottom
+        return heroBounds.bottom > 0 && heroBounds.top < window.innerHeight;
       }
 
       function pauseSpline() {
@@ -543,7 +546,20 @@
       }, { passive: true });
 
       window.addEventListener('scroll', () => {
-        syncSplineState();
+        if (scrollThrottle) return;
+        scrollThrottle = setTimeout(() => {
+          scrollThrottle = null;
+          const visible = heroIsVisible();
+          if (!splineApp) return;
+          
+          if (!visible && !wasPausedByScroll) {
+            wasPausedByScroll = true;
+            pauseSpline();
+          } else if (visible && wasPausedByScroll) {
+            wasPausedByScroll = false;
+            resumeSpline(true);
+          }
+        }, 100);
       }, { passive: true });
 
       document.addEventListener('visibilitychange', () => {
@@ -555,14 +571,22 @@
       window.addEventListener('focus', () => {
         syncSplineState(true);
       }, { passive: true });
-      window.addEventListener('pageshow', () => {
+      window.addEventListener('pageshow', (e) => {
         size = setCanvasSize();
 
         if (splineApp?.setSize) {
           splineApp.setSize(size.width, size.height, size.dpr);
         }
 
-        syncSplineState(true);
+        // Check if we're at hero section and resume if needed
+        const visible = heroIsVisible();
+        if (visible && splineApp?.start) {
+          wasPausedByScroll = false;
+          resumeSpline(true);
+        } else if (!visible && splineApp?.stop) {
+          wasPausedByScroll = true;
+          pauseSpline();
+        }
       });
 
       const loadObserver = new IntersectionObserver((entries) => {
