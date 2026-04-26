@@ -36,6 +36,64 @@
     linear-gradient(180deg, #f8fafc 0%, #f1f5f9 28%, #e2e8f0 58%, #cbd5e1 100%);
 }
 
+/* Entrance Animation Overlay */
+.entrance-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: opacity 400ms ease-out;
+}
+
+.entrance-overlay.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.entrance-content {
+  text-align: center;
+}
+
+.entrance-hint {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.875rem;
+  margin-top: 2rem;
+  opacity: 0;
+  transition: opacity 1s ease-out;
+  position: relative;
+  z-index: 10;
+}
+
+.entrance-hint.visible {
+  opacity: 1;
+}
+
+/* Ensure Tegaki container has enough space */
+#tegaki-name {
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hero Reveal Animation */
+#hero-reveal {
+  opacity: 0 !important;
+  transform: translateY(20px);
+  transition: opacity 800ms ease-out, transform 800ms ease-out;
+  pointer-events: none;
+}
+
+#hero-reveal.revealed {
+  opacity: 1 !important;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
 /* Dark Mode Background */
 .dark .page-gradient {
   background:

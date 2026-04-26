@@ -1,5 +1,188 @@
 /* Portfolio JavaScript - Main Functionality */
 
+// Entrance Animation Module
+const EntranceAnimation = {
+  overlay: null,
+  video: null,
+  heroReveal: null,
+  heroRevealed: false,
+  splashTime: 1.2,
+  tegakiEngine: null,
+  DEV_MODE: true, // Set to false to enable first-visit-only behavior
+
+  init() {
+    // Check for reduced motion preference
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      this.skipAnimation();
+      return;
+    }
+
+    // Check if already seen (skip only if not in DEV_MODE)
+    if (!this.DEV_MODE && localStorage.getItem('hasSeenEntrance')) {
+      this.skipAnimation();
+      return;
+    }
+
+    this.overlay = document.getElementById('entrance-overlay');
+    this.video = document.getElementById('hero-video');
+    this.heroReveal = document.getElementById('hero-reveal');
+
+    if (!this.overlay || !this.video || !this.heroReveal) {
+      console.warn('[Entrance] Missing elements, skipping animation');
+      this.skipAnimation();
+      return;
+    }
+
+    // Get splash time from video data attribute
+    const splashAttr = this.video.dataset.splashTime;
+    if (splashAttr) this.splashTime = parseFloat(splashAttr);
+
+    // Pause video immediately to ensure it doesn't play before click
+    this.video.pause();
+    this.video.currentTime = 0;
+    
+    this.setupTegaki();
+    this.setupEventListeners();
+  },
+
+  setupTegaki() {
+    console.log('[Entrance] Setting up Tegaki...');
+    
+    // Wait for TegakiEngine and font to load
+    if (typeof window.TegakiEngine === 'undefined') {
+      console.log('[Entrance] TegakiEngine not loaded yet, retrying...');
+      setTimeout(() => this.setupTegaki(), 200);
+      return;
+    }
+    
+    if (typeof window.caveatFont === 'undefined') {
+      console.log('[Entrance] caveatFont not loaded yet, retrying...');
+      setTimeout(() => this.setupTegaki(), 200);
+      return;
+    }
+
+    const container = document.getElementById('tegaki-name');
+    if (!container) {
+      console.error('[Entrance] tegaki-name container not found');
+      return;
+    }
+
+    console.log('[Entrance] Font bundle loaded:', window.caveatFont);
+    console.log('[Entrance] Font type:', typeof window.caveatFont);
+    console.log('[Entrance] Is Array:', Array.isArray(window.caveatFont));
+    
+    // Try to find the actual font data - handle module exports
+    let fontData = window.caveatFont;
+    if (fontData.default) {
+      fontData = fontData.default;
+      console.log('[Entrance] Using .default export');
+    }
+    
+    // Log what we're trying to register
+    console.log('[Entrance] Attempting to register:', fontData);
+
+    // Register font bundle with Tegaki
+    try {
+      window.TegakiEngine.registerBundle(fontData);
+      console.log('[Entrance] Font bundle registered');
+    } catch (err) {
+      console.error('[Entrance] Failed to register font:', err);
+      return;
+    }
+
+    // Create Tegaki engine for "Kirren" - pass font bundle directly
+    try {
+      this.tegakiEngine = new window.TegakiEngine(container, {
+        text: 'Kirren',
+        font: fontData,
+        time: { mode: 'uncontrolled', speed: 1, loop: false }
+      });
+      console.log('[Entrance] Tegaki engine created with font data');
+      
+      // Show hint after 5 seconds (when writing should be done)
+      setTimeout(() => {
+        const hint = document.querySelector('.entrance-hint');
+        if (hint) hint.classList.add('visible');
+      }, 5000);
+    } catch (err) {
+      console.error('[Entrance] Failed to create Tegaki engine:', err);
+    }
+  },
+
+  setupEventListeners() {
+    // Click anywhere on overlay to reveal
+    console.log('[Entrance] Setting up click listeners on overlay');
+    this.overlay.addEventListener('click', (e) => {
+      console.log('[Entrance] Overlay clicked', e.target);
+      this.reveal();
+    });
+    this.overlay.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      console.log('[Entrance] Overlay touched');
+      this.reveal();
+    }, { passive: false });
+  },
+
+  reveal() {
+    console.log('[Entrance] reveal() called');
+    if (this.overlay.classList.contains('fade-out')) return;
+
+    // Fade out overlay
+    console.log('[Entrance] Fading out overlay');
+    this.overlay.classList.add('fade-out');
+
+    // Mark as seen
+    localStorage.setItem('hasSeenEntrance', 'true');
+
+    // Cleanup Tegaki engine when overlay fades
+    if (this.tegakiEngine) {
+      this.tegakiEngine.destroy();
+    }
+
+    // Start video and watch for splash moment
+    this.startVideoAndWatch();
+  },
+
+  setupVideoWatcher() {
+    // Video is paused until overlay is clicked
+    this.video.pause();
+    console.log('[Entrance] Video paused until click');
+  },
+  
+  startVideoAndWatch() {
+    // Reset and start video from beginning
+    this.video.currentTime = 0;
+    this.video.play();
+    console.log('[Entrance] Video started from 0, watching for splash at', this.splashTime);
+    
+    const checkTime = () => {
+      if (!this.heroRevealed && this.video.currentTime >= this.splashTime) {
+        console.log('[Entrance] Splash moment reached at', this.video.currentTime);
+        this.revealHero();
+      } else if (!this.heroRevealed) {
+        requestAnimationFrame(checkTime);
+      }
+    };
+    requestAnimationFrame(checkTime);
+  },
+
+  revealHero() {
+    this.heroRevealed = true;
+    this.heroReveal.classList.add('revealed');
+    // Note: Tegaki continues until overlay is clicked
+  },
+
+  skipAnimation() {
+    // Hide overlay immediately
+    const overlay = document.getElementById('entrance-overlay');
+    if (overlay) overlay.style.display = 'none';
+
+    // Show hero immediately
+    const heroReveal = document.getElementById('hero-reveal');
+    if (heroReveal) heroReveal.classList.add('revealed');
+  }
+};
+
 // Utility: Throttle function calls
 function throttle(func, limit) {
   let inThrottle;
@@ -378,6 +561,7 @@ function initVisualNovel() {
 // Initialize Everything on Page Load
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('year').textContent = new Date().getFullYear();
+  EntranceAnimation.init();
   initThemeToggle();
   initScrollAnimations();
   initScrollToTop();
