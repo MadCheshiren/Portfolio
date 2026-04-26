@@ -29,3 +29,7 @@ build/
 # Git worktrees
 .worktrees/
 
+# Dependencies
+node_modules/
+package-lock.json
+
