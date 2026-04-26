@@ -36,7 +36,7 @@
     linear-gradient(180deg, #f8fafc 0%, #f1f5f9 28%, #e2e8f0 58%, #cbd5e1 100%);
 }
 
-/* Entrance Animation Overlay */
+/* Entrance animation overlay */
 .entrance-overlay {
   position: fixed;
   inset: 0;
@@ -49,15 +49,18 @@
   transition: opacity 400ms ease-out;
 }
 
+/* Fade out state */
 .entrance-overlay.fade-out {
   opacity: 0;
   pointer-events: none;
 }
 
+/* Tegaki + hint container */
 .entrance-content {
   text-align: center;
 }
 
+/* Click hint - shows after 5s */
 .entrance-hint {
   color: rgba(255, 255, 255, 0.5);
   font-size: 0.875rem;
@@ -68,11 +71,12 @@
   z-index: 10;
 }
 
+/* Hint visible */
 .entrance-hint.visible {
   opacity: 1;
 }
 
-/* Ensure Tegaki container has enough space */
+/* Tegaki container */
 #tegaki-name {
   min-height: 80px;
   display: flex;
@@ -80,7 +84,9 @@
   justify-content: center;
 }
 
-/* Hero Reveal Animation */
+/* Hero reveal at splash moment */
+
+/* Hero hidden until splash */
 #hero-reveal {
   opacity: 0 !important;
   transform: translateY(20px);
@@ -91,6 +97,20 @@
 #hero-reveal.revealed {
   opacity: 1 !important;
   transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Nav/terminal hidden during entrance */
+#navbar.entrance-hidden,
+#terminal-toggle.entrance-hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 800ms ease-out;
+}
+
+#navbar:not(.entrance-hidden),
+#terminal-toggle:not(.entrance-hidden) {
+  opacity: 1;
   pointer-events: auto;
 }
 
