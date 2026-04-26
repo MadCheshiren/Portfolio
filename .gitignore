@@ -25,3 +25,7 @@ build/
 # Environment
 .env
 .env.local
+
+# Git worktrees
+.worktrees/
+
