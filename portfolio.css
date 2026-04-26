@@ -36,15 +36,6 @@
     linear-gradient(180deg, #020202 0%, #040404 28%, #071231 58%, #0a1f61 100%);
 }
 
-.page-gradient::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0) 26%, rgba(0, 0, 0, 0.18) 100%),
-    radial-gradient(circle at 50% 40%, transparent 42%, rgba(0, 0, 0, 0.32) 100%);
-}
-
 /* Hero Video Background */
 .hero-video {
   position: fixed;
@@ -79,11 +70,6 @@
   .hero-video-overlay {
     display: none !important;
   }
-
-  .projects-ambient__glow,
-  .nav-float {
-    animation: none;
-  }
 }
 
 /* Glass & UI */
@@ -109,7 +95,6 @@
 
 .dark .glass {
   background: rgba(9, 9, 9, 0.75);
-  border: 1px solid rgba(255, 90, 31, 0.15);
 }
 
 /* Nav Links */
@@ -212,10 +197,6 @@
   border-radius: 999px;
   background: #2A0F0A;
   overflow: hidden;
-}
-
-.dark .skill-bar {
-  background: #2A0F0A;
 }
 
 .skill-fill {

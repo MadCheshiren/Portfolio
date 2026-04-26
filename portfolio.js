@@ -211,76 +211,73 @@ function initTerminal() {
     output.scrollTop = output.scrollHeight;
   }
 
+  // Terminal command data
+  const commands = {
+    help: { color: 'text-yellow-300', title: 'Available commands:', lines: [
+      '  help      - Show available commands',
+      '  about     - Learn more about me',
+      '  skills    - List my technical skills',
+      '  projects  - View my featured projects',
+      '  contact   - Show contact information',
+      '  resume    - Download my resume',
+      '  clear     - Clear terminal screen',
+      '  exit      - Close terminal'
+    ]},
+    about: { color: 'text-blue-400', title: '[About Me]', lines: ['IT Student at STI College Naga. Learning web development and building projects to grow my skills.'] },
+    skills: { color: 'text-purple-400', title: '[Technical Skills]', lines: [
+      'Frontend: HTML5, CSS3, JavaScript (ES6+), Tailwind CSS',
+      'Tools: Git, VS Code, Chrome DevTools',
+      'Design: UI/UX Design, Accessibility (a11y), Responsive Design'
+    ]},
+    projects: { color: 'text-blue-400', title: '[Featured Projects]', lines: [
+      '• Task Manager - To-do list with CRUD operations',
+      '• Dev Life Visual Novel - Interactive text-based game',
+      '• Form Validator - Client-side validation with real-time feedback',
+      '• Portfolio Website - Responsive site with video background'
+    ]},
+    contact: { color: 'text-green-400', title: '[Contact Information]', lines: [
+      'Email: fraginalkirrenmichael@gmail.com',
+      'GitHub: github.com/MadCheshiren',
+      'LinkedIn: linkedin.com/in/kirren-michael-fraginal-871368403',
+      'Location: Naga City, Philippines'
+    ]}
+  };
+
   function process(cmd) {
-    switch (cmd) {
-      case 'help':
-        add('Available commands:', 'text-yellow-300');
-        add('  help      - Show available commands');
-        add('  about     - Learn more about me');
-        add('  skills    - List my technical skills');
-        add('  projects  - View my featured projects');
-        add('  contact   - Show contact information');
-        add('  resume    - Download my resume');
-        add('  clear     - Clear terminal screen');
-        add('  exit      - Close terminal');
-        break;
-      case 'about':
-        add('[About Me]', 'text-blue-400');
-        add('IT Student at STI College Naga. Learning web development and building projects to grow my skills.');
-        break;
-      case 'skills':
-        add('[Technical Skills]', 'text-purple-400');
-        add('Frontend: HTML5, CSS3, JavaScript (ES6+), Tailwind CSS');
-        add('Tools: Git, VS Code, Chrome DevTools');
-        add('Design: UI/UX Design, Accessibility (a11y), Responsive Design');
-        break;
-      case 'projects':
-        add('[Featured Projects]', 'text-blue-400');
-        add('• Task Manager - To-do list with CRUD operations');
-        add('• Dev Life Visual Novel - Interactive text-based game');
-        add('• Form Validator - Client-side validation with real-time feedback');
-        add('• Portfolio Website - Responsive site with video background');
-        break;
-      case 'contact':
-        add('[Contact Information]', 'text-green-400');
-        add('Email: fraginalkirrenmichael@gmail.com');
-        add('GitHub: github.com/MadCheshiren');
-        add('LinkedIn: linkedin.com/in/kirren-michael-fraginal-871368403');
-        add('Location: Naga City, Philippines');
-        break;
-      case 'resume':
-        add('Downloading resume...', 'text-yellow-300');
-        fetch('Kirren_Michael_Fraginal_Resume.pdf')
-          .then(r => r.ok ? r.blob() : Promise.reject())
-          .then(blob => {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'Kirren_Michael_Fraginal_Resume.pdf';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            add('Resume downloaded!', 'text-green-400');
-          })
-          .catch(() => {
-            const a = document.createElement('a');
-            a.href = 'Kirren_Michael_Fraginal_Resume.pdf';
-            a.download = 'Kirren_Michael_Fraginal_Resume.pdf';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            add('Resume downloaded!', 'text-green-400');
-          });
-        break;
-      case 'clear':
-        output.innerHTML = '';
-        break;
-      case 'exit':
-        close();
-        break;
-      default:
-        if (cmd) add(`Command not found: ${cmd}. Type 'help' for options.`, 'text-red-400');
+    if (commands[cmd]) {
+      const c = commands[cmd];
+      add(c.title, c.color);
+      c.lines.forEach(line => add(line));
+      return;
+    }
+    
+    if (cmd === 'resume') {
+      add('Downloading resume...', 'text-yellow-300');
+      const download = (url, isBlob = false) => {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Kirren_Michael_Fraginal_Resume.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        if (isBlob) URL.revokeObjectURL(url);
+      };
+      fetch('Kirren_Michael_Fraginal_Resume.pdf')
+        .then(r => r.ok ? r.blob() : Promise.reject())
+        .then(blob => {
+          download(URL.createObjectURL(blob), true);
+          add('Resume downloaded!', 'text-green-400');
+        })
+        .catch(() => {
+          download('Kirren_Michael_Fraginal_Resume.pdf');
+          add('Resume downloaded!', 'text-green-400');
+        });
+    } else if (cmd === 'clear') {
+      output.innerHTML = '';
+    } else if (cmd === 'exit') {
+      close();
+    } else if (cmd) {
+      add(`Command not found: ${cmd}. Type 'help' for options.`, 'text-red-400');
     }
   }
 }
