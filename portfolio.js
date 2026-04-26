@@ -1,17 +1,6 @@
-/*
- * Portfolio Website - Main JavaScript File
- * Handles all interactive features and functionality
- * Last updated: April 2026
- */
+/* Portfolio JavaScript - Main Functionality */
 
-// ==========================================
-// UTILITY FUNCTIONS
-// ==========================================
-
-/**
- * Throttle function to limit how often a function can fire
- * Used for scroll events to improve performance
- */
+// Utility: Throttle function calls
 function throttle(func, limit) {
   let inThrottle;
   return function(...args) {
@@ -23,115 +12,82 @@ function throttle(func, limit) {
   };
 }
 
-// ==========================================
-// THEME MANAGEMENT
-// ==========================================
-
+// Theme Toggle (Dark/Light Mode)
 function initThemeToggle() {
-  const themeToggle = document.getElementById('theme-toggle');
+  const toggle = document.getElementById('theme-toggle');
   const html = document.documentElement;
-  const savedTheme = localStorage.getItem('theme');
+  const saved = localStorage.getItem('theme');
   
-  // Check saved preference or system preference
-  if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+  if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     html.classList.add('dark');
   }
   
-  themeToggle.addEventListener('click', () => {
+  toggle.addEventListener('click', () => {
     html.classList.toggle('dark');
     localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
   });
 }
 
-// ==========================================
-// SCROLL & NAVIGATION
-// ==========================================
-
+// Scroll Reveal Animations
 function initScrollAnimations() {
-  // Reveal animations for sections
-  const observerOptions = { 
-    threshold: 0.1, 
-    rootMargin: '0px 0px -50px 0px' 
-  };
-  
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('active');
-        // Animate skill bars when visible
         entry.target.querySelectorAll('.skill-fill').forEach(bar => {
           bar.style.width = bar.dataset.width;
         });
         observer.unobserve(entry.target);
       }
     });
-  }, observerOptions);
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 }
 
+// Scroll to Top Button
 function initScrollToTop() {
-  const scrollTopBtn = document.getElementById('scroll-top');
+  const btn = document.getElementById('scroll-top');
   
-  scrollTopBtn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
+  btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
   
-  // Show/hide button based on scroll position
   window.addEventListener('scroll', throttle(() => {
-    if (window.scrollY > 300) {
-      scrollTopBtn.style.opacity = '1';
-      scrollTopBtn.style.pointerEvents = 'auto';
-    } else {
-      scrollTopBtn.style.opacity = '0';
-      scrollTopBtn.style.pointerEvents = 'none';
-    }
+    btn.style.opacity = window.scrollY > 300 ? '1' : '0';
+    btn.style.pointerEvents = window.scrollY > 300 ? 'auto' : 'none';
   }, 100));
   
-  // Initial state
-  scrollTopBtn.style.opacity = '0';
-  scrollTopBtn.style.pointerEvents = 'none';
+  btn.style.opacity = '0';
+  btn.style.pointerEvents = 'none';
 }
 
+// Navbar Scroll Effects
 function initNavbarEffects() {
   const navbar = document.getElementById('navbar');
-  
   window.addEventListener('scroll', throttle(() => {
-    if (window.scrollY > 20) {
-      navbar.classList.add('shadow-lg');
-    } else {
-      navbar.classList.remove('shadow-lg');
-    }
+    navbar.classList.toggle('shadow-lg', window.scrollY > 20);
   }, 100));
 }
 
+// Active Nav Link Highlighting
 function initActiveNavLinks() {
   const sections = document.querySelectorAll('section');
-  const navLinks = document.querySelectorAll('.nav-link-item');
+  const links = document.querySelectorAll('.nav-link-item');
 
   window.addEventListener('scroll', throttle(() => {
     let current = '';
     sections.forEach(section => {
-      const sectionTop = section.offsetTop;
-      const sectionHeight = section.clientHeight;
-      if (window.scrollY >= (sectionTop - 200)) {
+      if (window.scrollY >= (section.offsetTop - 200)) {
         current = section.getAttribute('id');
       }
     });
     
-    navLinks.forEach(link => {
-      link.classList.remove('active');
-      if (link.getAttribute('href').slice(1) === current) {
-        link.classList.add('active');
-      }
+    links.forEach(link => {
+      link.classList.toggle('active', link.getAttribute('href').slice(1) === current);
     });
   }, 100));
 }
 
-// ==========================================
-// CONTACT FORM
-// ==========================================
-
+// Contact Form Handling
 function initContactForm() {
   const form = document.getElementById('contact-form');
   const status = document.getElementById('form-status');
@@ -139,319 +95,237 @@ function initContactForm() {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = form.querySelector('button[type="submit"]');
-    const originalText = btn.textContent;
+    const original = btn.textContent;
     
     btn.textContent = 'Sending...';
     btn.disabled = true;
 
     try {
-      const response = await fetch(form.action, {
+      const res = await fetch(form.action, {
         method: 'POST',
         body: new FormData(form),
         headers: { 'Accept': 'application/json' }
       });
       
-      if (response.ok) {
+      if (res.ok) {
         btn.textContent = 'Sent!';
         status.classList.remove('hidden');
         form.reset();
         setTimeout(() => { 
           status.classList.add('hidden'); 
-          btn.textContent = originalText; 
+          btn.textContent = original; 
         }, 3000);
-      } else {
-        throw new Error('Failed');
-      }
+      } else throw new Error('Failed');
     } catch {
       btn.textContent = 'Error';
-      setTimeout(() => { btn.textContent = originalText; }, 2000);
+      setTimeout(() => btn.textContent = original, 2000);
     }
     
     btn.disabled = false;
   });
 }
 
-// ==========================================
-// PROJECT FILTERING
-// ==========================================
-
+// Project Category Filtering
 function initProjectFiltering() {
-  const filterBtns = document.querySelectorAll('.filter-btn');
-  const projectCards = document.querySelectorAll('.project-card');
+  const btns = document.querySelectorAll('.filter-btn');
+  const cards = document.querySelectorAll('.project-card');
 
-  filterBtns.forEach(btn => {
+  btns.forEach(btn => {
     btn.addEventListener('click', () => {
-      // Update button styles
-      filterBtns.forEach(b => {
+      btns.forEach(b => {
         b.classList.remove('bg-accent', 'text-white', 'shadow-glow');
         b.classList.add('glass');
       });
       btn.classList.remove('glass');
       btn.classList.add('bg-accent', 'text-white', 'shadow-glow');
 
-      // Filter cards
-      const filterValue = btn.getAttribute('data-filter');
-      projectCards.forEach(card => {
-        if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
-          card.classList.remove('hidden-card');
-        } else {
-          card.classList.add('hidden-card');
-        }
+      const filter = btn.getAttribute('data-filter');
+      cards.forEach(card => {
+        card.classList.toggle('hidden-card', 
+          filter !== 'all' && card.getAttribute('data-category') !== filter);
       });
     });
   });
 }
 
-// ==========================================
-// 3D CARD EFFECTS (Desktop Only)
-// ==========================================
-
+// 3D Card Tilt Effect (Desktop Only)
 function init3DTiltEffect() {
-  // Only enable on devices with hover (desktop)
   if (!window.matchMedia('(hover: hover)').matches) return;
   
   document.querySelectorAll('.tilt-card').forEach(card => {
-    // Use GSAP for smoother animations with force3D for GPU acceleration
     card.addEventListener('mousemove', (e) => {
       const rect = card.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-      const rotateX = ((y - centerY) / centerY) * -10;
-      const rotateY = ((x - centerX) / centerX) * 10;
+      const rotateX = ((y - rect.height / 2) / (rect.height / 2)) * -10;
+      const rotateY = ((x - rect.width / 2) / (rect.width / 2)) * 10;
       
-      gsap.to(card, {
-        rotateX: rotateX,
-        rotateY: rotateY,
-        duration: 0.3,
-        ease: 'power2.out',
-        transformPerspective: 1000,
-        force3D: true
-      });
+      gsap.to(card, { rotateX, rotateY, duration: 0.3, ease: 'power2.out', transformPerspective: 1000 });
     });
     
     card.addEventListener('mouseleave', () => {
-      gsap.to(card, {
-        rotateX: 0,
-        rotateY: 0,
-        duration: 0.5,
-        ease: 'power2.out',
-        transformPerspective: 1000,
-        force3D: true
-      });
+      gsap.to(card, { rotateX: 0, rotateY: 0, duration: 0.5, ease: 'power2.out' });
     });
   });
 }
 
-// ==========================================
-// INTERACTIVE TERMINAL
-// ==========================================
-
+// Interactive Terminal Modal
 function initTerminal() {
-  const terminalModal = document.getElementById('terminal-modal');
-  const terminalToggle = document.getElementById('terminal-toggle');
-  const closeTerminal = document.getElementById('close-terminal');
-  const terminalInput = document.getElementById('terminal-input');
-  const terminalOutput = document.getElementById('terminal-output');
-  let terminalLastFocus = null;
+  const modal = document.getElementById('terminal-modal');
+  const toggle = document.getElementById('terminal-toggle');
+  const closeBtn = document.getElementById('close-terminal');
+  const input = document.getElementById('terminal-input');
+  const output = document.getElementById('terminal-output');
+  let lastFocus = null;
 
-  function openTerminal() {
-    terminalLastFocus = document.activeElement;
-    terminalModal.classList.remove('hidden');
-    terminalInput.focus();
+  function open() {
+    lastFocus = document.activeElement;
+    modal.classList.remove('hidden');
+    input.focus();
   }
 
-  function closeTerminalFn() {
-    terminalModal.classList.add('hidden');
-    if (terminalLastFocus) terminalLastFocus.focus();
+  function close() {
+    modal.classList.add('hidden');
+    if (lastFocus) lastFocus.focus();
   }
 
-  terminalToggle.addEventListener('click', openTerminal);
-  closeTerminal.addEventListener('click', closeTerminalFn);
-  
-  terminalModal.addEventListener('click', (e) => {
-    if (e.target === terminalModal) closeTerminalFn();
-  });
+  toggle.addEventListener('click', open);
+  closeBtn.addEventListener('click', close);
+  modal.addEventListener('click', (e) => e.target === modal && close());
+  document.addEventListener('keydown', (e) => e.key === 'Escape' && !modal.classList.contains('hidden') && close());
 
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !terminalModal.classList.contains('hidden')) {
-      closeTerminalFn();
-    }
-  });
-
-  terminalInput.addEventListener('keydown', (e) => {
+  input.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
-      const command = terminalInput.value.trim().toLowerCase();
-      addOutput(`guest@portfolio:~ $ ${command}`);
-      processCommand(command);
-      terminalInput.value = '';
+      const cmd = input.value.trim().toLowerCase();
+      add(`guest@portfolio:~ $ ${cmd}`);
+      process(cmd);
+      input.value = '';
     }
   });
 
-  function addOutput(text, color = 'text-slate-300') {
+  function add(text, color = 'text-slate-300') {
     const div = document.createElement('div');
     div.className = color;
     div.textContent = text;
-    terminalOutput.appendChild(div);
-    terminalOutput.scrollTop = terminalOutput.scrollHeight;
+    output.appendChild(div);
+    output.scrollTop = output.scrollHeight;
   }
 
-  function processCommand(cmd) {
+  function process(cmd) {
     switch (cmd) {
       case 'help':
-        addOutput('Available commands:', 'text-yellow-300');
-        addOutput('  help      - Show available commands');
-        addOutput('  about     - Learn more about me');
-        addOutput('  skills    - List my technical skills');
-        addOutput('  contact   - Show contact information');
-        addOutput('  resume    - Download my resume');
-        addOutput('  clear     - Clear terminal screen');
-        addOutput('  exit      - Close terminal');
+        add('Available commands:', 'text-yellow-300');
+        add('  help      - Show available commands');
+        add('  about     - Learn more about me');
+        add('  skills    - List my technical skills');
+        add('  projects  - View my featured projects');
+        add('  contact   - Show contact information');
+        add('  resume    - Download my resume');
+        add('  clear     - Clear terminal screen');
+        add('  exit      - Close terminal');
         break;
       case 'about':
-        addOutput('[About Me]', 'text-blue-400');
-        addOutput('IT Student at STI College Naga. Learning web development and building projects to grow my skills.');
+        add('[About Me]', 'text-blue-400');
+        add('IT Student at STI College Naga. Learning web development and building projects to grow my skills.');
         break;
       case 'skills':
-        addOutput('[Skills]', 'text-purple-400');
-        addOutput('HTML & CSS, JavaScript (ES6+), Tailwind CSS, UI/UX Design, Accessibility (a11y), Creative Writing');
+        add('[Technical Skills]', 'text-purple-400');
+        add('Frontend: HTML5, CSS3, JavaScript (ES6+), Tailwind CSS');
+        add('Tools: Git, VS Code, Chrome DevTools');
+        add('Design: UI/UX Design, Accessibility (a11y), Responsive Design');
+        break;
+      case 'projects':
+        add('[Featured Projects]', 'text-blue-400');
+        add('• Task Manager - To-do list with CRUD operations');
+        add('• Dev Life Visual Novel - Interactive text-based game');
+        add('• Form Validator - Client-side validation with real-time feedback');
+        add('• Portfolio Website - Responsive site with video background');
         break;
       case 'contact':
-        addOutput('[Contact]', 'text-green-400');
-        addOutput('Email: fraginalkirrenmichael@gmail.com');
-        addOutput('GitHub: github.com/MadCheshiren');
-        addOutput('LinkedIn: linkedin.com/in/kirren-michael-fraginal-871368403');
+        add('[Contact Information]', 'text-green-400');
+        add('Email: fraginalkirrenmichael@gmail.com');
+        add('GitHub: github.com/MadCheshiren');
+        add('LinkedIn: linkedin.com/in/kirren-michael-fraginal-871368403');
+        add('Location: Naga City, Philippines');
         break;
       case 'resume':
-        addOutput('Preparing resume download...', 'text-yellow-300');
-        setTimeout(() => addOutput('Resume downloaded!', 'text-green-400'), 1000);
+        add('Downloading resume...', 'text-yellow-300');
+        fetch('Kirren_Michael_Fraginal_Resume.pdf')
+          .then(r => r.ok ? r.blob() : Promise.reject())
+          .then(blob => {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Kirren_Michael_Fraginal_Resume.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            add('Resume downloaded!', 'text-green-400');
+          })
+          .catch(() => {
+            const a = document.createElement('a');
+            a.href = 'Kirren_Michael_Fraginal_Resume.pdf';
+            a.download = 'Kirren_Michael_Fraginal_Resume.pdf';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            add('Resume downloaded!', 'text-green-400');
+          });
         break;
       case 'clear':
-        terminalOutput.innerHTML = '';
+        output.innerHTML = '';
         break;
       case 'exit':
-        closeTerminalFn();
+        close();
         break;
       default:
-        if (cmd !== '') addOutput(`Command not found: ${cmd}. Type 'help' for options.`, 'text-red-400');
+        if (cmd) add(`Command not found: ${cmd}. Type 'help' for options.`, 'text-red-400');
     }
   }
 }
 
-// ==========================================
-// VISUAL NOVEL GAME
-// ==========================================
+// Visual Novel Story Data
+const story = [
+  { id: 1, speaker: 'Narrator', text: 'It is 7:00 AM. Your alarm goes off. You have a big deployment due today.', emoji: '⏰', 
+    choices: [{ text: '☕ Drink Coffee first', next: 2 }, { text: '💻 Jump straight into code', next: 3 }] },
+  { id: 2, speaker: 'You', text: 'The coffee is hot. You feel energized and ready to tackle any bug.', emoji: '☕', 
+    choices: [{ text: 'Start coding...', next: 3 }] },
+  { id: 3, speaker: 'System', text: 'ERROR: npm install failed. 404 Not Found.', emoji: '💀', 
+    choices: [{ text: 'Delete node_modules and retry', next: 4 }, { text: 'Panic and cry', next: 5 }] },
+  { id: 4, speaker: 'You', text: 'That actually worked. The packages are installing successfully.', emoji: '📦', 
+    choices: [{ text: 'Push to production', next: 6 }, { text: 'Write tests first', next: 7 }] },
+  { id: 5, speaker: 'Narrator', text: "You take a deep breath. Remember: It's just code.", emoji: '😢', 
+    choices: [{ text: 'Try deleting node_modules', next: 4 }] },
+  { id: 6, speaker: 'Narrator', text: 'Yolo! You pushed it. The site is... actually working! You are a hero.', emoji: '🚀', 
+    choices: [{ text: 'Restart Story', next: 1 }] },
+  { id: 7, speaker: 'Narrator', text: 'You found a critical bug in testing! You saved the company millions.', emoji: '🛡️', 
+    choices: [{ text: 'Restart Story', next: 1 }] }
+];
 
+// Visual Novel Game Modal
 function initVisualNovel() {
-  const vnModal = document.getElementById('vn-modal');
-  const openVnBtn = document.getElementById('open-vn');
-  const closeVnBtn = document.getElementById('close-vn');
-  let lastFocusedElement = null;
+  const modal = document.getElementById('vn-modal');
+  const openBtn = document.getElementById('open-vn');
+  const closeBtn = document.getElementById('close-vn');
+  let lastFocus = null;
 
-  function openVN() {
-    lastFocusedElement = document.activeElement;
-    vnModal.classList.remove('hidden');
-    vnModal.focus();
-    startVisualNovelGame();
+  function open() {
+    lastFocus = document.activeElement;
+    modal.classList.remove('hidden');
+    modal.focus();
+    loadScene(1);
   }
 
-  function closeVN() {
-    vnModal.classList.add('hidden');
-    if (lastFocusedElement) lastFocusedElement.focus();
+  function close() {
+    modal.classList.add('hidden');
+    if (lastFocus) lastFocus.focus();
   }
 
-  if (openVnBtn && vnModal) {
-    openVnBtn.addEventListener('click', openVN);
-  }
-
-  if (closeVnBtn && vnModal) {
-    closeVnBtn.addEventListener('click', closeVN);
-  }
-
-  if (vnModal) {
-    vnModal.addEventListener('click', (e) => {
-      if (e.target === vnModal) closeVN();
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && !vnModal.classList.contains('hidden')) {
-        closeVN();
-      }
-    });
-  }
-}
-
-async function startVisualNovelGame() {
-  // Story data embedded directly
-  const storyData = [
-    { 
-      id: 1, 
-      speaker: "Narrator", 
-      text: "It is 7:00 AM. Your alarm goes off. You have a big deployment due today.", 
-      emoji: "⏰", 
-      choices: [
-        { text: "☕ Drink Coffee first", next: 2 }, 
-        { text: "💻 Jump straight into code", next: 3 }
-      ] 
-    },
-    { 
-      id: 2, 
-      speaker: "You", 
-      text: "The coffee is hot. You feel energized and ready to tackle any bug.", 
-      emoji: "☕", 
-      choices: [
-        { text: "Start coding...", next: 3 }
-      ] 
-    },
-    { 
-      id: 3, 
-      speaker: "System", 
-      text: "ERROR: npm install failed. 404 Not Found.", 
-      emoji: "💀", 
-      choices: [
-        { text: "Delete node_modules and retry", next: 4 }, 
-        { text: "Panic and cry", next: 5 }
-      ] 
-    },
-    { 
-      id: 4, 
-      speaker: "You", 
-      text: "That actually worked. The packages are installing successfully.", 
-      emoji: "📦", 
-      choices: [
-        { text: "Push to production", next: 6 }, 
-        { text: "Write tests first", next: 7 }
-      ] 
-    },
-    { 
-      id: 5, 
-      speaker: "Narrator", 
-      text: "You take a deep breath. Remember: It's just code.", 
-      emoji: "😢", 
-      choices: [
-        { text: "Try deleting node_modules", next: 4 }
-      ] 
-    },
-    { 
-      id: 6, 
-      speaker: "Narrator", 
-      text: "Yolo! You pushed it. The site is... actually working! You are a hero.", 
-      emoji: "🚀", 
-      choices: [
-        { text: "Restart Story", next: 1 }
-      ] 
-    },
-    { 
-      id: 7, 
-      speaker: "Narrator", 
-      text: "You found a critical bug in testing! You saved the company millions.", 
-      emoji: "🛡️", 
-      choices: [
-        { text: "Restart Story", next: 1 }
-      ] 
-    }
-  ];
+  openBtn?.addEventListener('click', open);
+  closeBtn?.addEventListener('click', close);
+  modal?.addEventListener('click', (e) => e.target === modal && close());
+  document.addEventListener('keydown', (e) => e.key === 'Escape' && !modal.classList.contains('hidden') && close());
 
   const sceneEl = document.getElementById('vn-scene');
   const speakerEl = document.getElementById('vn-speaker');
@@ -462,43 +336,31 @@ async function startVisualNovelGame() {
   if (!sceneEl || !speakerEl || !textEl || !choicesEl || !emojiEl) return;
 
   function loadScene(id) {
-    const scene = storyData.find(s => s.id === id);
-    if (!scene) return;
+    const s = story.find(x => x.id === id);
+    if (!s) return;
 
-    // Fade effect
     sceneEl.style.opacity = '0';
     setTimeout(() => {
-      emojiEl.innerText = scene.emoji || '👨‍💻';
-      speakerEl.innerText = scene.speaker || 'Narrator';
-      textEl.innerText = scene.text;
+      emojiEl.textContent = s.emoji || '👨‍💻';
+      speakerEl.textContent = s.speaker || 'Narrator';
+      textEl.textContent = s.text;
       sceneEl.style.opacity = '1';
     }, 200);
 
-    // Render choices
     choicesEl.innerHTML = '';
-    if (scene.choices) {
-      scene.choices.forEach(choice => {
-        const btn = document.createElement('button');
-        btn.className = 'vn-choice-btn';
-        btn.innerText = choice.text;
-        btn.onclick = () => loadScene(choice.next);
-        choicesEl.appendChild(btn);
-      });
-    }
+    s.choices?.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'vn-choice-btn';
+      btn.textContent = c.text;
+      btn.onclick = () => loadScene(c.next);
+      choicesEl.appendChild(btn);
+    });
   }
-
-  loadScene(1);
 }
 
-// ==========================================
-// INITIALIZATION
-// ==========================================
-
+// Initialize Everything on Page Load
 document.addEventListener('DOMContentLoaded', () => {
-  // Set current year in footer
   document.getElementById('year').textContent = new Date().getFullYear();
-  
-  // Initialize all features
   initThemeToggle();
   initScrollAnimations();
   initScrollToTop();

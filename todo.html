@@ -1,3 +1,4 @@
+<!-- Task Manager - Student Project -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,103 +7,52 @@
   <title>Task Manager - Student Project</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    :root {
-      color-scheme: dark;
-    }
+    /* CSS Variables */
+    :root { color-scheme: dark; }
+
+    /* Video Background */
 
     body {
       margin: 0;
       min-height: 100vh;
       color: #f8fafc;
-      background:
-        radial-gradient(circle at 18% 18%, rgba(255, 111, 28, 0.16), transparent 18%),
-        radial-gradient(circle at 72% 68%, rgba(37, 99, 235, 0.22), transparent 24%),
-        linear-gradient(180deg, #020202 0%, #040404 26%, #09163d 62%, #0a1f61 100%);
+      background: #020202;
       overflow-x: hidden;
     }
 
-    .project-background {
+    .page-video {
+      /* Full screen video positioning */
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      transform: translate(-50%, -50%);
+      z-index: -2;
+      pointer-events: none;
+      opacity: 0.8;
+      object-fit: cover;
+    }
+
+    .page-video-overlay {
       position: fixed;
       inset: 0;
+      z-index: -1;
       pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-
-    .project-background__glow {
-      position: absolute;
-      border-radius: 999px;
-      filter: blur(48px);
-      will-change: transform, opacity;
-    }
-
-    .project-background__glow--orange {
-      top: 8%;
-      left: -6%;
-      width: 24rem;
-      height: 12rem;
-      background: radial-gradient(circle, rgba(255, 111, 28, 0.4) 0%, rgba(255, 111, 28, 0.14) 46%, rgba(255, 111, 28, 0) 72%);
-      animation: driftOrange 14s ease-in-out infinite alternate;
-    }
-
-    .project-background__glow--blue {
-      right: -10%;
-      bottom: -2%;
-      width: 30rem;
-      height: 18rem;
-      background: radial-gradient(circle, rgba(37, 99, 235, 0.28) 0%, rgba(37, 99, 235, 0.1) 48%, rgba(37, 99, 235, 0) 72%);
-      animation: driftBlue 18s ease-in-out infinite alternate;
-    }
-
-    .project-background__wave {
-      position: absolute;
-      inset: auto;
-      border-radius: 999px;
-      will-change: transform, opacity;
-      mix-blend-mode: screen;
-    }
-
-    .project-background__wave--crest {
-      left: -8%;
-      right: -8%;
-      bottom: -6%;
-      height: 54%;
       background:
-        radial-gradient(circle at 18% 16%, rgba(255, 188, 77, 0.56), transparent 16%),
-        radial-gradient(circle at 52% 12%, rgba(255, 98, 28, 0.7), transparent 18%),
-        radial-gradient(circle at 84% 18%, rgba(255, 188, 77, 0.46), transparent 14%),
-        linear-gradient(180deg, rgba(205, 211, 220, 0.52) 0%, rgba(92, 114, 179, 0.56) 54%, rgba(12, 30, 84, 0.88) 100%);
-      filter: blur(38px);
-      opacity: 0.9;
-      animation: waveShift 16s ease-in-out infinite alternate;
+        radial-gradient(circle at 20% 20%, rgba(255, 90, 31, 0.15), transparent 25%),
+        radial-gradient(circle at 80% 80%, rgba(37, 99, 235, 0.12), transparent 30%),
+        linear-gradient(180deg, rgba(2, 2, 2, 0.3) 0%, rgba(9, 22, 61, 0.2) 60%, rgba(10, 31, 97, 0.25) 100%);
+      mix-blend-mode: multiply;
     }
 
-    .project-background__wave--ridge {
-      left: -6%;
-      right: -4%;
-      bottom: 34%;
-      height: 16%;
-      background:
-        radial-gradient(circle at 16% 50%, rgba(255, 110, 26, 0.92) 0%, rgba(255, 110, 26, 0) 22%),
-        radial-gradient(circle at 48% 44%, rgba(255, 188, 77, 0.88) 0%, rgba(255, 188, 77, 0) 20%),
-        radial-gradient(circle at 82% 48%, rgba(255, 110, 26, 0.92) 0%, rgba(255, 110, 26, 0) 22%);
-      filter: blur(22px);
-      opacity: 0.9;
-      animation: ridgeShift 12s ease-in-out infinite alternate;
-    }
-
-    .project-shell {
-      position: relative;
-      z-index: 1;
-    }
-
+    /* Main Card Styling */
     .project-card {
       position: relative;
       background: rgba(7, 10, 24, 0.72);
       border: 1px solid rgba(255, 122, 34, 0.18);
       box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
       backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
     }
 
     .project-card::before {
@@ -119,21 +69,21 @@
       pointer-events: none;
     }
 
+    /* Task Input Field */
     .task-input {
       background: rgba(255, 255, 255, 0.05);
       border-color: rgba(255, 255, 255, 0.08);
       color: #f8fafc;
     }
 
-    .task-input::placeholder {
-      color: rgba(248, 250, 252, 0.45);
-    }
+    .task-input::placeholder { color: rgba(248, 250, 252, 0.45); }
 
     .task-input:focus {
       border-color: rgba(255, 122, 34, 0.65) !important;
       box-shadow: 0 0 0 3px rgba(255, 122, 34, 0.16);
     }
 
+    /* Add Button */
     .task-button {
       background: linear-gradient(135deg, #ff6f1c 0%, #ff8a24 100%);
       box-shadow: 0 10px 30px rgba(255, 111, 28, 0.28);
@@ -143,6 +93,7 @@
       background: linear-gradient(135deg, #ff7a22 0%, #ff9832 100%);
     }
 
+    /* Individual Task Items */
     .task-item {
       animation: fadeIn 0.2s ease;
       background: rgba(255, 255, 255, 0.05);
@@ -155,102 +106,61 @@
       color: #64748b;
     }
 
-    .back-link {
-      color: #ff9b63;
-    }
+    .back-link { color: #ff9b63; }
+    .back-link:hover { color: #ffb282; }
 
-    .back-link:hover {
-      color: #ffb282;
-    }
-
-    .footer-note,
-    .muted-copy {
-      color: rgba(226, 232, 240, 0.6);
-    }
+    .muted-copy { color: rgba(226, 232, 240, 0.6); }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(-10px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes driftOrange {
-      from { transform: translate3d(0, 0, 0) scale(1); opacity: 0.78; }
-      to { transform: translate3d(36px, -18px, 0) scale(1.08); opacity: 0.96; }
-    }
-
-    @keyframes driftBlue {
-      from { transform: translate3d(0, 0, 0) scale(1); opacity: 0.64; }
-      to { transform: translate3d(-28px, 20px, 0) scale(1.05); opacity: 0.9; }
-    }
-
-    @keyframes waveShift {
-      from { transform: translate3d(-1%, 2%, 0) scale(1); }
-      to { transform: translate3d(3%, -3%, 0) scale(1.05); }
-    }
-
-    @keyframes ridgeShift {
-      from { transform: translate3d(-1%, 0, 0) scaleX(1); }
-      to { transform: translate3d(3%, -7%, 0) scaleX(1.08); }
-    }
-
     @media (prefers-reduced-motion: reduce) {
-      .project-background__glow,
-      .project-background__wave {
-        animation: none;
-      }
+      .page-video, .page-video-overlay { display: none !important; }
     }
   </style>
 </head>
 <body class="min-h-screen p-4">
-  <div class="project-background" aria-hidden="true">
-    <div class="project-background__glow project-background__glow--orange"></div>
-    <div class="project-background__glow project-background__glow--blue"></div>
-    <div class="project-background__wave project-background__wave--crest"></div>
-    <div class="project-background__wave project-background__wave--ridge"></div>
-  </div>
+  <!-- Static Video Background (paused) -->
+  <video class="page-video" muted loop playsinline aria-hidden="true" preload="auto">
+    <source src="background.mp4" type="video/mp4">
+  </video>
+  <div class="page-video-overlay" aria-hidden="true"></div>
 
-  <div class="project-shell max-w-md mx-auto pt-8">
-    <a href="index.html#projects" class="back-link text-sm hover:underline mb-4 inline-block">
-      &larr; Back to Portfolio
-    </a>
+  <!-- Main Content -->
+  <div class="relative z-10 max-w-md mx-auto pt-8">
+    <!-- Back Link -->
+    <a href="index.html#projects" class="back-link text-sm hover:underline mb-4 inline-block">&larr; Back to Portfolio</a>
 
+    <!-- Task Manager Card -->
     <div class="project-card rounded-2xl p-6">
       <h1 class="text-2xl font-bold text-white mb-1">Task Manager</h1>
       <p class="muted-copy text-sm mb-6">My first JavaScript project</p>
 
+      <!-- Add Task Form -->
       <div class="flex gap-2 mb-6">
-        <input
-          type="text"
-          id="taskInput"
-          placeholder="Add a new task..."
-          class="task-input flex-1 px-4 py-2 border rounded-xl focus:outline-none"
-        >
-        <button
-          id="addBtn"
-          class="task-button text-white px-4 py-2 rounded-xl transition-colors"
-        >
-          Add
-        </button>
+        <input type="text" id="taskInput" placeholder="Add a new task..." class="task-input flex-1 px-4 py-2 border rounded-xl focus:outline-none">
+        <button id="addBtn" class="task-button text-white px-4 py-2 rounded-xl transition-colors">Add</button>
       </div>
 
+      <!-- Task List -->
       <ul id="taskList" class="space-y-2"></ul>
 
-      <p id="emptyState" class="text-center muted-copy py-8">
-        No tasks yet. Add one above!
-      </p>
+      <!-- Empty State Message -->
+      <p id="emptyState" class="text-center muted-copy py-8">No tasks yet. Add one above!</p>
 
+      <!-- Footer Stats -->
       <div class="border-t border-white/10 mt-6 pt-4 flex justify-between text-sm muted-copy">
         <span id="totalTasks">0 tasks</span>
         <button id="clearBtn" class="text-red-400 hover:text-red-300 hover:underline hidden">Clear all</button>
       </div>
     </div>
-
-    <p class="footer-note text-center text-xs mt-4">
-      Built with HTML, Tailwind CSS & vanilla JavaScript
-    </p>
   </div>
 
+  <!-- Task Manager Logic -->
   <script>
+    // DOM Elements
     const taskInput = document.getElementById('taskInput');
     const addBtn = document.getElementById('addBtn');
     const taskList = document.getElementById('taskList');
@@ -263,24 +173,14 @@
     function addTask() {
       const text = taskInput.value.trim();
       if (!text) return;
-
-      const task = {
-        id: Date.now(),
-        text: text,
-        completed: false
-      };
-
-      tasks.push(task);
+      tasks.push({ id: Date.now(), text, completed: false });
       taskInput.value = '';
       render();
     }
 
     function toggleTask(id) {
       const task = tasks.find(t => t.id === id);
-      if (task) {
-        task.completed = !task.completed;
-        render();
-      }
+      if (task) { task.completed = !task.completed; render(); }
     }
 
     function deleteTask(id) {
@@ -288,10 +188,7 @@
       render();
     }
 
-    function clearAll() {
-      tasks = [];
-      render();
-    }
+    function clearAll() { tasks = []; render(); }
 
     function render() {
       taskList.innerHTML = '';
@@ -306,23 +203,11 @@
         tasks.forEach(task => {
           const li = document.createElement('li');
           li.className = `task-item flex items-center gap-3 p-3 rounded-xl ${task.completed ? 'completed' : ''}`;
-
           li.innerHTML = `
-            <input
-              type="checkbox"
-              ${task.completed ? 'checked' : ''}
-              onchange="toggleTask(${task.id})"
-              class="w-5 h-5 accent-orange-500 cursor-pointer"
-            >
+            <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${task.id})" class="w-5 h-5 accent-orange-500 cursor-pointer">
             <span class="flex-1">${task.text}</span>
-            <button
-              onclick="deleteTask(${task.id})"
-              class="text-red-300 hover:text-red-200 text-sm"
-            >
-              Delete
-            </button>
+            <button onclick="deleteTask(${task.id})" class="text-red-300 hover:text-red-200 text-sm">Delete</button>
           `;
-
           taskList.appendChild(li);
         });
       }
@@ -331,9 +216,7 @@
     }
 
     addBtn.addEventListener('click', addTask);
-    taskInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') addTask();
-    });
+    taskInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addTask(); });
     clearBtn.addEventListener('click', clearAll);
   </script>
 </body>

@@ -1,3 +1,4 @@
+<!-- Form Validator - Student Project -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,103 +7,51 @@
   <title>Form Validator - Student Project</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    :root {
-      color-scheme: dark;
-    }
+    /* CSS Variables */
+    :root { color-scheme: dark; }
+
+    /* Video Background Styles */
 
     body {
       margin: 0;
       min-height: 100vh;
       color: #f8fafc;
-      background:
-        radial-gradient(circle at 16% 14%, rgba(255, 111, 28, 0.16), transparent 18%),
-        radial-gradient(circle at 82% 70%, rgba(37, 99, 235, 0.22), transparent 24%),
-        linear-gradient(180deg, #020202 0%, #040404 24%, #09163d 62%, #0a1f61 100%);
+      background: #020202;
       overflow-x: hidden;
     }
 
-    .project-background {
+    .page-video {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      transform: translate(-50%, -50%);
+      z-index: -2;
+      pointer-events: none;
+      opacity: 0.8;
+      object-fit: cover;
+    }
+
+    .page-video-overlay {
       position: fixed;
       inset: 0;
+      z-index: -1;
       pointer-events: none;
-      z-index: 0;
-      overflow: hidden;
-    }
-
-    .project-background__glow {
-      position: absolute;
-      border-radius: 999px;
-      filter: blur(48px);
-      will-change: transform, opacity;
-    }
-
-    .project-background__glow--orange {
-      top: 10%;
-      left: -8%;
-      width: 25rem;
-      height: 12rem;
-      background: radial-gradient(circle, rgba(255, 111, 28, 0.4) 0%, rgba(255, 111, 28, 0.14) 46%, rgba(255, 111, 28, 0) 72%);
-      animation: driftOrange 13s ease-in-out infinite alternate;
-    }
-
-    .project-background__glow--blue {
-      right: -8%;
-      bottom: 0;
-      width: 32rem;
-      height: 18rem;
-      background: radial-gradient(circle, rgba(37, 99, 235, 0.28) 0%, rgba(37, 99, 235, 0.1) 48%, rgba(37, 99, 235, 0) 72%);
-      animation: driftBlue 17s ease-in-out infinite alternate;
-    }
-
-    .project-background__wave {
-      position: absolute;
-      inset: auto;
-      border-radius: 999px;
-      will-change: transform, opacity;
-      mix-blend-mode: screen;
-    }
-
-    .project-background__wave--crest {
-      left: -8%;
-      right: -8%;
-      bottom: -5%;
-      height: 56%;
       background:
-        radial-gradient(circle at 18% 16%, rgba(255, 188, 77, 0.56), transparent 16%),
-        radial-gradient(circle at 52% 12%, rgba(255, 98, 28, 0.7), transparent 18%),
-        radial-gradient(circle at 84% 18%, rgba(255, 188, 77, 0.46), transparent 14%),
-        linear-gradient(180deg, rgba(205, 211, 220, 0.52) 0%, rgba(92, 114, 179, 0.56) 54%, rgba(12, 30, 84, 0.88) 100%);
-      filter: blur(38px);
-      opacity: 0.9;
-      animation: waveShift 16s ease-in-out infinite alternate;
+        radial-gradient(circle at 20% 20%, rgba(255, 90, 31, 0.15), transparent 25%),
+        radial-gradient(circle at 80% 80%, rgba(37, 99, 235, 0.12), transparent 30%),
+        linear-gradient(180deg, rgba(2, 2, 2, 0.3) 0%, rgba(9, 22, 61, 0.2) 60%, rgba(10, 31, 97, 0.25) 100%);
+      mix-blend-mode: multiply;
     }
 
-    .project-background__wave--ridge {
-      left: -6%;
-      right: -4%;
-      bottom: 36%;
-      height: 16%;
-      background:
-        radial-gradient(circle at 16% 50%, rgba(255, 110, 26, 0.92) 0%, rgba(255, 110, 26, 0) 22%),
-        radial-gradient(circle at 48% 44%, rgba(255, 188, 77, 0.88) 0%, rgba(255, 188, 77, 0) 20%),
-        radial-gradient(circle at 82% 48%, rgba(255, 110, 26, 0.92) 0%, rgba(255, 110, 26, 0) 22%);
-      filter: blur(22px);
-      opacity: 0.9;
-      animation: ridgeShift 12s ease-in-out infinite alternate;
-    }
-
-    .project-shell {
-      position: relative;
-      z-index: 1;
-    }
-
+    /* Main Form Card */
     .project-card {
       position: relative;
       background: rgba(7, 10, 24, 0.74);
       border: 1px solid rgba(255, 122, 34, 0.18);
       box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
       backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
     }
 
     .project-card::before {
@@ -119,35 +68,27 @@
       pointer-events: none;
     }
 
-    .back-link {
-      color: #ff9b63;
-    }
+    /* Navigation Link */
+    .back-link { color: #ff9b63; }
+    .back-link:hover { color: #ffb282; }
 
-    .back-link:hover {
-      color: #ffb282;
-    }
-
+    /* Form Input Fields */
     .field-input {
       background: rgba(255, 255, 255, 0.05);
       border-color: rgba(255, 255, 255, 0.08);
       color: #f8fafc;
     }
 
-    .field-input::placeholder {
-      color: rgba(248, 250, 252, 0.45);
-    }
+    .field-input::placeholder { color: rgba(248, 250, 252, 0.45); }
 
     .field-input:focus {
       border-color: rgba(255, 122, 34, 0.65) !important;
       box-shadow: 0 0 0 3px rgba(255, 122, 34, 0.16);
     }
 
-    .field-label,
-    .muted-copy,
-    .footer-note {
-      color: rgba(226, 232, 240, 0.72);
-    }
+    .field-label, .muted-copy { color: rgba(226, 232, 240, 0.72); }
 
+    /* Submit Button */
     .submit-button {
       background: linear-gradient(135deg, #ff6f1c 0%, #ff8a24 100%);
       box-shadow: 0 10px 30px rgba(255, 111, 28, 0.28);
@@ -157,119 +98,69 @@
       background: linear-gradient(135deg, #ff7a22 0%, #ff9832 100%);
     }
 
+    /* Success Message Panel */
     .success-panel {
       background: rgba(34, 197, 94, 0.12);
       border-color: rgba(34, 197, 94, 0.3);
       color: #bbf7d0;
     }
 
+    /* Error Message Panel */
     .error-panel {
       background: rgba(239, 68, 68, 0.12);
       border-color: rgba(239, 68, 68, 0.3);
       color: #fecaca;
     }
 
-    .error-message {
-      animation: shake 0.3s ease-in-out;
-    }
-
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      25% { transform: translateX(-5px); }
-      75% { transform: translateX(5px); }
-    }
-
-    @keyframes driftOrange {
-      from { transform: translate3d(0, 0, 0) scale(1); opacity: 0.76; }
-      to { transform: translate3d(30px, -16px, 0) scale(1.08); opacity: 0.94; }
-    }
-
-    @keyframes driftBlue {
-      from { transform: translate3d(0, 0, 0) scale(1); opacity: 0.62; }
-      to { transform: translate3d(-26px, 16px, 0) scale(1.05); opacity: 0.88; }
-    }
-
-    @keyframes waveShift {
-      from { transform: translate3d(-1%, 2%, 0) scale(1); }
-      to { transform: translate3d(3%, -3%, 0) scale(1.05); }
-    }
-
-    @keyframes ridgeShift {
-      from { transform: translate3d(-1%, 0, 0) scaleX(1); }
-      to { transform: translate3d(3%, -7%, 0) scaleX(1.08); }
-    }
-
     @media (prefers-reduced-motion: reduce) {
-      .project-background__glow,
-      .project-background__wave {
-        animation: none;
-      }
+      .page-video, .page-video-overlay { display: none !important; }
     }
   </style>
 </head>
-<body class="min-h-screen p-4">
-  <div class="project-background" aria-hidden="true">
-    <div class="project-background__glow project-background__glow--orange"></div>
-    <div class="project-background__glow project-background__glow--blue"></div>
-    <div class="project-background__wave project-background__wave--crest"></div>
-    <div class="project-background__wave project-background__wave--ridge"></div>
-  </div>
+<body class="min-h-screen flex items-center justify-center p-4">
+  <!-- Static Video Background -->
+  <video class="page-video" muted loop playsinline aria-hidden="true" preload="auto">
+    <source src="background.mp4" type="video/mp4">
+  </video>
+  <div class="page-video-overlay" aria-hidden="true"></div>
 
-  <div class="project-shell max-w-md mx-auto pt-8">
-    <a href="index.html#projects" class="back-link text-sm hover:underline mb-4 inline-block">
-      &larr; Back to Portfolio
-    </a>
+  <!-- Main Content -->
+  <div class="relative z-10 max-w-md mx-auto pt-8">
+    <!-- Back to Portfolio Link -->
+    <a href="index.html#projects" class="back-link text-sm hover:underline mb-4 inline-block">&larr; Back to Portfolio</a>
 
+    <!-- Form Validator Card -->
     <div class="project-card rounded-2xl p-6">
       <h1 class="text-2xl font-bold text-white mb-1">Form Validator</h1>
       <p class="muted-copy text-sm mb-6">Learning form validation for QA testing</p>
 
+      <!-- Validation Form -->
       <form id="validator-form" class="space-y-4">
+        <!-- Name Field -->
         <div>
           <label for="name" class="field-label block text-sm font-medium mb-1">Full Name</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            placeholder="Enter your name"
-            class="field-input w-full px-4 py-2 border rounded-xl focus:outline-none"
-          >
+          <input type="text" id="name" name="name" placeholder="Enter your name" class="field-input w-full px-4 py-2 border rounded-xl focus:outline-none">
           <p id="name-error" class="text-red-400 text-xs mt-1 hidden"></p>
         </div>
 
+        <!-- Email Field -->
         <div>
           <label for="email" class="field-label block text-sm font-medium mb-1">Email</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            placeholder="your@email.com"
-            class="field-input w-full px-4 py-2 border rounded-xl focus:outline-none"
-          >
+          <input type="email" id="email" name="email" placeholder="your@email.com" class="field-input w-full px-4 py-2 border rounded-xl focus:outline-none">
           <p id="email-error" class="text-red-400 text-xs mt-1 hidden"></p>
         </div>
 
+        <!-- Phone Field -->
         <div>
           <label for="phone" class="field-label block text-sm font-medium mb-1">Phone Number</label>
-          <input
-            type="tel"
-            id="phone"
-            name="phone"
-            placeholder="123-456-7890"
-            class="field-input w-full px-4 py-2 border rounded-xl focus:outline-none"
-          >
+          <input type="tel" id="phone" name="phone" placeholder="123-456-7890" class="field-input w-full px-4 py-2 border rounded-xl focus:outline-none">
           <p id="phone-error" class="text-red-400 text-xs mt-1 hidden"></p>
         </div>
 
+        <!-- Password Field with Strength Meter -->
         <div>
           <label for="password" class="field-label block text-sm font-medium mb-1">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Min 8 characters"
-            class="field-input w-full px-4 py-2 border rounded-xl focus:outline-none"
-          >
+          <input type="password" id="password" name="password" placeholder="Min 8 characters" class="field-input w-full px-4 py-2 border rounded-xl focus:outline-none">
           <p id="password-error" class="text-red-400 text-xs mt-1 hidden"></p>
           <div class="flex gap-1 mt-2">
             <div id="strength-1" class="h-1 flex-1 bg-white/10 rounded"></div>
@@ -279,204 +170,113 @@
           </div>
         </div>
 
-        <button
-          type="submit"
-          class="submit-button w-full text-white py-2.5 rounded-xl transition-colors font-medium"
-        >
-          Validate Form
-        </button>
+        <button type="submit" class="submit-button w-full text-white py-2.5 rounded-xl transition-colors font-medium">Validate Form</button>
       </form>
 
-      <div id="success-message" class="success-panel hidden mt-4 p-4 border rounded-xl text-sm text-center">
-        All fields passed validation!
-      </div>
+      <!-- Success Message -->
+      <div id="success-message" class="success-panel hidden mt-4 p-4 border rounded-xl text-sm text-center">All fields passed validation!</div>
 
+      <!-- Error Summary Panel -->
       <div id="validation-summary" class="error-panel hidden mt-4 p-4 border rounded-xl text-sm">
         <p class="font-semibold mb-2">Validation Errors:</p>
         <ul id="error-list" class="list-disc list-inside space-y-1"></ul>
       </div>
     </div>
-
-    <p class="footer-note text-center text-xs mt-4">
-      Built with HTML, Tailwind CSS & vanilla JavaScript
-    </p>
   </div>
 
+  <!-- Form Validation Logic -->
   <script>
+    // DOM Elements
     const form = document.getElementById('validator-form');
-    const nameInput = document.getElementById('name');
-    const emailInput = document.getElementById('email');
-    const phoneInput = document.getElementById('phone');
-    const passwordInput = document.getElementById('password');
-
-    const nameError = document.getElementById('name-error');
-    const emailError = document.getElementById('email-error');
-    const phoneError = document.getElementById('phone-error');
-    const passwordError = document.getElementById('password-error');
-
-    const successMessage = document.getElementById('success-message');
-    const validationSummary = document.getElementById('validation-summary');
+    const inputs = {
+      name: document.getElementById('name'),
+      email: document.getElementById('email'),
+      phone: document.getElementById('phone'),
+      password: document.getElementById('password')
+    };
+    const errors = {
+      name: document.getElementById('name-error'),
+      email: document.getElementById('email-error'),
+      phone: document.getElementById('phone-error'),
+      password: document.getElementById('password-error')
+    };
+    const successMsg = document.getElementById('success-message');
+    const errorSummary = document.getElementById('validation-summary');
     const errorList = document.getElementById('error-list');
 
-    function validateName(name) {
-      return name.trim().length >= 2;
-    }
+    const validate = {
+      name: (v) => v.trim().length >= 2,
+      email: (v) => v.includes('@') && v.includes('.') && v.indexOf('@') < v.lastIndexOf('.'),
+      phone: (v) => /^\d{10}$/.test(v.replace(/[-\s]/g, '')),
+      password: (v) => v.length >= 8
+    };
 
-    function validateEmail(email) {
-      const hasAtSymbol = email.includes('@');
-      const hasDot = email.includes('.');
-      const atBeforeDot = email.indexOf('@') < email.lastIndexOf('.');
-      return hasAtSymbol && hasDot && atBeforeDot;
-    }
-
-    function validatePhone(phone) {
-      const cleanPhone = phone.replace(/[-\s]/g, '');
-      return cleanPhone.length === 10 && /^\d+$/.test(cleanPhone);
-    }
-
-    function checkPasswordStrength(password) {
+    function checkPasswordStrength(pwd) {
       let score = 0;
-      if (password.length >= 8) score++;
-      if (/[A-Z]/.test(password)) score++;
-      if (/[a-z]/.test(password)) score++;
-      if (/\d/.test(password)) score++;
-      return score;
+      if (pwd.length >= 8) score++;
+      if (/[A-Z]/.test(pwd)) score++;
+      if (/[a-z]/.test(pwd)) score++;
+      if (/\d/.test(pwd)) score++;
+      const bars = [1,2,3,4].map(i => document.getElementById(`strength-${i}`));
+      const colors = ['bg-white/10', 'bg-red-400', 'bg-yellow-400', 'bg-green-400', 'bg-green-500'];
+      bars.forEach((bar, i) => bar.className = `h-1 flex-1 ${colors[Math.min(score, i + 1) > i ? Math.min(score, 4) : 0]} rounded`);
     }
 
-    function validatePassword(password) {
-      return password.length >= 8;
+    function showError(el, msg) {
+      el.textContent = msg;
+      el.classList.remove('hidden');
     }
 
-    function showError(element, message) {
-      element.textContent = message;
-      element.classList.remove('hidden');
-      element.classList.add('error-message');
+    function hideError(el) {
+      el.classList.add('hidden');
     }
 
-    function hideError(element) {
-      element.classList.add('hidden');
-      element.classList.remove('error-message');
-    }
-
-    function updatePasswordStrength(password) {
-      const strength = checkPasswordStrength(password);
-      const bars = [
-        document.getElementById('strength-1'),
-        document.getElementById('strength-2'),
-        document.getElementById('strength-3'),
-        document.getElementById('strength-4')
-      ];
-
-      bars.forEach(bar => {
-        bar.className = 'h-1 flex-1 bg-white/10 rounded';
+    Object.keys(inputs).forEach(key => {
+      inputs[key].addEventListener('input', () => {
+        if (key === 'password') checkPasswordStrength(inputs[key].value);
+        const valid = validate[key](inputs[key].value);
+        inputs[key].classList.toggle('border-green-500', valid);
+        inputs[key].classList.toggle('border-red-500', !valid);
+        if (valid) hideError(errors[key]);
       });
-
-      if (strength >= 1) bars[0].className = 'h-1 flex-1 bg-red-400 rounded';
-      if (strength >= 2) bars[1].className = 'h-1 flex-1 bg-yellow-400 rounded';
-      if (strength >= 3) bars[2].className = 'h-1 flex-1 bg-green-400 rounded';
-      if (strength >= 4) bars[3].className = 'h-1 flex-1 bg-green-500 rounded';
-    }
-
-    nameInput.addEventListener('input', () => {
-      if (validateName(nameInput.value)) {
-        hideError(nameError);
-        nameInput.classList.remove('border-red-500');
-        nameInput.classList.add('border-green-500');
-      } else {
-        nameInput.classList.remove('border-green-500');
-        nameInput.classList.add('border-red-500');
-      }
-    });
-
-    emailInput.addEventListener('input', () => {
-      if (validateEmail(emailInput.value)) {
-        hideError(emailError);
-        emailInput.classList.remove('border-red-500');
-        emailInput.classList.add('border-green-500');
-      } else {
-        emailInput.classList.remove('border-green-500');
-        emailInput.classList.add('border-red-500');
-      }
-    });
-
-    phoneInput.addEventListener('input', () => {
-      if (validatePhone(phoneInput.value)) {
-        hideError(phoneError);
-        phoneInput.classList.remove('border-red-500');
-        phoneInput.classList.add('border-green-500');
-      } else {
-        phoneInput.classList.remove('border-green-500');
-        phoneInput.classList.add('border-red-500');
-      }
-    });
-
-    passwordInput.addEventListener('input', () => {
-      updatePasswordStrength(passwordInput.value);
-
-      if (validatePassword(passwordInput.value)) {
-        hideError(passwordError);
-        passwordInput.classList.remove('border-red-500');
-        passwordInput.classList.add('border-green-500');
-      } else {
-        passwordInput.classList.remove('border-green-500');
-        passwordInput.classList.add('border-red-500');
-      }
     });
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-
       let isValid = true;
-      const errors = [];
+      const msgs = [];
 
-      successMessage.classList.add('hidden');
-      validationSummary.classList.add('hidden');
+      successMsg.classList.add('hidden');
+      errorSummary.classList.add('hidden');
       errorList.innerHTML = '';
 
-      if (!validateName(nameInput.value)) {
-        showError(nameError, 'Name must be at least 2 characters long');
-        errors.push('Name must be at least 2 characters long');
-        isValid = false;
-      } else {
-        hideError(nameError);
-      }
+      const checks = [
+        { key: 'name', msg: 'Name must be at least 2 characters' },
+        { key: 'email', msg: 'Please enter a valid email' },
+        { key: 'phone', msg: 'Phone must be 10 digits' },
+        { key: 'password', msg: 'Password must be at least 8 characters' }
+      ];
 
-      if (!validateEmail(emailInput.value)) {
-        showError(emailError, 'Please enter a valid email address');
-        errors.push('Please enter a valid email address');
-        isValid = false;
-      } else {
-        hideError(emailError);
-      }
-
-      if (!validatePhone(phoneInput.value)) {
-        showError(phoneError, 'Phone number must be 10 digits');
-        errors.push('Phone number must be 10 digits');
-        isValid = false;
-      } else {
-        hideError(phoneError);
-      }
-
-      if (!validatePassword(passwordInput.value)) {
-        showError(passwordError, 'Password must be at least 8 characters long');
-        errors.push('Password must be at least 8 characters long');
-        isValid = false;
-      } else {
-        hideError(passwordError);
-      }
+      checks.forEach(({ key, msg }) => {
+        if (!validate[key](inputs[key].value)) {
+          showError(errors[key], msg);
+          msgs.push(msg);
+          isValid = false;
+        } else {
+          hideError(errors[key]);
+        }
+      });
 
       if (isValid) {
-        successMessage.classList.remove('hidden');
+        successMsg.classList.remove('hidden');
         form.reset();
-        updatePasswordStrength('');
-        [nameInput, emailInput, phoneInput, passwordInput].forEach(input => {
-          input.classList.remove('border-red-500', 'border-green-500');
-        });
+        checkPasswordStrength('');
+        Object.values(inputs).forEach(i => i.classList.remove('border-red-500', 'border-green-500'));
       } else {
-        validationSummary.classList.remove('hidden');
-        errors.forEach(error => {
+        errorSummary.classList.remove('hidden');
+        msgs.forEach(m => {
           const li = document.createElement('li');
-          li.textContent = error;
+          li.textContent = m;
           errorList.appendChild(li);
         });
       }

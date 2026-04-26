@@ -1,4 +1,6 @@
-// Service Worker for Portfolio - Caches assets for offline access and faster repeat visits
+/* Service Worker - Caches assets for offline access */
+
+// Cache Configuration
 const CACHE_NAME = 'portfolio-v3';
 const ASSETS_TO_CACHE = [
   '/',
@@ -8,10 +10,11 @@ const ASSETS_TO_CACHE = [
   '/profile.jpg',
   '/profile.webp',
   '/Kirren_Michael_Fraginal_Resume.pdf',
-  '/scene.splinecode' // Hero Spline scene file
+  '/background.mp4'
 ];
 
-// Install: Cache core assets
+// Install Event - Cache core assets
+
 self.addEventListener('install', (event) => {
   console.log('[SW] Installing...');
   event.waitUntil(
@@ -25,7 +28,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// Activate: Clean up old caches
+// Activate Event - Clean up old caches
 self.addEventListener('activate', (event) => {
   console.log('[SW] Activating...');
   event.waitUntil(
@@ -43,7 +46,7 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch: Serve from cache, fallback to network
+// Fetch Event - Serve from cache, fallback to network
 self.addEventListener('fetch', (event) => {
   // Skip non-GET requests and cross-origin requests
   if (event.request.method !== 'GET' || !event.request.url.startsWith(self.location.origin)) {
