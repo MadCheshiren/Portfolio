@@ -298,15 +298,31 @@ function initVisualNovel() {
   let lastFocus = null;
   let story = null;
 
+  // Inline story data as fallback for local file:// access
+  const storyData = [
+    { id: 1, speaker: 'Narrator', text: 'It is 7:00 AM. Your alarm goes off. You have a big deployment due today.', emoji: '⏰', choices: [{ text: '☕ Drink Coffee first', next: 2 }, { text: '💻 Jump straight into code', next: 3 }] },
+    { id: 2, speaker: 'You', text: 'The coffee is hot. You feel energized and ready to tackle any bug.', emoji: '☕', choices: [{ text: 'Start coding...', next: 3 }] },
+    { id: 3, speaker: 'System', text: 'ERROR: npm install failed. 404 Not Found.', emoji: '💀', choices: [{ text: 'Delete node_modules and retry', next: 4 }, { text: 'Panic and cry', next: 5 }] },
+    { id: 4, speaker: 'You', text: 'That actually worked. The packages are installing successfully.', emoji: '📦', choices: [{ text: 'Push to production', next: 6 }, { text: 'Write tests first', next: 7 }] },
+    { id: 5, speaker: 'Narrator', text: "You take a deep breath. Remember: It's just code.", emoji: '😢', choices: [{ text: 'Try deleting node_modules', next: 4 }] },
+    { id: 6, speaker: 'Narrator', text: 'Yolo! You pushed it. The site is... actually working! You are a hero.', emoji: '🚀', choices: [{ text: 'Restart Story', next: 1 }] },
+    { id: 7, speaker: 'Narrator', text: 'You found a critical bug in testing! You saved the company millions.', emoji: '🛡️', choices: [{ text: 'Restart Story', next: 1 }] }
+  ];
+
   async function loadStory() {
     if (story) return story;
+    // Try fetch first (works on HTTP servers), fallback to inline data (works locally)
     try {
       const response = await fetch('story.json');
-      story = await response.json();
-      return story;
+      if (response.ok) {
+        story = await response.json();
+        return story;
+      }
     } catch {
-      return [];
+      // Fetch failed (likely file:// protocol), use inline data
     }
+    story = storyData;
+    return story;
   }
 
   async function open() {

@@ -440,7 +440,9 @@
   
   <!-- Initialize Lucide Icons -->
   <script>
-    lucide.createIcons();
+    document.addEventListener('DOMContentLoaded', () => {
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    });
   </script>
 
   <script>
