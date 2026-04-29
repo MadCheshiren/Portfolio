@@ -151,7 +151,19 @@ document.documentElement.classList.add('dark');
 function initScrollAnimations() {
   const revealElements = document.querySelectorAll('.reveal');
   
-  // Activate elements already in viewport
+  // Activate all reveal elements immediately (safety fallback)
+  setTimeout(() => {
+    revealElements.forEach(el => {
+      if (!el.classList.contains('active')) {
+        el.classList.add('active');
+        el.querySelectorAll('.skill-fill').forEach(bar => {
+          bar.style.width = bar.dataset.width;
+        });
+      }
+    });
+  }, 100);
+  
+  // Also activate elements already in viewport
   revealElements.forEach(el => {
     const rect = el.getBoundingClientRect();
     if (rect.top < window.innerHeight && rect.bottom > 0) {
@@ -162,7 +174,7 @@ function initScrollAnimations() {
     }
   });
   
-  // Observe remaining elements
+  // Observe remaining elements for scroll reveal
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
