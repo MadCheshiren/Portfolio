@@ -144,21 +144,8 @@ function throttle(func, limit) {
   };
 }
 
-// Theme Toggle (Dark/Light Mode)
-function initThemeToggle() {
-  const toggle = document.getElementById('theme-toggle');
-  const html = document.documentElement;
-  const saved = localStorage.getItem('theme');
-  
-  if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-    html.classList.add('dark');
-  }
-  
-  toggle.addEventListener('click', () => {
-    html.classList.toggle('dark');
-    localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
-  });
-}
+// Force dark mode always
+document.documentElement.classList.add('dark');
 
 // Scroll Reveal Animations
 function initScrollAnimations() {
@@ -511,7 +498,6 @@ function initVisualNovel() {
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('year').textContent = new Date().getFullYear();
   EntranceAnimation.init();
-  initThemeToggle();
   initScrollAnimations();
   initScrollToTop();
   initNavbarEffects();

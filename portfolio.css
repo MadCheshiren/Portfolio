@@ -174,38 +174,10 @@
 }
 
 .glass {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(15, 23, 42, 0.7);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 90, 31, 0.2);
-}
-
-.dark .glass {
-  background: rgba(15, 23, 42, 0.7);
   border: 1px solid rgba(255, 90, 31, 0.15);
-}
-
-/* Light mode text - force black for visibility */
-html:not(.dark) h2,
-html:not(.dark) h3,
-html:not(.dark) p,
-html:not(.dark) span,
-html:not(.dark) label,
-html:not(.dark) button {
-  color: #1a1a1a !important;
-}
-
-/* Light mode placeholders - darker for visibility */
-html:not(.dark) ::placeholder {
-  color: #6b7280 !important;
-  opacity: 1;
-}
-
-/* Light mode form inputs - more solid background */
-html:not(.dark) input,
-html:not(.dark) textarea {
-  background: rgba(255, 255, 255, 0.9) !important;
-  color: #1a1a1a !important;
 }
 
 /* Nav Links */
@@ -298,21 +270,7 @@ html:not(.dark) textarea {
   transform: scale(1.05);
 }
 
-html:not(.dark) .floating-dock {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-html:not(.dark) .floating-btn {
-  color: #1a1a1a;
-}
-
-html:not(.dark) .floating-btn:hover {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.dark .floating-dock {
+.floating-dock {
   background: rgba(9, 9, 9, 0.7);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
@@ -339,10 +297,6 @@ html:not(.dark) .floating-btn:hover {
   top: 0;
   bottom: 0;
   width: 2px;
-  background: #e2e8f0;
-}
-
-.dark .timeline-line {
   background: #334155;
 }
 
