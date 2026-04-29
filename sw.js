@@ -1,7 +1,7 @@
 /* Service Worker - Caches assets for offline access */
 
 // Cache Configuration
-const CACHE_NAME = 'portfolio-v3';
+const CACHE_NAME = 'portfolio-v4';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
