@@ -540,16 +540,4 @@ document.addEventListener('DOMContentLoaded', () => {
   init3DTiltEffect();
   initTerminal();
   initVisualNovel();
-  
-  // Nuclear fallback: force all content visible after 2 seconds
-  setTimeout(() => {
-    document.querySelectorAll('.reveal, section, article').forEach(el => {
-      el.style.opacity = '1';
-      el.style.transform = 'none';
-      el.style.display = '';
-      el.classList.add('active');
-    });
-    const hero = document.getElementById('hero-reveal');
-    if (hero) hero.classList.add('revealed');
-  }, 2000);
 });
