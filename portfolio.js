@@ -149,6 +149,20 @@ document.documentElement.classList.add('dark');
 
 // Scroll Reveal Animations
 function initScrollAnimations() {
+  const revealElements = document.querySelectorAll('.reveal');
+  
+  // Activate elements already in viewport
+  revealElements.forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight && rect.bottom > 0) {
+      el.classList.add('active');
+      el.querySelectorAll('.skill-fill').forEach(bar => {
+        bar.style.width = bar.dataset.width;
+      });
+    }
+  });
+  
+  // Observe remaining elements
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -161,7 +175,11 @@ function initScrollAnimations() {
     });
   }, { threshold: 0.05, rootMargin: '50px 0px 0px 0px' });
 
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  revealElements.forEach(el => {
+    if (!el.classList.contains('active')) {
+      observer.observe(el);
+    }
+  });
 }
 
 // Scroll to Top Button
