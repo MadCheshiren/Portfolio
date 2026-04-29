@@ -174,7 +174,7 @@
 }
 
 .glass {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border: 1px solid rgba(255, 90, 31, 0.2);
@@ -183,6 +183,29 @@
 .dark .glass {
   background: rgba(15, 23, 42, 0.7);
   border: 1px solid rgba(255, 90, 31, 0.15);
+}
+
+/* Light mode text - force black for visibility */
+html:not(.dark) h2,
+html:not(.dark) h3,
+html:not(.dark) p,
+html:not(.dark) span,
+html:not(.dark) label,
+html:not(.dark) button {
+  color: #1a1a1a !important;
+}
+
+/* Light mode placeholders - darker for visibility */
+html:not(.dark) ::placeholder {
+  color: #6b7280 !important;
+  opacity: 1;
+}
+
+/* Light mode form inputs - more solid background */
+html:not(.dark) input,
+html:not(.dark) textarea {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #1a1a1a !important;
 }
 
 /* Nav Links */
@@ -198,13 +221,13 @@
 }
 
 .nav-link-item.active {
-  background: rgba(255, 90, 31, 0.15);
-  color: #FF5A1F;
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
 }
 
 .dark .nav-link-item.active {
-  background: rgba(255, 90, 31, 0.25);
-  color: #FF5A1F;
+  background: rgba(239, 68, 68, 0.25);
+  color: #ef4444;
 }
 
 .tooltip {
@@ -263,7 +286,7 @@
   align-items: center;
   justify-content: center;
   background: transparent;
-  color: #FF5A1F;
+  color: #ef4444;
   cursor: pointer;
   transition: all 0.2s ease;
   border: none;
@@ -271,8 +294,22 @@
 }
 
 .floating-btn:hover {
-  background: rgba(255, 90, 31, 0.15);
+  background: rgba(239, 68, 68, 0.15);
   transform: scale(1.05);
+}
+
+html:not(.dark) .floating-dock {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+html:not(.dark) .floating-btn {
+  color: #1a1a1a;
+}
+
+html:not(.dark) .floating-btn:hover {
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .dark .floating-dock {
@@ -283,14 +320,14 @@
 .skill-bar {
   height: 0.5rem;
   border-radius: 999px;
-  background: #2A0F0A;
+  background: rgba(15, 23, 42, 0.5);
   overflow: hidden;
 }
 
 .skill-fill {
   height: 100%;
   border-radius: 999px;
-  background: linear-gradient(90deg, #FF5A1F, #FFB703);
+  background: linear-gradient(90deg, #ef4444, #8b5cf6, #3b82f6);
   transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: width;
   transform: translateZ(0);
@@ -339,7 +376,7 @@ button {
   left: -8%;
   width: 28rem;
   height: 13rem;
-  background: radial-gradient(circle, rgba(255, 111, 28, 0.34) 0%, rgba(255, 111, 28, 0.1) 44%, rgba(255, 111, 28, 0) 72%);
+  background: radial-gradient(circle, rgba(239, 68, 68, 0.34) 0%, rgba(239, 68, 68, 0.1) 44%, rgba(239, 68, 68, 0) 72%);
   animation: projectGlowOrange 14s ease-in-out infinite alternate;
 }
 
@@ -367,6 +404,34 @@ button {
   position: relative;
   animation: fadeIn 0.4s ease-out;
   backdrop-filter: blur(8px);
+  min-width: 0;
+  width: 100%;
+}
+
+#projects .grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  width: 100%;
+  align-items: stretch;
+}
+
+#projects .grid > article {
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+}
+
+@media (max-width: 1024px) {
+  #projects .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  #projects .grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .project-card::before {
@@ -375,7 +440,7 @@ button {
   inset: -1px;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, rgba(255, 122, 34, 0.34), rgba(255, 255, 255, 0.06), rgba(37, 99, 235, 0.2));
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.34), rgba(139, 92, 246, 0.2), rgba(37, 99, 235, 0.34));
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
@@ -392,7 +457,7 @@ button {
   width: 10rem;
   height: 10rem;
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(255, 111, 28, 0.18) 0%, rgba(255, 111, 28, 0) 72%);
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, rgba(139, 92, 246, 0) 72%);
   filter: blur(18px);
   opacity: 0.7;
   pointer-events: none;
