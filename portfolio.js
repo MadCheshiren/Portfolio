@@ -152,16 +152,19 @@ function initScrollAnimations() {
   const revealElements = document.querySelectorAll('.reveal');
   
   // Activate all reveal elements immediately (safety fallback)
-  setTimeout(() => {
+  const forceReveal = () => {
     revealElements.forEach(el => {
-      if (!el.classList.contains('active')) {
-        el.classList.add('active');
-        el.querySelectorAll('.skill-fill').forEach(bar => {
-          bar.style.width = bar.dataset.width;
-        });
-      }
+      el.classList.add('active', 'reveal-forced');
+      el.querySelectorAll('.skill-fill').forEach(bar => {
+        bar.style.width = bar.dataset.width;
+      });
     });
-  }, 100);
+  };
+  
+  // Multiple fallbacks in case of race conditions
+  setTimeout(forceReveal, 100);
+  setTimeout(forceReveal, 500);
+  setTimeout(forceReveal, 1000);
   
   // Also activate elements already in viewport
   revealElements.forEach(el => {

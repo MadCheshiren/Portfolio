@@ -173,6 +173,12 @@
   will-change: auto;
 }
 
+/* Force all reveal elements visible after page load */
+.reveal.reveal-forced {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
 .glass {
   background: rgba(15, 23, 42, 0.7);
   backdrop-filter: blur(16px);
