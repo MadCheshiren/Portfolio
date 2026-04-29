@@ -45,11 +45,11 @@
       mix-blend-mode: multiply;
     }
 
-    /* Main Form Card */
+    /* Main Form Card - Red/Violet/Blue Gradient */
     .project-card {
       position: relative;
       background: rgba(7, 10, 24, 0.74);
-      border: 1px solid rgba(255, 122, 34, 0.18);
+      border: 1px solid rgba(239, 68, 68, 0.2);
       box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
       backdrop-filter: blur(14px);
     }
@@ -60,7 +60,7 @@
       inset: -1px;
       border-radius: inherit;
       padding: 1px;
-      background: linear-gradient(135deg, rgba(255, 122, 34, 0.4), rgba(255, 255, 255, 0.06), rgba(37, 99, 235, 0.28));
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.4), rgba(139, 92, 246, 0.3), rgba(37, 99, 235, 0.4));
       -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
       -webkit-mask-composite: xor;
       mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
@@ -69,8 +69,8 @@
     }
 
     /* Navigation Link */
-    .back-link { color: #ff9b63; }
-    .back-link:hover { color: #ffb282; }
+    .back-link { color: #a78bfa; }
+    .back-link:hover { color: #c4b5fd; }
 
     /* Form Input Fields */
     .field-input {
@@ -82,20 +82,21 @@
     .field-input::placeholder { color: rgba(248, 250, 252, 0.45); }
 
     .field-input:focus {
-      border-color: rgba(255, 122, 34, 0.65) !important;
-      box-shadow: 0 0 0 3px rgba(255, 122, 34, 0.16);
+      border-color: rgba(139, 92, 246, 0.65) !important;
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.16);
     }
 
     .field-label, .muted-copy { color: rgba(226, 232, 240, 0.72); }
 
-    /* Submit Button */
+    /* Submit Button - Red/Violet/Blue Gradient */
     .submit-button {
-      background: linear-gradient(135deg, #ff6f1c 0%, #ff8a24 100%);
-      box-shadow: 0 10px 30px rgba(255, 111, 28, 0.28);
+      background: linear-gradient(135deg, #ef4444 0%, #8b5cf6 50%, #3b82f6 100%);
+      box-shadow: 0 10px 30px rgba(139, 92, 246, 0.28);
     }
 
     .submit-button:hover {
-      background: linear-gradient(135deg, #ff7a22 0%, #ff9832 100%);
+      background: linear-gradient(135deg, #f87171 0%, #a78bfa 50%, #60a5fa 100%);
+      transform: translateY(-1px);
     }
 
     /* Success Message Panel */

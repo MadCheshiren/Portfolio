@@ -151,33 +151,7 @@ document.documentElement.classList.add('dark');
 function initScrollAnimations() {
   const revealElements = document.querySelectorAll('.reveal');
   
-  // Activate all reveal elements immediately (safety fallback)
-  const forceReveal = () => {
-    revealElements.forEach(el => {
-      el.classList.add('active', 'reveal-forced');
-      el.querySelectorAll('.skill-fill').forEach(bar => {
-        bar.style.width = bar.dataset.width;
-      });
-    });
-  };
-  
-  // Multiple fallbacks in case of race conditions
-  setTimeout(forceReveal, 100);
-  setTimeout(forceReveal, 500);
-  setTimeout(forceReveal, 1000);
-  
-  // Also activate elements already in viewport
-  revealElements.forEach(el => {
-    const rect = el.getBoundingClientRect();
-    if (rect.top < window.innerHeight && rect.bottom > 0) {
-      el.classList.add('active');
-      el.querySelectorAll('.skill-fill').forEach(bar => {
-        bar.style.width = bar.dataset.width;
-      });
-    }
-  });
-  
-  // Observe remaining elements for scroll reveal
+  // Observe elements for scroll reveal
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -188,13 +162,9 @@ function initScrollAnimations() {
         observer.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.05, rootMargin: '50px 0px 0px 0px' });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-  revealElements.forEach(el => {
-    if (!el.classList.contains('active')) {
-      observer.observe(el);
-    }
-  });
+  revealElements.forEach(el => observer.observe(el));
 }
 
 // Scroll to Top Button
