@@ -1,6 +1,6 @@
-/* Portfolio JavaScript - Main Functionality */
+/* Main JavaScript functionality for portfolio site */
 
-// Entrance Animation - Black screen with Tegaki handwriting
+// Entrance animation with handwriting effect
 const EntranceAnimation = {
   overlay: null,
   video: null,
@@ -13,7 +13,7 @@ const EntranceAnimation = {
   DEV_MODE: false,  // true = always show, false = first visit only
 
   init() {
-    // Skip for reduced motion or return visits
+    // Skip animation for reduced motion preference or returning visitors
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       this.skipAnimation();
       return;
@@ -23,7 +23,7 @@ const EntranceAnimation = {
       return;
     }
 
-    // Get elements
+    // Cache DOM elements
     this.overlay = document.getElementById('entrance-overlay');
     this.video = document.getElementById('hero-video');
     this.heroReveal = document.getElementById('hero-reveal');
@@ -35,7 +35,7 @@ const EntranceAnimation = {
       return;
     }
     
-    // Hide navbar/terminal, pause video
+    // Hide UI elements and pause video during entrance
     if (this.navbar) this.navbar.classList.add('entrance-hidden');
     if (this.terminalBtn) this.terminalBtn.classList.add('entrance-hidden');
     this.video.pause();
@@ -48,7 +48,7 @@ const EntranceAnimation = {
     this.setupEventListeners();
   },
 
-  // Tegaki handwriting animation
+  // Handwriting animation using Tegaki library
   setupTegaki() {
     if (typeof window.TegakiEngine === 'undefined' || typeof window.caveatFont === 'undefined') {
       setTimeout(() => this.setupTegaki(), 200);
@@ -78,7 +78,7 @@ const EntranceAnimation = {
     }
   },
 
-  // Click/touch to reveal
+  // Click to skip entrance animation
   setupEventListeners() {
     this.overlay.addEventListener('click', () => this.reveal());
     this.overlay.addEventListener('touchstart', (e) => {
@@ -87,7 +87,7 @@ const EntranceAnimation = {
     }, { passive: false });
   },
 
-  // Fade overlay, start video
+  // Fade out overlay and start video
   reveal() {
     if (this.overlay.classList.contains('fade-out')) return;
     this.overlay.classList.add('fade-out');
@@ -96,7 +96,7 @@ const EntranceAnimation = {
     this.startVideoAndWatch();
   },
 
-  // Watch for splash moment (1.2s)
+  // Monitor video playback to reveal hero at splash moment
   startVideoAndWatch() {
     this.video.currentTime = 0;
     this.video.play();
@@ -111,7 +111,7 @@ const EntranceAnimation = {
     requestAnimationFrame(checkTime);
   },
 
-  // Show hero at splash moment
+  // Reveal hero content at specific video timestamp
   revealHero() {
     this.heroRevealed = true;
     this.heroReveal.classList.add('revealed');
@@ -119,7 +119,7 @@ const EntranceAnimation = {
     if (this.terminalBtn) this.terminalBtn.classList.remove('entrance-hidden');
   },
 
-  // Fast path for return visits
+  // Skip animation for returning visitors
   skipAnimation() {
     const overlay = document.getElementById('entrance-overlay');
     if (overlay) overlay.style.display = 'none';
@@ -132,7 +132,7 @@ const EntranceAnimation = {
   }
 };
 
-// Utility: Throttle function calls
+// Throttle scroll events for performance
 function throttle(func, limit) {
   let inThrottle;
   return function(...args) {
@@ -144,10 +144,10 @@ function throttle(func, limit) {
   };
 }
 
-// Force dark mode always
+// Force dark mode
 document.documentElement.classList.add('dark');
 
-// Scroll Reveal Animations
+// Scroll reveal animation using IntersectionObserver
 function initScrollAnimations() {
   const revealElements = document.querySelectorAll('.reveal');
   
@@ -167,7 +167,7 @@ function initScrollAnimations() {
   revealElements.forEach(el => observer.observe(el));
 }
 
-// Scroll to Top Button
+// Scroll-to-top button visibility
 function initScrollToTop() {
   const btn = document.getElementById('scroll-top');
   if (!btn) return;
@@ -183,7 +183,7 @@ function initScrollToTop() {
   btn.style.pointerEvents = 'none';
 }
 
-// Navbar Scroll Effects
+// Navbar shadow on scroll
 function initNavbarEffects() {
   const navbar = document.getElementById('navbar');
   if (!navbar) return;
@@ -192,7 +192,7 @@ function initNavbarEffects() {
   }, 100));
 }
 
-// Active Nav Link Highlighting
+// Highlight nav link based on current section
 function initActiveNavLinks() {
   const sections = document.querySelectorAll('section');
   const links = document.querySelectorAll('.nav-link-item');
@@ -212,7 +212,7 @@ function initActiveNavLinks() {
   }, 100));
 }
 
-// Contact Form Handling
+// Contact form submission to Formspree
 function initContactForm() {
   const form = document.getElementById('contact-form');
   const status = document.getElementById('form-status');
@@ -251,7 +251,7 @@ function initContactForm() {
   });
 }
 
-// Project Category Filtering
+// Filter projects by category
 function initProjectFiltering() {
   const btns = document.querySelectorAll('.filter-btn');
   const cards = document.querySelectorAll('.project-card');
@@ -275,7 +275,7 @@ function initProjectFiltering() {
   });
 }
 
-// 3D Card Tilt Effect (Desktop Only)
+// 3D hover tilt effect for project cards
 function init3DTiltEffect() {
   if (!window.matchMedia('(hover: hover)').matches) return;
   
@@ -296,7 +296,7 @@ function init3DTiltEffect() {
   });
 }
 
-// Interactive Terminal Modal
+// Interactive terminal modal with commands
 function initTerminal() {
   const modal = document.getElementById('terminal-modal');
   const toggle = document.getElementById('terminal-toggle');
@@ -339,7 +339,7 @@ function initTerminal() {
     output.scrollTop = output.scrollHeight;
   }
 
-  // Terminal command data
+  // Available terminal commands
   const commands = {
     help: { color: 'text-yellow-300', title: 'Available commands:', lines: [
       '  help      - Show available commands',
@@ -410,7 +410,7 @@ function initTerminal() {
   }
 }
 
-// Visual Novel Game Modal - Lazy Load Story Data
+// Visual novel game modal
 function initVisualNovel() {
   const modal = document.getElementById('vn-modal');
   const openBtn = document.getElementById('open-vn');
@@ -420,7 +420,7 @@ function initVisualNovel() {
   let lastFocus = null;
   let story = null;
 
-  // Inline story data as fallback for local file:// access
+  // Story data embedded for local file access
   const storyData = [
     { id: 1, speaker: 'Narrator', text: 'It is 7:00 AM. Your alarm goes off. You have a big deployment due today.', emoji: '⏰', choices: [{ text: '☕ Drink Coffee first', next: 2 }, { text: '💻 Jump straight into code', next: 3 }] },
     { id: 2, speaker: 'You', text: 'The coffee is hot. You feel energized and ready to tackle any bug.', emoji: '☕', choices: [{ text: 'Start coding...', next: 3 }] },
@@ -497,7 +497,7 @@ function initVisualNovel() {
   }
 }
 
-// Initialize Everything on Page Load
+// Initialize all features when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('year').textContent = new Date().getFullYear();
   EntranceAnimation.init();

@@ -1,6 +1,6 @@
 /* Portfolio Styles - Main CSS File */
 
-/* Reduce motion for accessibility */
+/* Disable animations for users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -11,7 +11,7 @@
   }
 }
 
-/* 3D Tilt Effect */
+/* 3D tilt effect on hover for desktop */
 .tilt-card {
   transform-style: preserve-3d;
   transform: perspective(1000px);
@@ -23,7 +23,7 @@
   transform: translateZ(20px);
 }
 
-/* Global Background - Light Mode Default */
+/* Page background gradient */
 .page-gradient {
   position: fixed;
   inset: 0;
@@ -36,7 +36,7 @@
     linear-gradient(180deg, #f8fafc 0%, #f1f5f9 28%, #e2e8f0 58%, #cbd5e1 100%);
 }
 
-/* Entrance animation overlay */
+/* Entrance screen overlay with handwriting animation */
 .entrance-overlay {
   position: fixed;
   inset: 0;
@@ -49,18 +49,18 @@
   transition: opacity 400ms ease-out;
 }
 
-/* Fade out state */
+/* Fade out animation state */
 .entrance-overlay.fade-out {
   opacity: 0;
   pointer-events: none;
 }
 
-/* Tegaki + hint container */
+/* Centered content wrapper */
 .entrance-content {
   text-align: center;
 }
 
-/* Click hint - shows after 5s */
+/* Hint text that appears after 5 seconds */
 .entrance-hint {
   color: rgba(255, 255, 255, 0.5);
   font-size: 0.875rem;
@@ -84,9 +84,7 @@
   justify-content: center;
 }
 
-/* Hero reveal at splash moment */
-
-/* Hero hidden until splash */
+/* Hero section starts hidden, reveals at video splash moment */
 #hero-reveal {
   opacity: 0 !important;
   transform: translateY(20px);
@@ -100,7 +98,7 @@
   pointer-events: auto;
 }
 
-/* Nav/terminal hidden during entrance */
+/* Hide navbar during entrance animation */
 #navbar.entrance-hidden,
 #terminal-toggle.entrance-hidden {
   opacity: 0;
@@ -114,7 +112,7 @@
   pointer-events: auto;
 }
 
-/* Dark Mode Background */
+/* Dark mode background (always enabled) */
 .dark .page-gradient {
   background:
     radial-gradient(circle at 18% 10%, rgba(255, 111, 28, 0.18), transparent 24%),
@@ -123,7 +121,7 @@
     linear-gradient(180deg, #020202 0%, #040404 28%, #071231 58%, #0a1f61 100%);
 }
 
-/* Hero Video Background */
+/* Full-screen looping video background */
 .hero-video {
   position: fixed;
   top: 50%;
@@ -139,7 +137,7 @@
   object-fit: cover;
 }
 
-/* Video overlay to match todo/validator page colors */
+/* Gradient overlay to blend video with theme */
 .hero-video-overlay {
   position: fixed;
   inset: 0;
@@ -159,7 +157,7 @@
   }
 }
 
-/* Glass & UI */
+/* Scroll reveal - elements fade in on scroll */
 .reveal {
   opacity: 0;
   transform: translateY(24px);
