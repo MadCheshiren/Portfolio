@@ -183,11 +183,12 @@ function initScrollAnimations() {
   revealElements.forEach(el => observer.observe(el));
 }
 
+// ---------------------------------------------------------
+// 3. NAVIGATION EFFECTS
+// ---------------------------------------------------------
+
 // Scroll-to-top button visibility
 function initScrollToTop() {
-  // ---------------------------------------------------------
-  // 3. NAVIGATION EFFECTS
-  // ---------------------------------------------------------
   const btn = document.getElementById('scroll-top');
   if (!btn) return;
   
