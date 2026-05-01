@@ -1,4 +1,10 @@
-/* Portfolio Styles - Main CSS File */
+/* =========================================================
+   PORTFOLIO STYLES - Main CSS File
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   1. ACCESSIBILITY & RESET
+   --------------------------------------------------------- */
 
 /* Disable animations for users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
@@ -10,6 +16,10 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---------------------------------------------------------
+   2. BASE STYLES & BACKGROUNDS
+   --------------------------------------------------------- */
 
 /* 3D tilt effect on hover for desktop */
 .tilt-card {
@@ -23,20 +33,11 @@
   transform: translateZ(20px);
 }
 
-/* Page background gradient */
-.page-gradient {
-  position: fixed;
-  inset: 0;
-  z-index: -2;
-  pointer-events: none;
-  background:
-    radial-gradient(circle at 18% 10%, rgba(255, 111, 28, 0.12), transparent 24%),
-    radial-gradient(circle at 78% 22%, rgba(255, 140, 45, 0.08), transparent 18%),
-    radial-gradient(circle at 50% 72%, rgba(59, 130, 246, 0.15), transparent 36%),
-    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 28%, #e2e8f0 58%, #cbd5e1 100%);
-}
+/* ---------------------------------------------------------
+   3. ENTRANCE ANIMATION (Tegaki Handwriting)
+   --------------------------------------------------------- */
 
-/* Entrance screen overlay with handwriting animation */
+/* Full-screen overlay for handwriting animation */
 .entrance-overlay {
   position: fixed;
   inset: 0;
@@ -98,7 +99,7 @@
   pointer-events: auto;
 }
 
-/* Hide navbar during entrance animation */
+/* Hide floating nav and terminal during entrance */
 #navbar.entrance-hidden,
 #terminal-toggle.entrance-hidden {
   opacity: 0;
@@ -112,8 +113,8 @@
   pointer-events: auto;
 }
 
-/* Dark mode background (always enabled) */
-.dark .page-gradient {
+/* Dark theme background (default and only theme) */
+.page-gradient {
   background:
     radial-gradient(circle at 18% 10%, rgba(255, 111, 28, 0.18), transparent 24%),
     radial-gradient(circle at 78% 22%, rgba(255, 140, 45, 0.1), transparent 18%),
@@ -121,7 +122,11 @@
     linear-gradient(180deg, #020202 0%, #040404 28%, #071231 58%, #0a1f61 100%);
 }
 
-/* Full-screen looping video background */
+/* ---------------------------------------------------------
+   4. HERO SECTION
+   --------------------------------------------------------- */
+
+/* Full-screen background video */
 .hero-video {
   position: fixed;
   top: 50%;
@@ -133,21 +138,16 @@
   transform: translate(-50%, -50%);
   z-index: -1;
   pointer-events: none;
-  opacity: 0.8;
   object-fit: cover;
 }
 
-/* Gradient overlay to blend video with theme */
+/* Subtle vignette overlay for depth - keeps video colors intact */
 .hero-video-overlay {
   position: fixed;
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(255, 90, 31, 0.15), transparent 25%),
-    radial-gradient(circle at 80% 80%, rgba(37, 99, 235, 0.12), transparent 30%),
-    linear-gradient(180deg, rgba(2, 2, 2, 0.3) 0%, rgba(9, 22, 61, 0.2) 60%, rgba(10, 31, 97, 0.25) 100%);
-  mix-blend-mode: multiply;
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, 0.3) 100%);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -157,7 +157,11 @@
   }
 }
 
-/* Scroll reveal - elements fade in on scroll */
+/* ---------------------------------------------------------
+   5. UTILITY CLASSES
+   --------------------------------------------------------- */
+
+/* Scroll reveal animation - elements fade in on scroll */
 .reveal {
   opacity: 0;
   transform: translateY(24px);
@@ -171,6 +175,7 @@
   will-change: auto;
 }
 
+/* Glass morphism effect - frosted glass look */
 .glass {
   background: rgba(15, 23, 42, 0.7);
   backdrop-filter: blur(16px);
@@ -178,7 +183,11 @@
   border: 1px solid rgba(255, 90, 31, 0.15);
 }
 
-/* Nav Links */
+/* ---------------------------------------------------------
+   6. NAVIGATION
+   --------------------------------------------------------- */
+
+/* Nav link items with hover effects */
 .nav-link-item,
 .nav-icon {
   position: relative;
@@ -191,15 +200,11 @@
 }
 
 .nav-link-item.active {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
-}
-
-.dark .nav-link-item.active {
   background: rgba(239, 68, 68, 0.25);
   color: #ef4444;
 }
 
+/* Tooltip that appears on hover */
 .tooltip {
   position: absolute;
   bottom: 120%;
@@ -218,17 +223,13 @@
   z-index: 60;
 }
 
-.dark .tooltip {
-  background: #f8fafc;
-  color: #0f172a;
-}
-
 .nav-link-item:hover .tooltip,
 .nav-icon:hover .tooltip {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
 
+/* Floating terminal button (bottom right) */
 .floating-dock {
   position: fixed;
   bottom: 1.5rem;
@@ -374,15 +375,26 @@ button {
   height: 100%;
 }
 
+/* Hero card spans 2 columns */
+#projects .grid > article.project-hero {
+  grid-column: span 2;
+}
+
 @media (max-width: 1024px) {
   #projects .grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+  #projects .grid > article.project-hero {
+    grid-column: span 2;
   }
 }
 
 @media (max-width: 768px) {
   #projects .grid {
     grid-template-columns: 1fr;
+  }
+  #projects .grid > article.project-hero {
+    grid-column: span 1;
   }
 }
 
@@ -499,7 +511,9 @@ button {
   font-family: inherit;
 }
 
-/* VN Game Styles */
+/* === Visual Novel Game Styles === */
+
+/* Choice buttons - player options */
 .vn-choice-btn {
   padding: 0.75rem 1rem;
   border-radius: 0.75rem;
@@ -513,6 +527,7 @@ button {
   cursor: pointer;
 }
 
+/* Hover state - slides right and glows */
 .vn-choice-btn:hover {
   background: rgba(99, 102, 241, 0.2);
   border-color: #6366f1;
@@ -520,7 +535,7 @@ button {
   transform: translateX(4px);
 }
 
-/* VN Modal */
+/* Modal container - hides/shows with CSS */
 #vn-modal {
   overscroll-behavior: contain;
   display: flex;
@@ -530,7 +545,153 @@ button {
   display: none;
 }
 
-/* Modal focus styles */
+/* Remove focus outline on modal itself */
 #vn-modal:focus {
   outline: none;
+}
+/* === End VN Game Styles === */
+
+/* Skill Constellation Animations */
+
+/* Pulse animation for central QA hub */
+@keyframes hubPulse {
+  0%, 100% {
+    r: 38;
+    opacity: 1;
+  }
+  50% {
+    r: 42;
+    opacity: 0.9;
+  }
+}
+
+.skill-hub-pulse {
+  animation: hubPulse 3s ease-in-out infinite;
+}
+
+/* Dashed line animation */
+@keyframes dashFlow {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+.skill-line {
+  animation: dashFlow 2s linear infinite;
+}
+
+/* Node hover interaction */
+.skill-node {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.skill-node:hover circle {
+  stroke-width: 3;
+  filter: drop-shadow(0 0 8px currentColor);
+}
+
+.skill-node:hover {
+  transform: scale(1.05);
+}
+
+/* Staggered fade-in for constellation nodes */
+@keyframes nodeReveal {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.skill-node {
+  animation: nodeReveal 0.6s ease-out forwards;
+}
+
+.skill-node:nth-child(1) { animation-delay: 0.1s; }
+.skill-node:nth-child(2) { animation-delay: 0.2s; }
+.skill-node:nth-child(3) { animation-delay: 0.3s; }
+.skill-node:nth-child(4) { animation-delay: 0.4s; }
+.skill-node:nth-child(5) { animation-delay: 0.5s; }
+.skill-node:nth-child(6) { animation-delay: 0.6s; }
+
+/* Terminal Contact Form Styles */
+.terminal-submit {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  font-family: 'Courier New', monospace;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.terminal-submit:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.terminal-header {
+  font-family: 'Courier New', monospace;
+}
+
+/* Cursor blink for terminal inputs */
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.terminal-input:focus::after {
+  content: '|';
+  animation: cursorBlink 1s step-end infinite;
+  color: #ffb282;
+}
+
+/* About Section - Attribute Pills */
+.attribute-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba(30, 30, 45, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 0.75rem;
+  transition: all 0.3s ease;
+}
+
+.attribute-pill:hover {
+  background: rgba(139, 92, 246, 0.1);
+  border-color: rgba(139, 92, 246, 0.3);
+  transform: translateY(-2px);
+}
+
+.attribute-icon {
+  font-size: 1.1rem;
+  filter: grayscale(0.3);
+}
+
+.attribute-label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 500;
+}
+
+/* Scan line animation for profile image */
+@keyframes scanLine {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.animate-scan {
+  animation: scanLine 4s ease-in-out infinite;
 }

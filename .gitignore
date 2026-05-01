@@ -33,3 +33,7 @@ build/
 node_modules/
 package-lock.json
 
+# Design files (local only)
+PRODUCT.md
+DESIGN.md
+

@@ -1,186 +1,471 @@
-<!-- Form Validator - Student Project -->
+<!-- Form Validator - CRT Terminal + Live Code Preview -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Form Validator - Student Project</title>
+  <title>Form Validator - Live Debug Terminal</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* CSS Variables */
-    :root { color-scheme: dark; }
+    :root {
+      --crt-green: #00ff41;
+      --crt-green-dim: #00b830;
+      --crt-green-dark: #008f26;
+      --crt-bg: #0a0f0a;
+      --crt-grid: rgba(0, 255, 65, 0.03);
+    }
 
-    /* Video Background Styles */
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       min-height: 100vh;
-      color: #f8fafc;
-      background: #020202;
+      background: var(--crt-bg);
+      color: var(--crt-green);
+      font-family: 'Courier New', Courier, monospace;
       overflow-x: hidden;
     }
 
-    .page-video {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      min-width: 100%;
-      min-height: 100%;
-      transform: translate(-50%, -50%);
-      z-index: -2;
-      pointer-events: none;
-      opacity: 0.8;
-      object-fit: cover;
-    }
-
-    .page-video-overlay {
+    /* CRT Scanlines Effect */
+    .crt-overlay {
       position: fixed;
       inset: 0;
-      z-index: -1;
       pointer-events: none;
+      z-index: 100;
       background:
-        radial-gradient(circle at 20% 20%, rgba(255, 90, 31, 0.15), transparent 25%),
-        radial-gradient(circle at 80% 80%, rgba(37, 99, 235, 0.12), transparent 30%),
-        linear-gradient(180deg, rgba(2, 2, 2, 0.3) 0%, rgba(9, 22, 61, 0.2) 60%, rgba(10, 31, 97, 0.25) 100%);
-      mix-blend-mode: multiply;
+        linear-gradient(
+          transparent 50%,
+          rgba(0, 0, 0, 0.25) 50%
+        ),
+        linear-gradient(
+          90deg,
+          rgba(255, 0, 0, 0.03),
+          rgba(0, 255, 0, 0.02),
+          rgba(0, 0, 255, 0.03)
+        );
+      background-size: 100% 4px, 6px 100%;
     }
 
-    /* Main Form Card - Red/Violet/Blue Gradient */
-    .project-card {
-      position: relative;
-      background: rgba(7, 10, 24, 0.74);
-      border: 1px solid rgba(239, 68, 68, 0.2);
-      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
-      backdrop-filter: blur(14px);
+    /* CRT Flicker Animation */
+    @keyframes flicker {
+      0%, 100% { opacity: 0.97; }
+      50% { opacity: 1; }
     }
 
-    .project-card::before {
-      content: '';
-      position: absolute;
-      inset: -1px;
-      border-radius: inherit;
-      padding: 1px;
-      background: linear-gradient(135deg, rgba(239, 68, 68, 0.4), rgba(139, 92, 246, 0.3), rgba(37, 99, 235, 0.4));
-      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor;
-      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      mask-composite: exclude;
-      pointer-events: none;
+    .crt-flicker {
+      animation: flicker 0.15s infinite;
     }
 
-    /* Navigation Link */
-    .back-link { color: #a78bfa; }
-    .back-link:hover { color: #c4b5fd; }
-
-    /* Form Input Fields */
-    .field-input {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 255, 255, 0.08);
-      color: #f8fafc;
+    /* Background Grid */
+    .crt-grid {
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--crt-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--crt-grid) 1px, transparent 1px);
+      background-size: 40px 40px;
+      z-index: -1;
     }
 
-    .field-input::placeholder { color: rgba(248, 250, 252, 0.45); }
-
-    .field-input:focus {
-      border-color: rgba(139, 92, 246, 0.65) !important;
-      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.16);
+    /* Terminal Window */
+    .terminal-window {
+      background: rgba(10, 15, 10, 0.95);
+      border: 1px solid var(--crt-green-dark);
+      border-radius: 8px;
+      box-shadow:
+        0 0 20px rgba(0, 255, 65, 0.1),
+        inset 0 0 40px rgba(0, 255, 65, 0.02);
     }
 
-    .field-label, .muted-copy { color: rgba(226, 232, 240, 0.72); }
-
-    /* Submit Button - Red/Violet/Blue Gradient */
-    .submit-button {
-      background: linear-gradient(135deg, #ef4444 0%, #8b5cf6 50%, #3b82f6 100%);
-      box-shadow: 0 10px 30px rgba(139, 92, 246, 0.28);
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--crt-green-dark);
+      background: rgba(0, 255, 65, 0.05);
     }
 
-    .submit-button:hover {
-      background: linear-gradient(135deg, #f87171 0%, #a78bfa 50%, #60a5fa 100%);
-      transform: translateY(-1px);
+    .terminal-btn {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 1px solid var(--crt-green-dark);
     }
 
-    /* Success Message Panel */
-    .success-panel {
-      background: rgba(34, 197, 94, 0.12);
-      border-color: rgba(34, 197, 94, 0.3);
-      color: #bbf7d0;
+    .terminal-btn.close { background: #ff5f56; }
+    .terminal-btn.minimize { background: #ffbd2e; }
+    .terminal-btn.maximize { background: #27c93f; }
+
+    .terminal-title {
+      font-size: 12px;
+      color: var(--crt-green-dim);
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    /* Error Message Panel */
-    .error-panel {
-      background: rgba(239, 68, 68, 0.12);
-      border-color: rgba(239, 68, 68, 0.3);
-      color: #fecaca;
+    .terminal-body {
+      padding: 20px;
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      .page-video, .page-video-overlay { display: none !important; }
+    /* CRT Input Fields */
+    .crt-input {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(0, 20, 0, 0.6);
+      border: 1px solid var(--crt-green-dark);
+      border-radius: 4px;
+      color: var(--crt-green);
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .crt-input:focus {
+      border-color: var(--crt-green);
+      box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+    }
+
+    .crt-input::placeholder {
+      color: var(--crt-green-dark);
+    }
+
+    .crt-input.valid {
+      border-color: #00ff41;
+      background: rgba(0, 255, 65, 0.05);
+    }
+
+    .crt-input.invalid {
+      border-color: #ff4444;
+      background: rgba(255, 68, 68, 0.05);
+    }
+
+    /* Cursor Blink */
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .cursor::after {
+      content: '█';
+      animation: blink 1s infinite;
+      color: var(--crt-green);
+    }
+
+    /* Code Preview Panel */
+    .code-panel {
+      background: rgba(5, 10, 5, 0.98);
+      border: 1px solid var(--crt-green-dark);
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+    }
+
+    .code-line {
+      padding: 2px 16px;
+      display: flex;
+    }
+
+    .code-line:nth-child(odd) {
+      background: rgba(0, 255, 65, 0.02);
+    }
+
+    .line-number {
+      color: var(--crt-green-dark);
+      min-width: 30px;
+      text-align: right;
+      margin-right: 16px;
+    }
+
+    .code-content { color: var(--crt-green-dim); }
+    .code-keyword { color: #ff6b9d; }
+    .code-string { color: #c3e88d; }
+    .code-function { color: #82aaff; }
+    .code-comment { color: #546e7a; }
+    .code-active {
+      background: rgba(0, 255, 65, 0.1) !important;
+      border-left: 2px solid var(--crt-green);
+    }
+
+    /* Status Indicators */
+    .status-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .status-pending { background: var(--crt-green-dark); }
+    .status-valid { background: #00ff41; box-shadow: 0 0 8px #00ff41; }
+    .status-invalid { background: #ff4444; box-shadow: 0 0 8px #ff4444; }
+
+    /* Submit Button */
+    .crt-button {
+      width: 100%;
+      padding: 14px;
+      background: transparent;
+      border: 2px solid var(--crt-green);
+      color: var(--crt-green);
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .crt-button:hover {
+      background: var(--crt-green);
+      color: var(--crt-bg);
+      box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
+    }
+
+    /* Console Output */
+    .console-output {
+      margin-top: 16px;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.5);
+      border-left: 3px solid var(--crt-green);
+      font-size: 12px;
+    }
+
+    .console-error {
+      border-left-color: #ff4444;
+      color: #ff6666;
+    }
+
+    .console-success {
+      border-left-color: #00ff41;
+      color: #66ff66;
+    }
+
+    /* Back Link */
+    .back-link {
+      color: var(--crt-green-dim);
+      text-decoration: none;
+      font-size: 12px;
+      transition: color 0.2s;
+    }
+
+    .back-link:hover {
+      color: var(--crt-green);
+    }
+
+    /* Glitch Effect */
+    @keyframes glitch {
+      0%, 100% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(2px, -2px); }
+      60% { transform: translate(-2px, -2px); }
+      80% { transform: translate(2px, 2px); }
+    }
+
+    .glitch {
+      animation: glitch 0.3s ease-in-out;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--crt-bg);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--crt-green-dark);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--crt-green-dim);
     }
   </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
-  <!-- Static Video Background -->
-  <video class="page-video" muted loop playsinline aria-hidden="true" preload="auto">
-    <source src="background.mp4" type="video/mp4">
-  </video>
-  <div class="page-video-overlay" aria-hidden="true"></div>
+<body class="min-h-screen p-4 md:p-8">
+  <!-- CRT Effects -->
+  <div class="crt-overlay"></div>
+  <div class="crt-grid"></div>
 
-  <!-- Main Content -->
-  <div class="relative z-10 max-w-lg mx-auto pt-8 w-full">
-    <!-- Back to Portfolio Link -->
-    <a href="index.html#projects" class="back-link text-sm hover:underline mb-4 inline-block">&larr; Back to Portfolio</a>
+  <div class="relative z-10 max-w-7xl mx-auto crt-flicker">
+    <!-- Header -->
+    <div class="mb-6">
+      <a href="index.html#projects" class="back-link">&larr; Back to Portfolio</a>
+      <h1 class="text-2xl md:text-3xl font-bold mt-2 cursor">VALIDATOR_DEBUG.exe</h1>
+      <p class="text-sm mt-1" style="color: var(--crt-green-dark);">Real-time validation with live code inspection // v2.0.1</p>
+    </div>
 
-    <!-- Form Validator Card -->
-    <div class="project-card rounded-2xl p-6">
-      <h1 class="text-2xl font-bold text-white mb-1">Form Validator</h1>
-      <p class="muted-copy text-sm mb-6">Learning form validation for QA testing</p>
-
-      <!-- Validation Form -->
-      <form id="validator-form" class="space-y-4">
-        <!-- Name Field -->
-        <div>
-          <label for="name" class="field-label block text-sm font-medium mb-1">Full Name</label>
-          <input type="text" id="name" name="name" placeholder="Enter your name" class="field-input w-full px-4 py-2 border rounded-xl focus:outline-none">
-          <p id="name-error" class="text-red-400 text-xs mt-1 hidden"></p>
+    <!-- Split Layout -->
+    <div class="grid lg:grid-cols-2 gap-6">
+      <!-- Left: Terminal Form -->
+      <div class="terminal-window">
+        <div class="terminal-header">
+          <div class="terminal-btn close"></div>
+          <div class="terminal-btn minimize"></div>
+          <div class="terminal-btn maximize"></div>
+          <span class="terminal-title">input_terminal — bash</span>
         </div>
+        <div class="terminal-body">
+          <form id="validator-form" class="space-y-4">
+            <!-- Name Field -->
+            <div class="form-field">
+              <label class="block text-xs mb-2" style="color: var(--crt-green-dim);">
+                <span class="status-indicator status-pending" id="name-status"></span>
+                > user.name
+              </label>
+              <input type="text" id="name" class="crt-input" placeholder="Enter name (min 2 chars)..." autocomplete="off">
+              <p id="name-error" class="text-xs mt-1 hidden" style="color: #ff6666;"></p>
+            </div>
 
-        <!-- Email Field -->
-        <div>
-          <label for="email" class="field-label block text-sm font-medium mb-1">Email</label>
-          <input type="email" id="email" name="email" placeholder="your@email.com" class="field-input w-full px-4 py-2 border rounded-xl focus:outline-none">
-          <p id="email-error" class="text-red-400 text-xs mt-1 hidden"></p>
+            <!-- Email Field -->
+            <div class="form-field">
+              <label class="block text-xs mb-2" style="color: var(--crt-green-dim);">
+                <span class="status-indicator status-pending" id="email-status"></span>
+                > user.email
+              </label>
+              <input type="text" id="email" class="crt-input" placeholder="user@domain.com" autocomplete="off">
+              <p id="email-error" class="text-xs mt-1 hidden" style="color: #ff6666;"></p>
+            </div>
+
+            <!-- Phone Field -->
+            <div class="form-field">
+              <label class="block text-xs mb-2" style="color: var(--crt-green-dim);">
+                <span class="status-indicator status-pending" id="phone-status"></span>
+                > user.phone
+              </label>
+              <input type="text" id="phone" class="crt-input" placeholder="10 digits required" autocomplete="off">
+              <p id="phone-error" class="text-xs mt-1 hidden" style="color: #ff6666;"></p>
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-field">
+              <label class="block text-xs mb-2" style="color: var(--crt-green-dim);">
+                <span class="status-indicator status-pending" id="password-status"></span>
+                > user.password
+              </label>
+              <input type="password" id="password" class="crt-input" placeholder="Min 8 chars + complexity" autocomplete="off">
+              <p id="password-error" class="text-xs mt-1 hidden" style="color: #ff6666;"></p>
+
+              <!-- Password Strength -->
+              <div class="mt-2 flex gap-1">
+                <div class="flex-1 h-1 bg-black/50 rounded" id="strength-1"></div>
+                <div class="flex-1 h-1 bg-black/50 rounded" id="strength-2"></div>
+                <div class="flex-1 h-1 bg-black/50 rounded" id="strength-3"></div>
+                <div class="flex-1 h-1 bg-black/50 rounded" id="strength-4"></div>
+              </div>
+              <p class="text-xs mt-1" id="strength-text" style="color: var(--crt-green-dark);">Strength: Waiting...</p>
+            </div>
+
+            <button type="submit" class="crt-button mt-6">Execute Validation</button>
+          </form>
+
+          <!-- Console Output -->
+          <div id="console-output" class="console-output hidden"></div>
         </div>
+      </div>
 
-        <!-- Phone Field -->
-        <div>
-          <label for="phone" class="field-label block text-sm font-medium mb-1">Phone Number</label>
-          <input type="tel" id="phone" name="phone" placeholder="123-456-7890" class="field-input w-full px-4 py-2 border rounded-xl focus:outline-none">
-          <p id="phone-error" class="text-red-400 text-xs mt-1 hidden"></p>
+      <!-- Right: Live Code Preview -->
+      <div class="code-panel">
+        <div class="terminal-header">
+          <span class="terminal-title">validator.js — readonly</span>
         </div>
-
-        <!-- Password Field with Strength Meter -->
-        <div>
-          <label for="password" class="field-label block text-sm font-medium mb-1">Password</label>
-          <input type="password" id="password" name="password" placeholder="Min 8 characters" class="field-input w-full px-4 py-2 border rounded-xl focus:outline-none">
-          <p id="password-error" class="text-red-400 text-xs mt-1 hidden"></p>
-          <div class="flex gap-1 mt-2">
-            <div id="strength-1" class="h-1 flex-1 bg-white/10 rounded"></div>
-            <div id="strength-2" class="h-1 flex-1 bg-white/10 rounded"></div>
-            <div id="strength-3" class="h-1 flex-1 bg-white/10 rounded"></div>
-            <div id="strength-4" class="h-1 flex-1 bg-white/10 rounded"></div>
+        <div class="overflow-auto max-h-[500px]" id="code-container">
+          <div class="code-line" data-field="name">
+            <span class="line-number">01</span>
+            <span class="code-content"><span class="code-keyword">const</span> <span class="code-function">validateName</span> = (v) => {</span>
+          </div>
+          <div class="code-line" data-field="name">
+            <span class="line-number">02</span>
+            <span class="code-content">  <span class="code-keyword">return</span> v.<span class="code-function">trim</span>().<span class="code-function">length</span> >= <span class="code-string" id="name-check">2</span>;</span>
+          </div>
+          <div class="code-line" data-field="name">
+            <span class="line-number">03</span>
+            <span class="code-content">}; <span class="code-comment" id="name-result">// pending...</span></span>
+          </div>
+          <div class="code-line">
+            <span class="line-number">04</span>
+            <span class="code-content"></span>
+          </div>
+          <div class="code-line" data-field="email">
+            <span class="line-number">05</span>
+            <span class="code-content"><span class="code-keyword">const</span> <span class="code-function">validateEmail</span> = (v) => {</span>
+          </div>
+          <div class="code-line" data-field="email">
+            <span class="line-number">06</span>
+            <span class="code-content">  <span class="code-keyword">const</span> regex = <span class="code-string">/@.*\./</span>;</span>
+          </div>
+          <div class="code-line" data-field="email">
+            <span class="line-number">07</span>
+            <span class="code-content">  <span class="code-keyword">return</span> regex.<span class="code-function">test</span>(v); <span class="code-comment" id="email-result">// pending...</span></span>
+          </div>
+          <div class="code-line" data-field="email">
+            <span class="line-number">08</span>
+            <span class="code-content">};</span>
+          </div>
+          <div class="code-line">
+            <span class="line-number">09</span>
+            <span class="code-content"></span>
+          </div>
+          <div class="code-line" data-field="phone">
+            <span class="line-number">10</span>
+            <span class="code-content"><span class="code-keyword">const</span> <span class="code-function">validatePhone</span> = (v) => {</span>
+          </div>
+          <div class="code-line" data-field="phone">
+            <span class="line-number">11</span>
+            <span class="code-content">  v = v.<span class="code-function">replace</span>(<span class="code-string">/[-\s]/g</span>, <span class="code-string">''</span>);</span>
+          </div>
+          <div class="code-line" data-field="phone">
+            <span class="line-number">12</span>
+            <span class="code-content">  <span class="code-keyword">return</span> <span class="code-string">/^\d{10}$/</span>.<span class="code-function">test</span>(v);</span>
+          </div>
+          <div class="code-line" data-field="phone">
+            <span class="line-number">13</span>
+            <span class="code-content">}; <span class="code-comment" id="phone-result">// pending...</span></span>
+          </div>
+          <div class="code-line">
+            <span class="line-number">14</span>
+            <span class="code-content"></span>
+          </div>
+          <div class="code-line" data-field="password">
+            <span class="line-number">15</span>
+            <span class="code-content"><span class="code-keyword">const</span> <span class="code-function">validatePassword</span> = (v) => {</span>
+          </div>
+          <div class="code-line" data-field="password">
+            <span class="line-number">16</span>
+            <span class="code-content">  <span class="code-keyword">let</span> score = <span id="password-score">0</span>;</span>
+          </div>
+          <div class="code-line" data-field="password">
+            <span class="line-number">17</span>
+            <span class="code-content">  <span class="code-keyword">if</span> (v.length >= 8) score++;</span>
+          </div>
+          <div class="code-line" data-field="password">
+            <span class="line-number">18</span>
+            <span class="code-content">  <span class="code-keyword">if</span> (/[A-Z]/.<span class="code-function">test</span>(v)) score++;</span>
+          </div>
+          <div class="code-line" data-field="password">
+            <span class="line-number">19</span>
+            <span class="code-content">  <span class="code-keyword">if</span> (/[a-z]/.<span class="code-function">test</span>(v)) score++;</span>
+          </div>
+          <div class="code-line" data-field="password">
+            <span class="line-number">20</span>
+            <span class="code-content">  <span class="code-keyword">if</span> (/\d/.<span class="code-function">test</span>(v)) score++;</span>
+          </div>
+          <div class="code-line" data-field="password">
+            <span class="line-number">21</span>
+            <span class="code-content">  <span class="code-keyword">return</span> score; <span class="code-comment" id="password-result">// pending...</span></span>
+          </div>
+          <div class="code-line" data-field="password">
+            <span class="line-number">22</span>
+            <span class="code-content">};</span>
           </div>
         </div>
-
-        <button type="submit" class="submit-button w-full text-white py-2.5 rounded-xl transition-colors font-medium">Validate Form</button>
-      </form>
-
-      <!-- Success Message -->
-      <div id="success-message" class="success-panel hidden mt-4 p-4 border rounded-xl text-sm text-center">All fields passed validation!</div>
-
-      <!-- Error Summary Panel -->
-      <div id="validation-summary" class="error-panel hidden mt-4 p-4 border rounded-xl text-sm">
-        <p class="font-semibold mb-2">Validation Errors:</p>
-        <ul id="error-list" class="list-disc list-inside space-y-1"></ul>
       </div>
     </div>
   </div>
@@ -189,22 +474,38 @@
   <script>
     // DOM Elements
     const form = document.getElementById('validator-form');
+    const consoleOutput = document.getElementById('console-output');
+
     const inputs = {
       name: document.getElementById('name'),
       email: document.getElementById('email'),
       phone: document.getElementById('phone'),
       password: document.getElementById('password')
     };
+
     const errors = {
       name: document.getElementById('name-error'),
       email: document.getElementById('email-error'),
       phone: document.getElementById('phone-error'),
       password: document.getElementById('password-error')
     };
-    const successMsg = document.getElementById('success-message');
-    const errorSummary = document.getElementById('validation-summary');
-    const errorList = document.getElementById('error-list');
 
+    const statusIndicators = {
+      name: document.getElementById('name-status'),
+      email: document.getElementById('email-status'),
+      phone: document.getElementById('phone-status'),
+      password: document.getElementById('password-status')
+    };
+
+    const codeResults = {
+      name: document.getElementById('name-result'),
+      email: document.getElementById('email-result'),
+      phone: document.getElementById('phone-result'),
+      password: document.getElementById('password-result'),
+      passwordScore: document.getElementById('password-score')
+    };
+
+    // Validation Functions
     const validate = {
       name: (v) => v.trim().length >= 2,
       email: (v) => v.includes('@') && v.includes('.') && v.indexOf('@') < v.lastIndexOf('.'),
@@ -212,76 +513,178 @@
       password: (v) => v.length >= 8
     };
 
+    // Update Status Indicator
+    function updateStatus(field, isValid, isEmpty) {
+      const indicator = statusIndicators[field];
+      const input = inputs[field];
+
+      indicator.className = 'status-indicator';
+      input.classList.remove('valid', 'invalid');
+
+      if (isEmpty) {
+        indicator.classList.add('status-pending');
+      } else if (isValid) {
+        indicator.classList.add('status-valid');
+        input.classList.add('valid');
+      } else {
+        indicator.classList.add('status-invalid');
+        input.classList.add('invalid');
+      }
+    }
+
+    // Highlight Code Lines
+    function highlightCode(field) {
+      document.querySelectorAll('.code-line').forEach(line => {
+        line.classList.remove('code-active');
+      });
+      document.querySelectorAll(`.code-line[data-field="${field}"]`).forEach(line => {
+        line.classList.add('code-active');
+      });
+    }
+
+    // Update Code Preview Comments
+    function updateCodeResult(field, isValid, value) {
+      const resultEl = codeResults[field];
+      if (!resultEl) return;
+
+      if (!value) {
+        resultEl.textContent = '// pending...';
+        resultEl.style.color = '#546e7a';
+      } else if (isValid) {
+        resultEl.textContent = `// ✓ VALID ("${value.slice(0, 20)}${value.length > 20 ? '...' : ''}")`;
+        resultEl.style.color = '#4ade80';
+      } else {
+        resultEl.textContent = `// ✗ INVALID ("${value.slice(0, 20)}${value.length > 20 ? '...' : ''}")`;
+        resultEl.style.color = '#ff6b6b';
+      }
+    }
+
+    // Check Password Strength
     function checkPasswordStrength(pwd) {
       let score = 0;
-      if (pwd.length >= 8) score++;
-      if (/[A-Z]/.test(pwd)) score++;
-      if (/[a-z]/.test(pwd)) score++;
-      if (/\d/.test(pwd)) score++;
-      const bars = [1,2,3,4].map(i => document.getElementById(`strength-${i}`));
-      const colors = ['bg-white/10', 'bg-red-400', 'bg-yellow-400', 'bg-green-400', 'bg-green-500'];
-      bars.forEach((bar, i) => bar.className = `h-1 flex-1 ${colors[Math.min(score, i + 1) > i ? Math.min(score, 4) : 0]} rounded`);
-    }
+      let checks = [];
 
-    function showError(el, msg) {
-      el.textContent = msg;
-      el.classList.remove('hidden');
-    }
+      if (pwd.length >= 8) { score++; checks.push('length'); }
+      if (/[A-Z]/.test(pwd)) { score++; checks.push('uppercase'); }
+      if (/[a-z]/.test(pwd)) { score++; checks.push('lowercase'); }
+      if (/\d/.test(pwd)) { score++; checks.push('number'); }
 
-    function hideError(el) {
-      el.classList.add('hidden');
-    }
+      // Update score in code display
+      codeResults.passwordScore.textContent = score;
 
-    Object.keys(inputs).forEach(key => {
-      inputs[key].addEventListener('input', () => {
-        if (key === 'password') checkPasswordStrength(inputs[key].value);
-        const valid = validate[key](inputs[key].value);
-        inputs[key].classList.toggle('border-green-500', valid);
-        inputs[key].classList.toggle('border-red-500', !valid);
-        if (valid) hideError(errors[key]);
-      });
-    });
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      let isValid = true;
-      const msgs = [];
-
-      successMsg.classList.add('hidden');
-      errorSummary.classList.add('hidden');
-      errorList.innerHTML = '';
-
-      const checks = [
-        { key: 'name', msg: 'Name must be at least 2 characters' },
-        { key: 'email', msg: 'Please enter a valid email' },
-        { key: 'phone', msg: 'Phone must be 10 digits' },
-        { key: 'password', msg: 'Password must be at least 8 characters' }
+      // Update strength bars with CRT colors
+      const bars = [1, 2, 3, 4].map(i => document.getElementById(`strength-${i}`));
+      const colors = [
+        'bg-black/50',
+        'bg-red-900',
+        'bg-yellow-900',
+        'bg-green-800',
+        'bg-[#00ff41]'
       ];
 
-      checks.forEach(({ key, msg }) => {
-        if (!validate[key](inputs[key].value)) {
-          showError(errors[key], msg);
-          msgs.push(msg);
-          isValid = false;
+      bars.forEach((bar, i) => {
+        bar.className = `flex-1 h-1 rounded transition-all duration-300 ${i < score ? colors[Math.min(score, 4)] : colors[0]}`;
+        if (i < score) {
+          bar.style.boxShadow = `0 0 8px ${score === 4 ? '#00ff41' : score === 3 ? '#22c55e' : score === 2 ? '#eab308' : '#ef4444'}`;
         } else {
-          hideError(errors[key]);
+          bar.style.boxShadow = 'none';
         }
       });
 
-      if (isValid) {
-        successMsg.classList.remove('hidden');
-        form.reset();
-        checkPasswordStrength('');
-        Object.values(inputs).forEach(i => i.classList.remove('border-red-500', 'border-green-500'));
+      // Update strength text
+      const strengthText = document.getElementById('strength-text');
+      const strengthLabels = ['Waiting...', 'Weak', 'Fair', 'Good', 'Strong'];
+      const strengthColors = ['#008f26', '#ff4444', '#ffbd2e', '#60a5fa', '#00ff41'];
+      strengthText.textContent = `Strength: ${strengthLabels[score]}`;
+      strengthText.style.color = strengthColors[score];
+
+      // Update password code result
+      if (!pwd) {
+        codeResults.password.textContent = '// pending...';
+        codeResults.password.style.color = '#546e7a';
       } else {
-        errorSummary.classList.remove('hidden');
-        msgs.forEach(m => {
-          const li = document.createElement('li');
-          li.textContent = m;
-          errorList.appendChild(li);
-        });
+        codeResults.password.textContent = `// score: ${score}/4 [${checks.join(', ')}]`;
+        codeResults.password.style.color = score >= 3 ? '#4ade80' : score >= 2 ? '#ffbd2e' : '#ff6b6b';
+      }
+
+      return score;
+    }
+
+    // Console Output
+    function log(message, type = 'info') {
+      consoleOutput.classList.remove('hidden', 'console-error', 'console-success');
+      consoleOutput.classList.add(`console-${type}`);
+      consoleOutput.innerHTML = `<span class="font-mono">[${new Date().toLocaleTimeString()}]</span> ${message}`;
+    }
+
+    // Field Event Listeners
+    Object.keys(inputs).forEach(key => {
+      inputs[key].addEventListener('focus', () => {
+        highlightCode(key);
+      });
+
+      inputs[key].addEventListener('input', () => {
+        const value = inputs[key].value;
+        const isEmpty = !value;
+
+        if (key === 'password') {
+          checkPasswordStrength(value);
+          const score = checkPasswordStrength(value);
+          const isValid = score >= 2;
+          updateStatus(key, isValid, isEmpty);
+          updateCodeResult(key, isValid, value);
+        } else {
+          const isValid = validate[key](value);
+          updateStatus(key, isValid, isEmpty);
+          updateCodeResult(key, isValid, value);
+        }
+
+        // Hide error on input
+        errors[key].classList.add('hidden');
+      });
+    });
+
+    // Form Submit
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      let allValid = true;
+      const results = [];
+
+      Object.keys(inputs).forEach(key => {
+        const value = inputs[key].value;
+        let isValid;
+
+        if (key === 'password') {
+          const score = checkPasswordStrength(value);
+          isValid = score >= 2;
+        } else {
+          isValid = validate[key](value);
+        }
+
+        if (!value || !isValid) {
+          allValid = false;
+          results.push(`✗ ${key}: FAILED`);
+          errors[key].textContent = `Invalid ${key}`;
+          errors[key].classList.remove('hidden');
+          inputs[key].classList.add('glitch');
+          setTimeout(() => inputs[key].classList.remove('glitch'), 300);
+        } else {
+          results.push(`✓ ${key}: PASSED`);
+        }
+      });
+
+      if (allValid) {
+        log('<span class="text-[#00ff41]">VALIDATION COMPLETE:</span> All checks passed. Form ready for submission.', 'success');
+        consoleOutput.classList.add('glitch');
+        setTimeout(() => consoleOutput.classList.remove('glitch'), 300);
+      } else {
+        log('<span class="text-[#ff6b6b]">VALIDATION FAILED:</span> ' + results.filter(r => r.includes('FAILED')).join(', '), 'error');
       }
     });
+
+    // Initial highlight
+    highlightCode('name');
   </script>
 </body>
 </html>

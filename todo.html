@@ -1,27 +1,24 @@
-<!-- Task Manager - Student Project -->
+<!-- Task Manager - Kanban Board -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Task Manager - Student Project</title>
+  <title>Task Manager - Kanban Board</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    /* CSS Variables */
     :root { color-scheme: dark; }
-
-    /* Video Background */
 
     body {
       margin: 0;
       min-height: 100vh;
       color: #f8fafc;
-      background: #020202;
+      background: #0a0a0f;
       overflow-x: hidden;
+      font-family: system-ui, -apple-system, sans-serif;
     }
 
     .page-video {
-      /* Full screen video positioning */
       position: fixed;
       top: 50%;
       left: 50%;
@@ -30,7 +27,7 @@
       transform: translate(-50%, -50%);
       z-index: -2;
       pointer-events: none;
-      opacity: 0.8;
+      opacity: 0.6;
       object-fit: cover;
     }
 
@@ -40,185 +37,452 @@
       z-index: -1;
       pointer-events: none;
       background:
-        radial-gradient(circle at 20% 20%, rgba(255, 90, 31, 0.15), transparent 25%),
-        radial-gradient(circle at 80% 80%, rgba(37, 99, 235, 0.12), transparent 30%),
-        linear-gradient(180deg, rgba(2, 2, 2, 0.3) 0%, rgba(9, 22, 61, 0.2) 60%, rgba(10, 31, 97, 0.25) 100%);
-      mix-blend-mode: multiply;
+        radial-gradient(circle at 20% 20%, rgba(255, 90, 31, 0.12), transparent 25%),
+        radial-gradient(circle at 80% 80%, rgba(37, 99, 235, 0.1), transparent 30%),
+        linear-gradient(180deg, rgba(10, 10, 15, 0.4) 0%, rgba(10, 10, 15, 0.6) 100%);
     }
 
-    /* Main Card Styling - Red/Violet/Blue Gradient */
-    .project-card {
+    /* Kanban Board Container */
+    .kanban-board {
+      display: flex;
+      gap: 1.5rem;
+      overflow-x: auto;
+      padding-bottom: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      .kanban-board {
+        flex-direction: column;
+        gap: 1rem;
+      }
+    }
+
+    /* Kanban Column */
+    .kanban-column {
+      min-width: 280px;
+      flex: 1;
+      background: rgba(20, 20, 31, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 1rem;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+
+    @media (max-width: 768px) {
+      .kanban-column {
+        min-width: auto;
+        max-height: none;
+      }
+    }
+
+    .column-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin-bottom: 0.5rem;
+    }
+
+    .column-title {
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .column-count {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+    }
+
+    /* Sticky Note Task Cards */
+    .sticky-note {
       position: relative;
-      background: rgba(7, 10, 24, 0.72);
-      border: 1px solid rgba(239, 68, 68, 0.2);
-      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
-      backdrop-filter: blur(14px);
+      padding: 1rem;
+      border-radius: 0.5rem;
+      cursor: grab;
+      transition: all 0.2s ease;
+      box-shadow: 
+        2px 3px 8px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+      transform: rotate(var(--rotation, 0deg));
     }
 
-    .project-card::before {
+    .sticky-note:hover {
+      transform: rotate(0deg) translateY(-3px) scale(1.02);
+      box-shadow: 
+        4px 6px 15px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+      z-index: 10;
+    }
+
+    .sticky-note.dragging {
+      opacity: 0.5;
+      cursor: grabbing;
+      transform: rotate(5deg) scale(1.05);
+    }
+
+    /* Sticky Note Colors - Darkened for dark theme */
+    .note-yellow { background: linear-gradient(135deg, #d4a574 0%, #c99868 100%); color: #2d1f14; }
+    .note-blue { background: linear-gradient(135deg, #7a9cc6 0%, #6b8cb5 100%); color: #1a2634; }
+    .note-green { background: linear-gradient(135deg, #8fb88f 0%, #7da67d 100%); color: #1a2e1a; }
+    .note-orange { background: linear-gradient(135deg, #d4886a 0%, #c47a5c 100%); color: #2d1a14; }
+    .note-purple { background: linear-gradient(135deg, #a67bb5 0%, #966ba5 100%); color: #261a2e; }
+    .note-pink { background: linear-gradient(135deg, #d48f9f 0%, #c47f8f 100%); color: #2d1a1f; }
+
+    /* Note tape effect */
+    .sticky-note::before {
       content: '';
       position: absolute;
-      inset: -1px;
-      border-radius: inherit;
-      padding: 1px;
-      background: linear-gradient(135deg, rgba(239, 68, 68, 0.4), rgba(139, 92, 246, 0.3), rgba(37, 99, 235, 0.4));
-      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      -webkit-mask-composite: xor;
-      mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-      mask-composite: exclude;
-      pointer-events: none;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 16px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 2px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     }
 
-    /* Task Input Field */
-    .task-input {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 255, 255, 0.08);
-      color: #f8fafc;
+    .note-text {
+      font-weight: 500;
+      line-height: 1.4;
+      word-wrap: break-word;
     }
 
-    .task-input::placeholder { color: rgba(248, 250, 252, 0.45); }
-
-    .task-input:focus {
-      border-color: rgba(139, 92, 246, 0.65) !important;
-      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.16);
+    .note-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
     }
 
-    /* Add Button - Red/Violet/Blue Gradient */
-    .task-button {
-      background: linear-gradient(135deg, #ef4444 0%, #8b5cf6 50%, #3b82f6 100%);
-      box-shadow: 0 10px 30px rgba(139, 92, 246, 0.28);
+    .note-btn {
+      font-size: 0.7rem;
+      padding: 0.25rem 0.5rem;
+      background: rgba(0, 0, 0, 0.15);
+      border: none;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      transition: background 0.2s;
     }
 
-    .task-button:hover {
-      background: linear-gradient(135deg, #f87171 0%, #a78bfa 50%, #60a5fa 100%);
-      transform: translateY(-1px);
+    .note-btn:hover {
+      background: rgba(0, 0, 0, 0.25);
     }
 
-    /* Individual Task Items */
-    .task-item {
-      animation: fadeIn 0.2s ease;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      color: #e2e8f0;
-    }
+    /* Column-specific colors */
+    .column-todo .column-title { color: #fbbf24; }
+    .column-progress .column-title { color: #60a5fa; }
+    .column-done .column-title { color: #4ade80; }
 
-    .task-item.completed span {
-      text-decoration: line-through;
-      color: #64748b;
+    .back-link {
+      color: #a78bfa;
+      transition: color 0.2s;
     }
-
-    .back-link { color: #a78bfa; }
     .back-link:hover { color: #c4b5fd; }
 
-    .muted-copy { color: rgba(226, 232, 240, 0.6); }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-10px); }
-      to { opacity: 1; transform: translateY(0); }
+    /* Add Task Form */
+    .add-task-form {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      .page-video, .page-video-overlay { display: none !important; }
+    .task-input {
+      flex: 1;
+      min-width: 200px;
+      padding: 0.75rem 1rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0.75rem;
+      color: #f8fafc;
+      outline: none;
+    }
+
+    .task-input:focus {
+      border-color: rgba(139, 92, 246, 0.5);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    }
+
+    .add-btn {
+      padding: 0.75rem 1.5rem;
+      background: linear-gradient(135deg, #ef4444, #8b5cf6, #3b82f6);
+      border: none;
+      border-radius: 0.75rem;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .add-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+    }
+
+    /* Color picker */
+    .color-picker {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .color-option {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .color-option.selected {
+      border-color: white;
+      box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.5);
+    }
+
+    .color-yellow { background: #d4a574; }
+    .color-blue { background: #7a9cc6; }
+    .color-green { background: #8fb88f; }
+    .color-orange { background: #d4886a; }
+    .color-purple { background: #a67bb5; }
+    .color-pink { background: #d48f9f; }
+
+    @keyframes noteAppear {
+      from {
+        opacity: 0;
+        transform: scale(0.8) rotate(-5deg);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) rotate(var(--rotation, 0deg));
+      }
+    }
+
+    .sticky-note {
+      animation: noteAppear 0.3s ease-out;
     }
   </style>
 </head>
-<body class="min-h-screen p-4">
-  <!-- Static Video Background (paused) -->
+<body class="min-h-screen p-4 md:p-8">
   <video class="page-video" muted loop playsinline aria-hidden="true" preload="auto">
     <source src="background.mp4" type="video/mp4">
   </video>
   <div class="page-video-overlay" aria-hidden="true"></div>
 
-  <!-- Main Content -->
-  <div class="relative z-10 max-w-lg mx-auto pt-8 w-full">
-    <!-- Back Link -->
-    <a href="index.html#projects" class="back-link text-sm hover:underline mb-4 inline-block">&larr; Back to Portfolio</a>
-
-    <!-- Task Manager Card -->
-    <div class="project-card rounded-2xl p-6">
-      <h1 class="text-2xl font-bold text-white mb-1">Task Manager</h1>
-      <p class="muted-copy text-sm mb-6">My first JavaScript project</p>
-
-      <!-- Add Task Form -->
-      <div class="flex gap-2 mb-6">
-        <input type="text" id="taskInput" placeholder="Add a new task..." class="task-input flex-1 px-4 py-2 border rounded-xl focus:outline-none">
-        <button id="addBtn" class="task-button text-white px-4 py-2 rounded-xl transition-colors">Add</button>
+  <div class="relative z-10 max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+      <div>
+        <a href="index.html#projects" class="back-link text-sm mb-2 inline-block">&larr; Back to Portfolio</a>
+        <h1 class="text-3xl md:text-4xl font-bold text-white">Task Board</h1>
+        <p class="text-white/50 text-sm mt-1">Drag notes between columns • Click tape to delete</p>
       </div>
 
-      <!-- Task List -->
-      <ul id="taskList" class="space-y-2"></ul>
+      <!-- Add Task Form -->
+      <div class="add-task-form">
+        <input type="text" id="taskInput" placeholder="What needs to be done?" class="task-input">
+        <div class="color-picker">
+          <div class="color-option color-yellow selected" data-color="yellow"></div>
+          <div class="color-option color-blue" data-color="blue"></div>
+          <div class="color-option color-green" data-color="green"></div>
+          <div class="color-option color-orange" data-color="orange"></div>
+          <div class="color-option color-purple" data-color="purple"></div>
+          <div class="color-option color-pink" data-color="pink"></div>
+        </div>
+        <button id="addBtn" class="add-btn">Add Note</button>
+      </div>
+    </div>
 
-      <!-- Empty State Message -->
-      <p id="emptyState" class="text-center muted-copy py-8">No tasks yet. Add one above!</p>
+    <!-- Kanban Board -->
+    <div class="kanban-board">
+      <!-- To Do Column -->
+      <div class="kanban-column column-todo" data-status="todo">
+        <div class="column-header">
+          <span class="column-title">To Do</span>
+          <span class="column-count" id="count-todo">0</span>
+        </div>
+        <div class="column-content" id="todo-list"></div>
+      </div>
 
-      <!-- Footer Stats -->
-      <div class="border-t border-white/10 mt-6 pt-4 flex justify-between text-sm muted-copy">
-        <span id="totalTasks">0 tasks</span>
-        <button id="clearBtn" class="text-red-400 hover:text-red-300 hover:underline hidden">Clear all</button>
+      <!-- In Progress Column -->
+      <div class="kanban-column column-progress" data-status="progress">
+        <div class="column-header">
+          <span class="column-title">In Progress</span>
+          <span class="column-count" id="count-progress">0</span>
+        </div>
+        <div class="column-content" id="progress-list"></div>
+      </div>
+
+      <!-- Done Column -->
+      <div class="kanban-column column-done" data-status="done">
+        <div class="column-header">
+          <span class="column-title">Done</span>
+          <span class="column-count" id="count-done">0</span>
+        </div>
+        <div class="column-content" id="done-list"></div>
       </div>
     </div>
   </div>
 
-  <!-- Task Manager Logic -->
   <script>
+    // State
+    let tasks = JSON.parse(localStorage.getItem('kanban-tasks')) || [
+      { id: 1, text: 'Learn JavaScript basics', color: 'yellow', status: 'done', rotation: -2 },
+      { id: 2, text: 'Build portfolio website', color: 'blue', status: 'progress', rotation: 1 },
+      { id: 3, text: 'Practice DOM manipulation', color: 'green', status: 'todo', rotation: -1 }
+    ];
+
+    let selectedColor = 'yellow';
+    let draggedTask = null;
+
     // DOM Elements
     const taskInput = document.getElementById('taskInput');
     const addBtn = document.getElementById('addBtn');
-    const taskList = document.getElementById('taskList');
-    const emptyState = document.getElementById('emptyState');
-    const totalTasks = document.getElementById('totalTasks');
-    const clearBtn = document.getElementById('clearBtn');
+    const colorOptions = document.querySelectorAll('.color-option');
 
-    let tasks = [];
+    // Color picker
+    colorOptions.forEach(opt => {
+      opt.addEventListener('click', () => {
+        colorOptions.forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+        selectedColor = opt.dataset.color;
+      });
+    });
 
+    // Add task
     function addTask() {
       const text = taskInput.value.trim();
       if (!text) return;
-      tasks.push({ id: Date.now(), text, completed: false });
+
+      const rotation = (Math.random() - 0.5) * 4; // Random rotation between -2 and 2 degrees
+
+      tasks.push({
+        id: Date.now(),
+        text,
+        color: selectedColor,
+        status: 'todo',
+        rotation
+      });
+
       taskInput.value = '';
-      render();
+      saveAndRender();
     }
 
-    function toggleTask(id) {
-      const task = tasks.find(t => t.id === id);
-      if (task) { task.completed = !task.completed; render(); }
-    }
-
+    // Delete task
     function deleteTask(id) {
       tasks = tasks.filter(t => t.id !== id);
+      saveAndRender();
+    }
+
+    // Move task
+    function moveTask(id, newStatus) {
+      const task = tasks.find(t => t.id === id);
+      if (task) {
+        task.status = newStatus;
+        saveAndRender();
+      }
+    }
+
+    // Save to localStorage
+    function saveAndRender() {
+      localStorage.setItem('kanban-tasks', JSON.stringify(tasks));
       render();
     }
 
-    function clearAll() { tasks = []; render(); }
-
+    // Render
     function render() {
-      taskList.innerHTML = '';
+      const todoList = document.getElementById('todo-list');
+      const progressList = document.getElementById('progress-list');
+      const doneList = document.getElementById('done-list');
 
-      if (tasks.length === 0) {
-        emptyState.style.display = 'block';
-        clearBtn.classList.add('hidden');
-      } else {
-        emptyState.style.display = 'none';
-        clearBtn.classList.remove('hidden');
+      todoList.innerHTML = '';
+      progressList.innerHTML = '';
+      doneList.innerHTML = '';
 
-        tasks.forEach(task => {
-          const li = document.createElement('li');
-          li.className = `task-item flex items-center gap-3 p-3 rounded-xl ${task.completed ? 'completed' : ''}`;
-          li.innerHTML = `
-            <input type="checkbox" ${task.completed ? 'checked' : ''} onchange="toggleTask(${task.id})" class="w-5 h-5 accent-orange-500 cursor-pointer">
-            <span class="flex-1">${task.text}</span>
-            <button onclick="deleteTask(${task.id})" class="text-red-300 hover:text-red-200 text-sm">Delete</button>
-          `;
-          taskList.appendChild(li);
+      const counts = { todo: 0, progress: 0, done: 0 };
+
+      tasks.forEach(task => {
+        counts[task.status]++;
+
+        const note = document.createElement('div');
+        note.className = `sticky-note note-${task.color}`;
+        note.style.setProperty('--rotation', `${task.rotation}deg`);
+        note.draggable = true;
+        note.dataset.id = task.id;
+
+        note.innerHTML = `
+          <div class="note-text">${escapeHtml(task.text)}</div>
+          <div class="note-actions">
+            <button class="note-btn" onclick="deleteTask(${task.id})">Delete</button>
+            ${task.status !== 'todo' ? `<button class="note-btn" onclick="moveTask(${task.id}, 'todo')">← Todo</button>` : ''}
+            ${task.status !== 'progress' ? `<button class="note-btn" onclick="moveTask(${task.id}, 'progress')">${task.status === 'todo' ? 'Start →' : '← Progress'}</button>` : ''}
+            ${task.status !== 'done' ? `<button class="note-btn" onclick="moveTask(${task.id}, 'done')">${task.status === 'progress' ? 'Done →' : '← Done'}</button>` : ''}
+          </div>
+        `;
+
+        // Drag events
+        note.addEventListener('dragstart', (e) => {
+          draggedTask = task;
+          note.classList.add('dragging');
         });
-      }
 
-      totalTasks.textContent = `${tasks.length} task${tasks.length !== 1 ? 's' : ''}`;
+        note.addEventListener('dragend', () => {
+          note.classList.remove('dragging');
+          draggedTask = null;
+        });
+
+        if (task.status === 'todo') todoList.appendChild(note);
+        else if (task.status === 'progress') progressList.appendChild(note);
+        else doneList.appendChild(note);
+      });
+
+      document.getElementById('count-todo').textContent = counts.todo;
+      document.getElementById('count-progress').textContent = counts.progress;
+      document.getElementById('count-done').textContent = counts.done;
     }
 
+    // Escape HTML
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Column drop zones
+    document.querySelectorAll('.kanban-column').forEach(column => {
+      column.addEventListener('dragover', (e) => {
+        e.preventDefault();
+      });
+
+      column.addEventListener('drop', (e) => {
+        e.preventDefault();
+        if (draggedTask) {
+          const newStatus = column.dataset.status;
+          if (draggedTask.status !== newStatus) {
+            moveTask(draggedTask.id, newStatus);
+          }
+        }
+      });
+    });
+
+    // Event listeners
     addBtn.addEventListener('click', addTask);
-    taskInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addTask(); });
-    clearBtn.addEventListener('click', clearAll);
+    taskInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') addTask();
+    });
+
+    // Initial render
+    render();
   </script>
 </body>
 </html>

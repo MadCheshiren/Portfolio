@@ -1,6 +1,21 @@
-/* Main JavaScript functionality for portfolio site */
+/* =========================================================
+   PORTFOLIO JAVASCRIPT - Main Functionality
+   =========================================================
+   Sections:
+   1. Entrance Animation (Tegaki handwriting)
+   2. Scroll Animations (reveal on scroll)
+   3. Navigation Effects (hide on scroll, active state)
+   4. Contact Form (terminal aesthetic)
+   5. Project Filtering (category buttons)
+   6. 3D Tilt Effect (project cards)
+   7. Terminal Module (command line interface)
+   8. Visual Novel Game (interactive story)
+   ========================================================= */
 
-// Entrance animation with handwriting effect
+// ---------------------------------------------------------
+// 1. ENTRANCE ANIMATION (Tegaki Handwriting)
+// ---------------------------------------------------------
+// Plays handwriting animation on first visit, syncs with video
 const EntranceAnimation = {
   overlay: null,
   video: null,
@@ -132,7 +147,11 @@ const EntranceAnimation = {
   }
 };
 
-// Throttle scroll events for performance
+// ---------------------------------------------------------
+// 2. SCROLL ANIMATIONS (Reveal on Scroll)
+// ---------------------------------------------------------
+
+// Throttle helper to limit scroll event frequency
 function throttle(func, limit) {
   let inThrottle;
   return function(...args) {
@@ -144,10 +163,7 @@ function throttle(func, limit) {
   };
 }
 
-// Force dark mode
-document.documentElement.classList.add('dark');
-
-// Scroll reveal animation using IntersectionObserver
+// Reveal elements when they enter viewport
 function initScrollAnimations() {
   const revealElements = document.querySelectorAll('.reveal');
   
@@ -169,6 +185,9 @@ function initScrollAnimations() {
 
 // Scroll-to-top button visibility
 function initScrollToTop() {
+  // ---------------------------------------------------------
+  // 3. NAVIGATION EFFECTS
+  // ---------------------------------------------------------
   const btn = document.getElementById('scroll-top');
   if (!btn) return;
   
@@ -183,7 +202,7 @@ function initScrollToTop() {
   btn.style.pointerEvents = 'none';
 }
 
-// Navbar shadow on scroll
+// Hide nav when scrolling down, show when scrolling up
 function initNavbarEffects() {
   const navbar = document.getElementById('navbar');
   if (!navbar) return;
@@ -192,7 +211,7 @@ function initNavbarEffects() {
   }, 100));
 }
 
-// Highlight nav link based on current section
+// Update active nav link based on current section
 function initActiveNavLinks() {
   const sections = document.querySelectorAll('section');
   const links = document.querySelectorAll('.nav-link-item');
@@ -212,7 +231,11 @@ function initActiveNavLinks() {
   }, 100));
 }
 
-// Contact form submission to Formspree
+// ---------------------------------------------------------
+// 4. CONTACT FORM (Formspree Integration)
+// ---------------------------------------------------------
+
+// Submit contact form to Formspree with status feedback
 function initContactForm() {
   const form = document.getElementById('contact-form');
   const status = document.getElementById('form-status');
@@ -251,7 +274,11 @@ function initContactForm() {
   });
 }
 
-// Filter projects by category
+// ---------------------------------------------------------
+// 5. PROJECT FILTERING
+// ---------------------------------------------------------
+
+// Show/hide projects based on category filter buttons
 function initProjectFiltering() {
   const btns = document.querySelectorAll('.filter-btn');
   const cards = document.querySelectorAll('.project-card');
@@ -275,7 +302,11 @@ function initProjectFiltering() {
   });
 }
 
-// 3D hover tilt effect for project cards
+// ---------------------------------------------------------
+// 6. 3D TILT EFFECT (GSAP)
+// ---------------------------------------------------------
+
+// Mouse-following 3D tilt animation for project cards
 function init3DTiltEffect() {
   if (!window.matchMedia('(hover: hover)').matches) return;
   
@@ -296,7 +327,11 @@ function init3DTiltEffect() {
   });
 }
 
-// Interactive terminal modal with commands
+// ---------------------------------------------------------
+// 7. TERMINAL MODULE
+// ---------------------------------------------------------
+// Floating command-line interface with help/about/skills commands
+
 function initTerminal() {
   const modal = document.getElementById('terminal-modal');
   const toggle = document.getElementById('terminal-toggle');
@@ -410,17 +445,26 @@ function initTerminal() {
   }
 }
 
-// Visual novel game modal
+// === Visual Novel Game ===
+// Simple interactive story showcasing basic JavaScript concepts:
+// - State management (story data, current scene)
+// - DOM manipulation (updating elements dynamically)
+// - Event handling (clicks, keyboard)
+// - Async/await (loading external data)
+
 function initVisualNovel() {
+  // Get DOM elements
   const modal = document.getElementById('vn-modal');
   const openBtn = document.getElementById('open-vn');
   const closeBtn = document.getElementById('close-vn');
   if (!modal || !openBtn) return;
-  
-  let lastFocus = null;
-  let story = null;
 
-  // Story data embedded for local file access
+  // Track state
+  let lastFocus = null;  // Store focus before opening modal (for accessibility)
+  let story = null;      // Will hold story data
+
+  // Hardcoded story data (fallback if fetch fails)
+  // Each scene has: id, speaker, text, emoji, and array of choices
   const storyData = [
     { id: 1, speaker: 'Narrator', text: 'It is 7:00 AM. Your alarm goes off. You have a big deployment due today.', emoji: '⏰', choices: [{ text: '☕ Drink Coffee first', next: 2 }, { text: '💻 Jump straight into code', next: 3 }] },
     { id: 2, speaker: 'You', text: 'The coffee is hot. You feel energized and ready to tackle any bug.', emoji: '☕', choices: [{ text: 'Start coding...', next: 3 }] },
@@ -431,9 +475,9 @@ function initVisualNovel() {
     { id: 7, speaker: 'Narrator', text: 'You found a critical bug in testing! You saved the company millions.', emoji: '🛡️', choices: [{ text: 'Restart Story', next: 1 }] }
   ];
 
+  // Try loading story from external JSON, fallback to inline data
   async function loadStory() {
-    if (story) return story;
-    // Try fetch first (works on HTTP servers), fallback to inline data (works locally)
+    if (story) return story;  // Already loaded
     try {
       const response = await fetch('story.json');
       if (response.ok) {
@@ -441,12 +485,13 @@ function initVisualNovel() {
         return story;
       }
     } catch {
-      // Fetch failed (likely file:// protocol), use inline data
+      // Fetch failed (file:// protocol or missing file) - use inline data
     }
     story = storyData;
     return story;
   }
 
+  // Open modal and start at scene 1
   async function open() {
     lastFocus = document.activeElement;
     modal.classList.remove('hidden');
@@ -455,16 +500,19 @@ function initVisualNovel() {
     loadScene(1);
   }
 
+  // Close modal and restore focus
   function close() {
     modal.classList.add('hidden');
     if (lastFocus) lastFocus.focus();
   }
 
+  // Event listeners for opening/closing
   openBtn.addEventListener('click', open);
   closeBtn?.addEventListener('click', close);
-  modal.addEventListener('click', (e) => e.target === modal && close());
+  modal.addEventListener('click', (e) => e.target === modal && close());  // Click backdrop to close
   document.addEventListener('keydown', (e) => e.key === 'Escape' && !modal.classList.contains('hidden') && close());
 
+  // Get scene elements
   const sceneEl = document.getElementById('vn-scene');
   const speakerEl = document.getElementById('vn-speaker');
   const textEl = document.getElementById('vn-text');
@@ -473,11 +521,13 @@ function initVisualNovel() {
 
   if (!sceneEl || !speakerEl || !textEl || !choicesEl || !emojiEl) return;
 
+  // Load and display a scene by ID
   function loadScene(id) {
     if (!story) return;
-    const s = story.find(x => x.id === id);
+    const s = story.find(x => x.id === id);  // Find scene in story array
     if (!s) return;
 
+    // Fade out, update content, fade in
     sceneEl.style.opacity = '0';
     setTimeout(() => {
       emojiEl.textContent = s.emoji || '👨‍💻';
@@ -486,18 +536,24 @@ function initVisualNovel() {
       sceneEl.style.opacity = '1';
     }, 200);
 
+    // Create choice buttons
     choicesEl.innerHTML = '';
     s.choices?.forEach(c => {
       const btn = document.createElement('button');
       btn.className = 'vn-choice-btn';
       btn.textContent = c.text;
-      btn.onclick = () => loadScene(c.next);
+      btn.onclick = () => loadScene(c.next);  // Click loads next scene
       choicesEl.appendChild(btn);
     });
   }
 }
+// === End Visual Novel Game ===
 
-// Initialize all features when DOM is ready
+// ---------------------------------------------------------
+// INITIALIZATION
+// ---------------------------------------------------------
+// Start all modules when page loads
+
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('year').textContent = new Date().getFullYear();
   EntranceAnimation.init();
