@@ -110,9 +110,11 @@
     <!-- ========== HERO SECTION ========== -->
     <!-- Full-screen hero with background video and reveal animation -->
     <section id="home" class="min-h-[85vh] flex items-center justify-center px-4 relative overflow-hidden">
-      <video id="hero-video" class="hero-video" preload="auto" muted loop playsinline aria-hidden="true" data-splash-time="1.2">
+      <video id="hero-video" class="hero-video" preload="auto" muted loop playsinline aria-hidden="true" data-splash-time="1.2" fetchpriority="high">
         <source src="assets/images/background.mp4" type="video/mp4">
       </video>
+      <!-- Static fallback - shows immediately while video loads -->
+      <div class="hero-video-fallback" aria-hidden="true"></div>
       <div class="hero-video-overlay" aria-hidden="true"></div>
       <div id="hero-reveal" class="hero-reveal">
         <div class="max-w-4xl mx-auto text-center space-y-6 relative z-10">
