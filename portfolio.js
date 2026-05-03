@@ -513,37 +513,80 @@ function initVisualNovel() {
   modal.addEventListener('click', (e) => e.target === modal && close());  // Click backdrop to close
   document.addEventListener('keydown', (e) => e.key === 'Escape' && !modal.classList.contains('hidden') && close());
 
-  // Get scene elements
+  // Get scene elements - BOLD VN
   const sceneEl = document.getElementById('vn-scene');
   const speakerEl = document.getElementById('vn-speaker');
+  const speakerAvatar = document.getElementById('vn-speaker-avatar');
   const textEl = document.getElementById('vn-text');
   const choicesEl = document.getElementById('vn-choices');
   const emojiEl = document.getElementById('vn-emoji');
+  const sceneNumEl = document.getElementById('vn-scene-num');
+  const progressEl = document.getElementById('vn-progress');
 
   if (!sceneEl || !speakerEl || !textEl || !choicesEl || !emojiEl) return;
+
+  // Speaker avatar mapping
+  const speakerEmojis = {
+    'Narrator': '🎭',
+    'You': '😎',
+    'System': '⚙️'
+  };
+
+  // Typewriter effect
+  function typeText(element, text, speed = 30) {
+    element.innerHTML = '<span class="typing-cursor"></span>';
+    let i = 0;
+    const span = document.createElement('span');
+    element.insertBefore(span, element.firstChild);
+
+    function type() {
+      if (i < text.length) {
+        span.textContent += text.charAt(i);
+        i++;
+        setTimeout(type, speed);
+      }
+    }
+    type();
+  }
 
   // Load and display a scene by ID
   function loadScene(id) {
     if (!story) return;
-    const s = story.find(x => x.id === id);  // Find scene in story array
+    const s = story.find(x => x.id === id);
     if (!s) return;
 
-    // Fade out, update content, fade in
+    // Update progress bar and scene counter
+    const progress = ((s.id - 1) / (story.length - 1)) * 100;
+    if (progressEl) progressEl.style.width = `${progress}%`;
+    if (sceneNumEl) sceneNumEl.textContent = s.id;
+
+    // Scene transition with pulse effect
+    sceneEl.classList.add('transitioning');
     sceneEl.style.opacity = '0';
+
     setTimeout(() => {
       emojiEl.textContent = s.emoji || '👨‍💻';
       speakerEl.textContent = s.speaker || 'Narrator';
-      textEl.textContent = s.text;
+
+      // Update speaker avatar
+      if (speakerAvatar) {
+        speakerAvatar.textContent = speakerEmojis[s.speaker] || '🎭';
+      }
+
+      // Typewriter effect for text
+      typeText(textEl, s.text);
+
       sceneEl.style.opacity = '1';
+      sceneEl.classList.remove('transitioning');
     }, 200);
 
-    // Create choice buttons
+    // Create bold choice buttons
     choicesEl.innerHTML = '';
     s.choices?.forEach(c => {
       const btn = document.createElement('button');
       btn.className = 'vn-choice-btn';
-      btn.textContent = c.text;
-      btn.onclick = () => loadScene(c.next);  // Click loads next scene
+      btn.innerHTML = `<span class="mr-2">▶</span> ${c.text}`;
+      btn.onclick = () => loadScene(c.next);
       choicesEl.appendChild(btn);
     });
   }
