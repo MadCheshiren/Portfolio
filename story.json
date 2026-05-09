@@ -1,9 +1,98 @@
 [
-  { "id": 1, "speaker": "Narrator", "text": "It is 7:00 AM. Your alarm goes off. You have a big deployment due today.", "emoji": "⏰", "choices": [{ "text": "☕ Drink Coffee first", "next": 2 }, { "text": "💻 Jump straight into code", "next": 3 }] },
-  { "id": 2, "speaker": "You", "text": "The coffee is hot. You feel energized and ready to tackle any bug.", "emoji": "☕", "choices": [{ "text": "Start coding...", "next": 3 }] },
-  { "id": 3, "speaker": "System", "text": "ERROR: npm install failed. 404 Not Found.", "emoji": "💀", "choices": [{ "text": "Delete node_modules and retry", "next": 4 }, { "text": "Panic and cry", "next": 5 }] },
-  { "id": 4, "speaker": "You", "text": "That actually worked. The packages are installing successfully.", "emoji": "📦", "choices": [{ "text": "Push to production", "next": 6 }, { "text": "Write tests first", "next": 7 }] },
-  { "id": 5, "speaker": "Narrator", "text": "You take a deep breath. Remember: It's just code.", "emoji": "😢", "choices": [{ "text": "Try deleting node_modules", "next": 4 }] },
-  { "id": 6, "speaker": "Narrator", "text": "Yolo! You pushed it. The site is... actually working! You are a hero.", "emoji": "🚀", "choices": [{ "text": "Restart Story", "next": 1 }] },
-  { "id": 7, "speaker": "Narrator", "text": "You found a critical bug in testing! You saved the company millions.", "emoji": "🛡️", "choices": [{ "text": "Restart Story", "next": 1 }] }
+  {
+    "id": 1,
+    "speaker": "Narrator",
+    "mood": "rain",
+    "text": "It's early morning. Rain taps against your window, steady and soft. You get up to make coffee and notice something outside: a tiny orange kitten, huddled under the eaves, fur matted from the rain.",
+    "choices": [
+      {
+        "text": "Go outside to check on it",
+        "next": 2
+      },
+      {
+        "text": "Watch from the window",
+        "next": 3
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "speaker": "Narrator",
+    "mood": "rain",
+    "text": "You step outside with an umbrella. The kitten flinches at first, then looks up at you with round, golden eyes. It's shivering. It can't be more than a few weeks old.",
+    "choices": [
+      {
+        "text": "Bring it inside",
+        "next": 4
+      },
+      {
+        "text": "Offer some food first",
+        "next": 5
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "speaker": "You",
+    "mood": "rain",
+    "text": "You watch through the glass. The kitten tries to shake off the rain, sneezes twice, then lets out a meow so small you almost miss it. Something tugs at your chest.",
+    "choices": [
+      {
+        "text": "Go outside",
+        "next": 2
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "speaker": "Narrator",
+    "mood": "warm",
+    "text": "You carry the kitten inside and wrap it in a warm towel. For a moment it goes still. Then you feel it: a tiny rumble against your hands. It's purring.",
+    "choices": [
+      {
+        "text": "Try to find the owner",
+        "next": 6
+      },
+      {
+        "text": "Give it a name",
+        "next": 7
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "speaker": "Narrator",
+    "mood": "rain",
+    "text": "You set a small bowl of warm milk by the door. The kitten sniffs it once, twice, then drinks eagerly. When the bowl is empty, it sits and looks up at you, as if to say: what now?",
+    "choices": [
+      {
+        "text": "Bring it inside",
+        "next": 4
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "speaker": "Neighbor",
+    "mood": "daylight",
+    "text": "You ask around the neighborhood all afternoon. Nobody recognizes it. An old neighbor on the corner smiles. 'No collar, no chip. Looks like that little one chose you.'",
+    "choices": [
+      {
+        "text": "I guess it did...",
+        "next": 7
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "speaker": "Narrator",
+    "mood": "golden",
+    "text": "Evening. The rain has stopped. You sit on the floor while the kitten sleeps curled in your lap, paws twitching in a dream. A ribbon of golden light slips through the window. Some mornings change everything.",
+    "choices": [
+      {
+        "text": "Start Over",
+        "next": 1
+      }
+    ]
+  }
 ]
