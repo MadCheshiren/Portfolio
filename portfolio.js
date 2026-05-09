@@ -392,17 +392,18 @@ function initTerminal() {
     about: { color: 'text-blue-400', title: '[About Me]', lines: ['IT Student at STI College Naga. Learning web development and building projects to grow my skills.'] },
     skills: {
       color: 'text-purple-400', title: '[Technical Skills]', lines: [
-        'Frontend: HTML5, CSS3, JavaScript (ES6+), Tailwind CSS',
-        'Tools: Git, VS Code, Chrome DevTools',
-        'Design: UI/UX Design, Accessibility (a11y), Responsive Design'
+        'Languages: JavaScript (ES6+), Python, Java, SQL',
+        'Frontend: React, HTML5, CSS3',
+        'Backend: Node.js',
+        'Tools & Design: Git, GitHub, VS Code, Figma'
       ]
     },
     projects: {
       color: 'text-blue-400', title: '[Featured Projects]', lines: [
         '• Task Manager - To-do list with CRUD operations',
-        '• Dev Life Visual Novel - Interactive text-based game',
+        '• The Stray Cat - Interactive text-based visual novel',
         '• Form Validator - Client-side validation with real-time feedback',
-        '• Portfolio Website - Responsive site with video background'
+        '• PayDaily POS - Web-based POS and Financial Management System built with Node.js & SQLite'
       ]
     },
     contact: {
