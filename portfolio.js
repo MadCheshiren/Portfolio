@@ -400,10 +400,10 @@ function initTerminal() {
     },
     projects: {
       color: 'text-blue-400', title: '[Featured Projects]', lines: [
-        '• Task Manager - To-do list with CRUD operations',
-        '• The Stray Cat - Interactive text-based visual novel',
-        '• Form Validator - Client-side validation with real-time feedback',
-        '• PayDaily POS - Web-based POS and Financial Management System built with Node.js & SQLite'
+        '- Task Manager - To-do list with CRUD operations',
+        '- The Stray Cat - Interactive text-based visual novel',
+        '- Form Validator - Client-side validation with real-time feedback',
+        '- PayDaily POS - Web-based POS and Financial Management System built with Node.js & SQLite'
       ]
     },
     contact: {
@@ -526,9 +526,9 @@ function initVisualNovel() {
 
   // Speaker avatar mapping
   const speakerEmojis = {
-    'Narrator': '🎭',
-    'You': '�',
-    'Neighbor': '👵'
+    'Narrator': 'N',
+    'You': 'Y',
+    'Neighbor': 'NB'
   };
 
   // Typewriter effect
@@ -572,7 +572,7 @@ function initVisualNovel() {
     scene.choices?.forEach(choice => {
       const btn = document.createElement('button');
       btn.className = 'vn-choice-btn';
-      btn.innerHTML = `<span class="mr-2">▶</span> ${choice.text}`;
+      btn.innerHTML = `<span class="mr-2">&gt;</span> ${choice.text}`;
       btn.onclick = () => loadScene(choice.next);
       choicesEl.appendChild(btn);
     });
