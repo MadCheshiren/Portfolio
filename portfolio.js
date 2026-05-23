@@ -28,6 +28,15 @@ const EntranceAnimation = {
   DEV_MODE: false,  // true = always show, false = first visit only
 
   init() {
+    // Check for cached poster frame first to prevent weird background
+    const videoFallback = document.querySelector('.hero-video-fallback');
+    const cachedPoster = localStorage.getItem('heroVideoPoster');
+    if (cachedPoster && videoFallback) {
+      videoFallback.style.backgroundImage = `url(${cachedPoster})`;
+      videoFallback.style.backgroundSize = 'cover';
+      videoFallback.style.backgroundPosition = 'center';
+    }
+
     // Skip animation for reduced motion preference or returning visitors
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       this.skipAnimation();
@@ -115,6 +124,22 @@ const EntranceAnimation = {
   startVideoAndWatch() {
     this.video.currentTime = 0;
     this.video.play();
+
+    // Capture first frame for future visits
+    this.video.addEventListener('playing', () => {
+      if (!localStorage.getItem('heroVideoPoster') && this.video.videoWidth > 0) {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = 480;
+          canvas.height = Math.round(480 * (this.video.videoHeight / this.video.videoWidth));
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(this.video, 0, 0, canvas.width, canvas.height);
+          localStorage.setItem('heroVideoPoster', canvas.toDataURL('image/jpeg', 0.6));
+        } catch (e) {
+          console.warn('Could not save poster frame', e);
+        }
+      }
+    }, { once: true });
 
     const checkTime = () => {
       if (!this.heroRevealed && this.video.currentTime >= this.splashTime) {

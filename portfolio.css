@@ -147,7 +147,11 @@
   position: fixed;
   inset: 0;
   z-index: -2;
-  background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #1e1b4b 100%);
+  background:
+    radial-gradient(circle at 18% 10%, rgba(255, 111, 28, 0.18), transparent 24%),
+    radial-gradient(circle at 78% 22%, rgba(255, 140, 45, 0.1), transparent 18%),
+    radial-gradient(circle at 50% 72%, rgba(13, 33, 94, 0.34), transparent 36%),
+    linear-gradient(180deg, #020202 0%, #040404 28%, #071231 58%, #0a1f61 100%);
   pointer-events: none;
 }
 
