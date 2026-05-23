@@ -37,11 +37,26 @@ const EntranceAnimation = {
       videoFallback.style.backgroundPosition = 'center';
     }
 
-    // Skip animation for reduced motion preference or returning visitors
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      this.skipAnimation();
-      return;
+    // Capture first frame for future visits (even if animation is skipped)
+    this.video = document.getElementById('hero-video');
+    if (this.video) {
+      this.video.addEventListener('playing', () => {
+        if (!localStorage.getItem('heroVideoPoster') && this.video.videoWidth > 0) {
+          try {
+            const canvas = document.createElement('canvas');
+            canvas.width = 480;
+            canvas.height = Math.round(480 * (this.video.videoHeight / this.video.videoWidth));
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(this.video, 0, 0, canvas.width, canvas.height);
+            localStorage.setItem('heroVideoPoster', canvas.toDataURL('image/jpeg', 0.6));
+          } catch (e) {
+            console.warn('Could not save poster frame', e);
+          }
+        }
+      }, { once: true });
     }
+
+    // Skip animation for returning visitors
     if (!this.DEV_MODE && localStorage.getItem('hasSeenEntrance')) {
       this.skipAnimation();
       return;
@@ -49,7 +64,6 @@ const EntranceAnimation = {
 
     // Cache DOM elements
     this.overlay = document.getElementById('entrance-overlay');
-    this.video = document.getElementById('hero-video');
     this.heroReveal = document.getElementById('hero-reveal');
     this.navbar = document.getElementById('navbar');
     this.terminalBtn = document.getElementById('terminal-toggle');
@@ -124,22 +138,6 @@ const EntranceAnimation = {
   startVideoAndWatch() {
     this.video.currentTime = 0;
     this.video.play();
-
-    // Capture first frame for future visits
-    this.video.addEventListener('playing', () => {
-      if (!localStorage.getItem('heroVideoPoster') && this.video.videoWidth > 0) {
-        try {
-          const canvas = document.createElement('canvas');
-          canvas.width = 480;
-          canvas.height = Math.round(480 * (this.video.videoHeight / this.video.videoWidth));
-          const ctx = canvas.getContext('2d');
-          ctx.drawImage(this.video, 0, 0, canvas.width, canvas.height);
-          localStorage.setItem('heroVideoPoster', canvas.toDataURL('image/jpeg', 0.6));
-        } catch (e) {
-          console.warn('Could not save poster frame', e);
-        }
-      }
-    }, { once: true });
 
     const checkTime = () => {
       if (!this.heroRevealed && this.video.currentTime >= this.splashTime) {
@@ -669,6 +667,46 @@ function initVisualNovel() {
 
 
 // ---------------------------------------------------------
+// 9. EASTER EGG (Reset Entrance Animation)
+// ---------------------------------------------------------
+function initResetEasterEgg() {
+  const nameElement = document.querySelector('.hero-name-gradient');
+  if (!nameElement) return;
+
+  let tapCount = 0;
+  let tapTimeout;
+
+  nameElement.style.cursor = 'pointer';
+  nameElement.style.display = 'inline-block';
+  nameElement.style.transition = 'transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+
+  nameElement.addEventListener('click', () => {
+    tapCount++;
+    
+    // Give a tiny bounce effect for each tap
+    nameElement.style.transform = `scale(${1 + (tapCount * 0.05)})`;
+    setTimeout(() => {
+      if (tapCount < 5) nameElement.style.transform = 'scale(1)';
+    }, 150);
+    
+    // Reset tap count if they stop tapping for 1.5 seconds
+    clearTimeout(tapTimeout);
+    tapTimeout = setTimeout(() => {
+      tapCount = 0;
+      nameElement.style.transform = 'scale(1)';
+    }, 1500);
+
+    // After 5 taps, clear storage and reload
+    if (tapCount >= 5) {
+      localStorage.removeItem('hasSeenEntrance');
+      setTimeout(() => {
+        window.location.reload();
+      }, 400);
+    }
+  });
+}
+
+// ---------------------------------------------------------
 // INITIALIZATION
 // ---------------------------------------------------------
 // Start all modules when page loads
@@ -686,4 +724,5 @@ document.addEventListener('DOMContentLoaded', () => {
   init3DTiltEffect();
   initTerminal();
   initVisualNovel();
+  initResetEasterEgg();
 });
