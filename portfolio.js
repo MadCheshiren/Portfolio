@@ -324,16 +324,33 @@ function initContactToggle() {
   proForm.classList.remove('hidden');
   terminalForm.classList.add('hidden');
 
+  // Function to move and resize the highlighter background
+  function updateHighlight(btn) {
+    activeBg.style.width = `${btn.offsetWidth}px`;
+    activeBg.style.height = `${btn.offsetHeight}px`;
+    activeBg.style.transform = `translate(${btn.offsetLeft}px, ${btn.offsetTop}px)`;
+  }
+
   // Set initial active tab styling
   tabBtns.forEach(btn => {
     const isPro = btn.dataset.tab === 'pro';
     btn.classList.toggle('text-white', isPro);
     btn.classList.toggle('text-white/50', !isPro);
   });
+  
   // Move bg to initial position
-  activeBg.style.width = '50%';
-  activeBg.style.transform = 'translateX(0%)'; // pro is first so no shift
+  const initialBtn = document.querySelector('.tab-btn[data-tab="pro"]');
+  if (initialBtn) {
+    // Need a tiny delay for font loading to ensure correct width calculation
+    setTimeout(() => updateHighlight(initialBtn), 50);
+  }
   activeBg.style.opacity = '1';
+
+  // Handle window resize
+  window.addEventListener('resize', () => {
+    const currentBtn = document.querySelector(`.tab-btn[data-tab="${activeTab}"]`);
+    if (currentBtn) updateHighlight(currentBtn);
+  });
 
   tabBtns.forEach(btn => {
     btn.addEventListener('click', () => {
@@ -347,8 +364,8 @@ function initContactToggle() {
       proForm.classList.toggle('hidden', !isPro);
       terminalForm.classList.toggle('hidden', isPro);
 
-      // Slide active background
-      activeBg.style.transform = isPro ? 'translateX(0%)' : 'translateX(100%)';
+      // Slide active background dynamically
+      updateHighlight(btn);
 
       // Update text contrast
       tabBtns.forEach(b => {
