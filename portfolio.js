@@ -236,18 +236,16 @@ function initActiveNavLinks() {
 // 4. CONTACT FORM (Formspree Integration)
 // ---------------------------------------------------------
 
-// Submit contact form to Formspree with status feedback
-function initContactForm() {
-  const form = document.getElementById('contact-form');
-  const status = document.getElementById('form-status');
+function attachContactForm(form, statusId) {
+  const status = document.getElementById(statusId);
   if (!form) return;
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const btn = form.querySelector('button[type="submit"]');
-    const original = btn.textContent;
+    const original = btn.innerHTML;
 
-    btn.textContent = 'Sending...';
+    btn.innerHTML = 'Sending...';
     btn.disabled = true;
 
     try {
@@ -258,20 +256,85 @@ function initContactForm() {
       });
 
       if (res.ok) {
-        btn.textContent = 'Sent!';
-        status.classList.remove('hidden');
+        btn.innerHTML = 'Sent!';
+        if (status) status.classList.remove('hidden');
         form.reset();
         setTimeout(() => {
-          status.classList.add('hidden');
-          btn.textContent = original;
+          if (status) status.classList.add('hidden');
+          btn.innerHTML = original;
         }, 3000);
       } else throw new Error('Failed');
     } catch {
-      btn.textContent = 'Error';
-      setTimeout(() => btn.textContent = original, 2000);
+      btn.innerHTML = 'Error';
+      status.textContent = 'Something went wrong. Please try again later.';
+      status.classList.remove('hidden');
+      setTimeout(() => {
+        status.classList.add('hidden');
+        btn.innerHTML = original;
+      }, 2000);
     }
 
     btn.disabled = false;
+  });
+}
+
+// Submit contact form to Formspree with status feedback
+function initContactForm() {
+  const terminalForm = document.getElementById('contact-form-terminal');
+  const proForm = document.getElementById('contact-form-pro');
+  if (terminalForm) attachContactForm(terminalForm, 'form-status-terminal');
+  if (proForm) attachContactForm(proForm, 'form-status-pro');
+}
+
+// ---------------------------------------------------------
+// CONTACT FORM TOGGLE
+// ---------------------------------------------------------
+
+function initContactToggle() {
+  const terminalForm = document.getElementById('terminal-form');
+  const proForm = document.getElementById('pro-form');
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const activeBg = document.getElementById('toggle-active-bg');
+  if (!terminalForm || !proForm || !activeBg) return;
+
+  let activeTab = 'pro'; // Default: Professional form visible first
+  proForm.classList.remove('hidden');
+  terminalForm.classList.add('hidden');
+
+  // Set initial active tab styling
+  tabBtns.forEach(btn => {
+    const isPro = btn.dataset.tab === 'pro';
+    btn.classList.toggle('text-white', isPro);
+    btn.classList.toggle('text-white/50', !isPro);
+  });
+  // Move bg to initial position
+  activeBg.style.width = '50%';
+  activeBg.style.transform = 'translateX(0%)'; // pro is first so no shift
+  activeBg.style.opacity = '1';
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const clickedTab = btn.dataset.tab;
+      if (clickedTab === activeTab) return;
+
+      activeTab = clickedTab;
+      const isPro = activeTab === 'pro';
+
+      // Toggle forms
+      proForm.classList.toggle('hidden', !isPro);
+      terminalForm.classList.toggle('hidden', isPro);
+
+      // Slide active background
+      activeBg.style.transform = isPro ? 'translateX(0%)' : 'translateX(100%)';
+
+      // Update text contrast
+      tabBtns.forEach(b => {
+        const bIsPro = b.dataset.tab === 'pro';
+        const isActive = (bIsPro && isPro) || (!bIsPro && !isPro);
+        b.classList.toggle('text-white', isActive);
+        b.classList.toggle('text-white/50', !isActive);
+      });
+    });
   });
 }
 
@@ -592,6 +655,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollToTop();
   initNavbarEffects();
   initActiveNavLinks();
+  initContactToggle();
   initContactForm();
   initProjectFiltering();
   init3DTiltEffect();
