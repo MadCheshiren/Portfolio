@@ -67,6 +67,12 @@
   <!-- ========== ENTRANCE ANIMATION OVERLAY ========== -->
   <!-- Handwriting animation that plays on first visit -->
   <div id="entrance-overlay" class="entrance-overlay">
+    <script>
+      // Prevent flash of overlay on reload for returning visitors
+      if (localStorage.getItem('hasSeenEntrance')) {
+        document.getElementById('entrance-overlay').style.display = 'none';
+      }
+    </script>
     <div class="entrance-content">
       <div id="tegaki-name" style="font-size: 72px; color: white;"></div>
       <div class="loading-bar-container" style="width: 80%; max-width: 300px; height: 4px; background: #333; margin: 2rem auto;">

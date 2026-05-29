@@ -96,6 +96,10 @@ const EntranceAnimation = {
 
     const container = document.getElementById('tegaki-name');
     if (!container) return;
+    
+    // Prevent highlighting of the name when rapidly clicking the overlay
+    container.style.userSelect = 'none';
+    container.style.webkitUserSelect = 'none';
 
     let fontData = window.caveatFont;
     if (fontData.default) fontData = fontData.default;
@@ -121,16 +125,22 @@ const EntranceAnimation = {
             return;
           }
           
-          let progress = 0;
+          let currentWidth = parseFloat(loadingBar ? loadingBar.style.width : 0) || 0;
+          let progress = currentWidth;
+          
           if (this.video.readyState >= 3) { // HAVE_FUTURE_DATA
             progress = 100;
-          } else if (this.video.buffered.length > 0 && this.video.duration) {
-            progress = (this.video.buffered.end(this.video.buffered.length - 1) / this.video.duration) * 100;
+          } else {
+            // WebM duration is often NaN or 0 over network until fully loaded.
+            // We simulate progress to keep the UI feeling responsive, capping at 90%.
+            if (progress < 90) {
+              progress += 0.8; // Artificial loading speed
+            }
           }
           
           if (loadingBar) loadingBar.style.width = `${progress}%`;
           
-          if (progress >= 100) {
+          if (progress >= 100 && this.video.readyState >= 3) {
             this.setReady(loadingContainer, hint);
           } else {
             requestAnimationFrame(checkLoad);
