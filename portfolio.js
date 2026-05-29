@@ -67,6 +67,7 @@ const EntranceAnimation = {
     this.heroReveal = document.getElementById('hero-reveal');
     this.navbar = document.getElementById('navbar');
     this.terminalBtn = document.getElementById('terminal-toggle');
+    this.videoReady = false;
 
     if (!this.overlay || !this.video || !this.heroReveal) {
       this.skipAnimation();
@@ -104,24 +105,80 @@ const EntranceAnimation = {
       this.tegakiEngine = new window.TegakiEngine(container, {
         text: 'Kirren',
         font: fontData,
-        time: { mode: 'uncontrolled', speed: 1, loop: false }
+        time: { mode: 'uncontrolled', speed: 0.7, loop: false }
       });
-      // Show hint after 5 seconds
+      
+      // Setup video loading tracking
+      const loadingBar = document.querySelector('.loading-bar');
+      const loadingContainer = document.querySelector('.loading-bar-container');
+      const hint = document.querySelector('.entrance-hint');
+      
+      // Let Tegaki draw for 3s before we start showing real video progress
       setTimeout(() => {
-        const hint = document.querySelector('.entrance-hint');
-        if (hint) hint.classList.add('visible');
-      }, 5000);
+        const checkLoad = () => {
+          if (!this.video) {
+            this.setReady(loadingContainer, hint);
+            return;
+          }
+          
+          let progress = 0;
+          if (this.video.readyState >= 3) { // HAVE_FUTURE_DATA
+            progress = 100;
+          } else if (this.video.buffered.length > 0 && this.video.duration) {
+            progress = (this.video.buffered.end(this.video.buffered.length - 1) / this.video.duration) * 100;
+          }
+          
+          if (loadingBar) loadingBar.style.width = `${progress}%`;
+          
+          if (progress >= 100) {
+            this.setReady(loadingContainer, hint);
+          } else {
+            requestAnimationFrame(checkLoad);
+          }
+        };
+        
+        this.video.addEventListener('canplaythrough', () => {
+          if (loadingBar) loadingBar.style.width = `100%`;
+          this.setReady(loadingContainer, hint);
+        }, { once: true });
+        
+        checkLoad();
+        
+        // Fallback: allow entering after 8 seconds anyway
+        setTimeout(() => {
+          if (!this.videoReady) {
+            if (loadingBar) loadingBar.style.width = `100%`;
+            this.setReady(loadingContainer, hint);
+          }
+        }, 8000);
+      }, 2500);
+
     } catch (err) {
       console.error('Tegaki setup failed:', err);
+      this.setReady(document.querySelector('.loading-bar-container'), document.querySelector('.entrance-hint'));
     }
   },
 
-  // Click to skip entrance animation
+  setReady(loadingContainer, hint) {
+    if (this.videoReady) return;
+    this.videoReady = true;
+    setTimeout(() => {
+      if (loadingContainer) {
+        loadingContainer.style.opacity = '0';
+        loadingContainer.style.transition = 'opacity 0.5s ease';
+      }
+      if (hint) hint.classList.add('visible');
+    }, 400); // short delay after bar fills
+  },
+
+  // Click to skip entrance animation (only if ready)
   setupEventListeners() {
-    this.overlay.addEventListener('click', () => this.reveal());
+    this.overlay.addEventListener('click', () => {
+      if (this.videoReady || this.DEV_MODE) this.reveal();
+    });
     this.overlay.addEventListener('touchstart', (e) => {
       e.preventDefault();
-      this.reveal();
+      if (this.videoReady || this.DEV_MODE) this.reveal();
     }, { passive: false });
   },
 
@@ -696,6 +753,10 @@ function initResetEasterEgg() {
   nameElement.style.cursor = 'pointer';
   nameElement.style.display = 'inline-block';
   nameElement.style.transition = 'transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+  
+  // Prevent text highlighting when clicking rapidly
+  nameElement.style.userSelect = 'none';
+  nameElement.style.webkitUserSelect = 'none';
 
   nameElement.addEventListener('click', () => {
     tapCount++;
