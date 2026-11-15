@@ -1,39 +1,34 @@
-# OS
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# Editor
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
 # Logs
+logs
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# Build output
-dist/
-build/
+node_modules
+dist
+dist-ssr
+*.local
 
-# Local dev server
-*.tmp
-*.temp
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# Environment
-.env
-.env.local
-
-# Git worktrees
-.worktrees/
-
-# Dependencies
-node_modules/
-package-lock.json
-
-# Design files (local only)
-PRODUCT.md
-DESIGN.md
-
+# Local agent / scratch assets (kept out of production git & Vercel builds)
+.agents/
+.freebuff/
+_legacy/
+skills-lock.json
+AUDIT-CHECKLIST.md
+Dreamy Pastel Coastline Sunset.png
+Wave_motion_with_sun_reflection_96b7db92_1080p.mp4
+statue bg removed*.png
