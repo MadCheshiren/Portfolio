@@ -468,9 +468,9 @@
 }
 
 .detail-drawer__quote {
-  padding: 18px 20px;
-  background: rgba(147, 59, 91, 0.06);
-  border-left: 2.5px solid var(--accent);
+  padding: 16px 0;
+  border-top: 1px solid rgba(147, 59, 91, 0.24);
+  border-bottom: 1px solid rgba(147, 59, 91, 0.24);
   margin-bottom: 28px;
   font-family: var(--serif);
   font-size: 16px;

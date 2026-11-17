@@ -393,7 +393,7 @@ function generateRandomLevel(seedNum, forcedTopologyIdx) {
     // TOPOLOGY 2: BIFURCATED DIAMOND (Dual-Branching High & Low Routes)
     // ------------------------------------------------------------------------
     flowName = 'BIFURCATED MATRIX';
-    hint = 'Branching jump matrix — choose the high acrobatics route or the low hazard route';
+    hint = 'Branching jump matrix: choose the high acrobatics route or the low hazard route';
 
     const startW = randInt(90, 118);
     const startY = randInt(265, 315);
@@ -656,7 +656,7 @@ function generateRandomLevel(seedNum, forcedTopologyIdx) {
 
   return {
     id: `proc_${seed}`,
-    title: `CHAMBER #${chamberNum} // ${flowName}`,
+    title: `CHAMBER ${chamberNum} · ${flowName}`,
     hint,
     spawn,
     door,
@@ -1356,9 +1356,9 @@ export default function HomePlatformGame() {
           </p>
         </div>
 
-        {/* Status Pills & Controls */}
-        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2.5">
-          <div className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border border-[#AABAAE]/60 bg-[#E3D6BF] text-[11px] sm:text-xs font-mono text-[#933B5B] flex items-center gap-1.5 sm:gap-2">
+        {/* Status & Controls */}
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          <div className="px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-md border border-[#AABAAE]/70 bg-[#F5EFE0] text-[11px] sm:text-xs font-mono text-[#933B5B] flex items-center gap-1.5 sm:gap-2">
             <span>CRYSTALS:</span>
             <span className="font-bold text-[#933B5B]">
               {coinsCollected} / {currentLevel.coins.length}
@@ -1368,7 +1368,7 @@ export default function HomePlatformGame() {
           <button
             type="button"
             onClick={loadNewRandomLevel}
-            className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border border-[#AABAAE]/60 bg-[#E3D6BF] text-[11px] sm:text-xs font-mono text-[#933B5B] hover:bg-[#933B5B] hover:text-[#E3D6BF] transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-md border border-[#AABAAE]/70 bg-[#F5EFE0] text-[11px] sm:text-xs font-mono text-[#933B5B] hover:bg-[#933B5B] hover:text-[#E3D6BF] transition-colors cursor-pointer"
             title="Generate New Procedural Chamber"
             aria-label="Randomize Level"
           >
@@ -1379,10 +1379,10 @@ export default function HomePlatformGame() {
           <button
             type="button"
             onClick={() => setShowTouchPad((prev) => !prev)}
-            className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-full border text-[11px] sm:text-xs font-mono transition-colors cursor-pointer ${
+            className={`inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-md border text-[11px] sm:text-xs font-mono transition-colors cursor-pointer ${
               showTouchPad
                 ? 'border-[#933B5B] bg-[#933B5B] text-[#E3D6BF]'
-                : 'border-[#AABAAE]/60 bg-[#E3D6BF] text-[#933B5B] hover:bg-[#933B5B] hover:text-[#E3D6BF]'
+                : 'border-[#AABAAE]/70 bg-[#F5EFE0] text-[#933B5B] hover:bg-[#933B5B] hover:text-[#E3D6BF]'
             }`}
             title="Toggle On-Screen Portrait & Tablet Controls"
             aria-pressed={showTouchPad}
@@ -1395,7 +1395,7 @@ export default function HomePlatformGame() {
           <button
             type="button"
             onClick={() => setSoundEnabled((prev) => !prev)}
-            className="p-1.5 sm:p-2 rounded-full border border-[#AABAAE]/60 bg-[#E3D6BF] text-[#933B5B] hover:bg-[#933B5B] hover:text-[#E3D6BF] transition-colors cursor-pointer"
+            className="p-1.5 sm:p-2 rounded-md border border-[#AABAAE]/70 bg-[#F5EFE0] text-[#933B5B] hover:bg-[#933B5B] hover:text-[#E3D6BF] transition-colors cursor-pointer"
             title={soundEnabled ? "Mute Game Audio" : "Enable Game Audio"}
             aria-label="Toggle Game Audio"
           >
@@ -1405,7 +1405,7 @@ export default function HomePlatformGame() {
           <button
             type="button"
             onClick={() => resetPlayer()}
-            className="p-1.5 sm:p-2 rounded-full border border-[#AABAAE]/60 bg-[#E3D6BF] text-[#933B5B] hover:bg-[#933B5B] hover:text-[#E3D6BF] transition-colors cursor-pointer"
+            className="p-1.5 sm:p-2 rounded-md border border-[#AABAAE]/70 bg-[#F5EFE0] text-[#933B5B] hover:bg-[#933B5B] hover:text-[#E3D6BF] transition-colors cursor-pointer"
             title="Restart Stage"
             aria-label="Restart Stage"
           >

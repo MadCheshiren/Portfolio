@@ -1,11 +1,35 @@
 import { useState, useEffect, useRef } from 'react';
-import { ArrowUp, ArrowUpRight, Play, Pause } from 'lucide-react';
+import { ArrowUp, ArrowUpRight, Play, Pause, Mic } from 'lucide-react';
+import { VOICEMAILS_UPDATED_EVENT, fetchVoicemails } from '../lib/voicemailStore';
+import VoicemailPaperCard from './voicemail/VoicemailPaperCard';
 
 export default function Footer() {
   const containerRef = useRef(null);
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [latestVoicemails, setLatestVoicemails] = useState([]);
+
+  useEffect(() => {
+    let active = true;
+    const loadLatest = async () => {
+      try {
+        const res = await fetchVoicemails({ limit: 3 });
+        if (active) {
+          setLatestVoicemails(res.entries.slice(0, 3));
+        }
+      } catch {
+        // Keep footer cleanly rendered if offline / unconfigured
+      }
+    };
+
+    loadLatest();
+    window.addEventListener(VOICEMAILS_UPDATED_EVENT, loadLatest);
+    return () => {
+      active = false;
+      window.removeEventListener(VOICEMAILS_UPDATED_EVENT, loadLatest);
+    };
+  }, []);
 
   useEffect(() => {
     // 1. Detect prefers-reduced-motion preference
@@ -95,6 +119,11 @@ export default function Footer() {
     window.location.hash = '#library';
   };
 
+  const openVoicemail = (e) => {
+    e.preventDefault();
+    window.location.hash = '#voicemail';
+  };
+
   return (
     <footer 
       ref={containerRef} 
@@ -113,22 +142,65 @@ export default function Footer() {
               Kirren Michael Fraginal
             </h2>
             <p className="mt-3 text-base md:text-lg text-[#9F9679] font-sans font-light max-w-xl leading-relaxed">
-              Systems Thinker &amp; QA Architect — mapping how complex parts interact, 
+              Systems Thinker &amp; QA Architect, mapping how complex parts interact, 
               stress-testing edge cases, and turning strict constraints into intuitive experiences.
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row lg:flex-col items-start lg:items-end justify-between gap-4">
-            <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border border-[#AABAAE]/60 bg-[#E3D6BF]/80 backdrop-blur-sm text-xs font-mono text-[#933B5B] shadow-xs">
-              <span className="w-2 h-2 rounded-full bg-[#933B5B] animate-pulse" />
-              <span className="uppercase tracking-wider">Available for Opportunities</span>
+          <div className="flex flex-col sm:flex-row lg:flex-col items-start lg:items-end justify-between gap-3">
+            <div className="px-3 py-1 rounded-md border border-[#AABAAE]/75 bg-[#F5EFE0] text-[11px] font-mono text-[#933B5B] uppercase tracking-wider">
+              Available for Opportunities
             </div>
             <div className="text-xs font-mono text-[#9F9679] text-left lg:text-right space-y-0.5">
-              <div>MANILA, PHILIPPINES // GMT+8</div>
+              <div>MANILA, PHILIPPINES · GMT+8</div>
               <div className="text-[#AABAAE]">14.5995° N, 120.9842° E</div>
             </div>
           </div>
         </div>
+
+        {/* ========================================================
+            1B. CLICKABLE PAPER DISPATCH LOG (LATEST VOICEMAIL ENTRIES)
+            Flat archival sheet displaying the latest public entries;
+            clicking anywhere transports the visitor to #voicemail.
+            ======================================================== */}
+        <a
+          href="#voicemail"
+          onClick={openVoicemail}
+          aria-label="Open Public Voicemail Box to see all entries or leave a voice note"
+          className="group block mt-8 rounded-lg border border-[#933B5B]/35 hover:border-[#933B5B] bg-[#F5EFE0] p-5 sm:p-7 transition-colors"
+        >
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 mb-5 border-b border-[#AABAAE]/65">
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-2 text-[10px] font-mono uppercase tracking-widest text-[#9F9679]">
+                <Mic size={12} className="text-[#933B5B]" />
+                <span>Public Voicemail Box · Paper Log</span>
+              </div>
+              <h3 className="text-2xl sm:text-3xl font-editorial text-[#933B5B] tracking-tight leading-none">
+                Latest Visitor Dispatches
+              </h3>
+            </div>
+
+            <span className="self-start sm:self-center inline-flex items-center gap-2 px-4 py-2 rounded-md bg-[#933B5B] group-hover:bg-[#B5728A] text-[#E3D6BF] font-mono text-[10px] sm:text-[11px] uppercase tracking-wider font-semibold transition-colors shrink-0">
+              <span>Leave a Voicemail or View All</span>
+              <ArrowUpRight
+                size={13}
+                className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"
+              />
+            </span>
+          </div>
+
+          {latestVoicemails.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-[#AABAAE]/55">
+              {latestVoicemails.map((entry) => (
+                <VoicemailPaperCard key={entry.id} entry={entry} compact />
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs font-mono text-[#9F9679] py-2">
+              No entries yet. Click this sheet to record a Whistle voicemail or leave a note.
+            </p>
+          )}
+        </a>
       </div>
 
       {/* ========================================================
@@ -179,6 +251,11 @@ export default function Footer() {
                     3D Library Archive
                   </a>
                 </li>
+                <li>
+                  <a href="#voicemail" onClick={openVoicemail} className="text-[#933B5B] hover:text-[#B5728A] transition-colors">
+                    Public Voicemail Box
+                  </a>
+                </li>
               </ul>
             </div>
 
@@ -192,6 +269,16 @@ export default function Footer() {
                     className="group inline-flex items-center gap-1 text-[#933B5B] hover:text-[#B5728A] transition-colors"
                   >
                     <span>3D Bookshelf Archive</span>
+                    <ArrowUpRight size={14} className="opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  </a>
+                </li>
+                <li>
+                  <a 
+                    href="#voicemail" 
+                    onClick={openVoicemail}
+                    className="group inline-flex items-center gap-1 text-[#933B5B] hover:text-[#B5728A] transition-colors"
+                  >
+                    <span>Whistle Voicemail Wall</span>
                     <ArrowUpRight size={14} className="opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                   </a>
                 </li>

@@ -262,13 +262,13 @@ export default function Skills() {
             </p>
           </div>
 
-          {/* Domain Filter Pills */}
+          {/* Domain Filter Bar */}
           <div
-            className="flex flex-wrap items-center gap-1.5 p-1.5 rounded-2xl border border-[#933B5B]/25 bg-[#E3D6BF]/90 shadow-xs"
+            className="flex flex-wrap items-center border border-[#933B5B]/35 rounded-md bg-[#F5EFE0] overflow-hidden"
             role="tablist"
             aria-label="Filter systems domains"
           >
-            {CATEGORIES.map((category) => {
+            {CATEGORIES.map((category, idx) => {
               const isActive = activeCategory === category;
               const count =
                 category === 'ALL SYSTEMS'
@@ -291,21 +291,21 @@ export default function Skills() {
                       setSelectedId(nextList[0].id);
                     }
                   }}
-                  className={`px-3 py-1.5 rounded-xl font-mono text-[11px] uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1.5 ${
+                  className={`px-3 py-2 font-mono text-[11px] uppercase tracking-wider transition-colors cursor-pointer flex items-center gap-1.5 ${
+                    idx > 0 ? 'border-l border-[#933B5B]/20' : ''
+                  } ${
                     isActive
-                      ? 'bg-[#933B5B] text-[#E3D6BF] shadow-xs font-semibold'
-                      : 'text-[#933B5B] hover:bg-[#933B5B]/10'
+                      ? 'bg-[#933B5B] text-[#E3D6BF] font-semibold'
+                      : 'text-[#933B5B] hover:bg-[#E3D6BF]/60'
                   }`}
                 >
                   <span>{category}</span>
                   <span
-                    className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                      isActive
-                        ? 'bg-[#B5728A] text-[#E3D6BF]'
-                        : 'bg-[#AABAAE]/40 text-[#933B5B]'
+                    className={`text-[10px] ${
+                      isActive ? 'text-[#E3D6BF]/80' : 'text-[#9F9679]'
                     }`}
                   >
-                    {count}
+                    ({count})
                   </span>
                 </button>
               );
@@ -314,7 +314,7 @@ export default function Skills() {
         </div>
 
         {/* Main 12-Column Exposed Hairline Blueprint Split Ledger */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 border border-[#933B5B] rounded-2xl overflow-hidden bg-[#E3D6BF] shadow-md">
+        <div className="grid grid-cols-1 lg:grid-cols-12 border border-[#933B5B] rounded-lg overflow-hidden bg-[#E3D6BF]">
           {/* LEFT 7 COLUMNS: Interactive Systems Ledger Rows */}
           <div className="lg:col-span-7 divide-y divide-[#933B5B]/20 border-b lg:border-b-0 lg:border-r border-[#933B5B]">
             <AnimatePresence mode="popLayout">
@@ -337,19 +337,12 @@ export default function Skills() {
                         inspectorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                       }
                     }}
-                    className={`w-full text-left grid grid-cols-12 items-center px-4 sm:px-5 py-3.5 sm:py-5 transition-colors cursor-pointer group relative ${
+                    className={`w-full text-left grid grid-cols-12 items-center px-4 sm:px-5 py-4 sm:py-5 transition-colors cursor-pointer group ${
                       isSelected
                         ? 'bg-[#933B5B] text-[#E3D6BF]'
                         : 'bg-[#E3D6BF] hover:bg-[#AABAAE]/20 text-[#933B5B]'
                     }`}
                   >
-                    {/* Left Active Indicator Bar */}
-                    <span
-                      className={`absolute left-0 top-0 bottom-0 w-1.5 transition-opacity ${
-                        isSelected ? 'bg-[#B5728A] opacity-100' : 'opacity-0'
-                      }`}
-                    />
-
                     {/* Index Column */}
                     <div className="col-span-2 flex flex-col">
                       <span
@@ -370,7 +363,7 @@ export default function Skills() {
 
                     {/* Title & Systems Role */}
                     <div className="col-span-7 pr-3">
-                      <div className="flex items-center gap-2 flex-wrap">
+                      <div className="flex items-baseline gap-2.5 flex-wrap">
                         <span
                           className={`text-base sm:text-lg font-bold font-sans tracking-tight ${
                             isSelected ? 'text-[#E3D6BF]' : 'text-[#933B5B]'
@@ -379,10 +372,8 @@ export default function Skills() {
                           {item.name}
                         </span>
                         <span
-                          className={`text-[9px] font-mono uppercase px-2 py-0.5 rounded-full border ${
-                            isSelected
-                              ? 'border-[#B5728A] bg-[#B5728A]/30 text-[#E3D6BF]'
-                              : 'border-[#AABAAE] bg-[#AABAAE]/25 text-[#933B5B]'
+                          className={`text-[10px] font-mono uppercase tracking-wider ${
+                            isSelected ? 'text-[#E3D6BF]/75' : 'text-[#9F9679]'
                           }`}
                         >
                           {item.tag}
@@ -405,7 +396,7 @@ export default function Skills() {
                           return (
                             <span
                               key={idx}
-                              className={`h-3.5 w-1 rounded-xs transition-all ${
+                              className={`h-3.5 w-1 transition-all ${
                                 filled
                                   ? isSelected
                                     ? 'bg-[#E3D6BF]'
@@ -432,7 +423,7 @@ export default function Skills() {
             </AnimatePresence>
           </div>
 
-          {/* RIGHT 5 COLUMNS: Live Systems Model & Edge-Case Inspector */}
+          {/* RIGHT 5 COLUMNS: Flat Systems Inspector (separated by 1px hairline rules) */}
           <div ref={inspectorRef} className="lg:col-span-5 bg-[#933B5B] text-[#E3D6BF] p-5 sm:p-8 flex flex-col justify-between relative overflow-hidden">
             <AnimatePresence mode="wait">
               <motion.div
@@ -443,53 +434,54 @@ export default function Skills() {
                 transition={{ duration: 0.22 }}
                 className="flex flex-col h-full justify-between gap-6"
               >
-                <div>
+                <div className="space-y-5">
                   {/* Top Header */}
-                  <div className="flex items-center justify-between gap-2 pb-3 mb-4 border-b border-[#B5728A]/40">
+                  <div className="flex items-center justify-between gap-2 pb-3 border-b border-[#B5728A]/40">
                     <span className="text-sm font-editorial text-[#E3D6BF] tracking-wide">
-                      DOMAIN #{activeSpec.index}
+                      DOMAIN {activeSpec.index}
                     </span>
-                    <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#B5728A] text-[#E3D6BF]">
+                    <span className="text-[10px] font-mono uppercase tracking-wider text-[#E3D6BF]/80">
                       {activeSpec.tag}
                     </span>
                   </div>
 
-                  <h3 className="text-3xl sm:text-4xl font-editorial text-[#E3D6BF] tracking-tight mb-2">
-                    {activeSpec.name}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-[#E3D6BF]/85 font-sans leading-relaxed mb-5">
-                    {activeSpec.role}
-                  </p>
+                  <div>
+                    <h3 className="text-3xl sm:text-4xl font-editorial text-[#E3D6BF] tracking-tight mb-2">
+                      {activeSpec.name}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-[#E3D6BF]/85 font-sans leading-relaxed">
+                      {activeSpec.role}
+                    </p>
+                  </div>
 
-                  {/* Visual Schematic Box */}
-                  <div className="rounded-xl border border-[#B5728A]/50 bg-[#933B5B]/80 p-3 mb-4 shadow-inner">
-                    <div className="flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-widest text-[#AABAAE] mb-1.5">
+                  {/* Schematic & Input -> Rule -> Outcome Flow (flat, hairline divided) */}
+                  <div className="pt-4 border-t border-[#B5728A]/35 space-y-3">
+                    <div className="flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-widest text-[#AABAAE]">
                       <Layers size={11} />
-                      <span>SYSTEM MODEL</span>
+                      <span>System Model</span>
                     </div>
                     <BlueprintSchematic type={activeSpec.schematicType} />
 
-                    {/* Input -> Constraint -> Outcome Flow */}
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-2 pt-2.5 border-t border-[#B5728A]/30 text-[11px] font-sans">
-                      <div className="rounded-lg bg-[#231118]/45 p-2.5 border border-[#B5728A]/25">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-[#B5728A]/30 pt-3 border-t border-[#B5728A]/30 text-[11px] font-sans">
+                      <div className="py-2 sm:py-0 sm:pr-3">
                         <span className="block text-[9px] font-mono uppercase tracking-wider text-[#AABAAE] mb-0.5">
-                          1. INPUT
+                          1. Input
                         </span>
                         <span className="text-[#E3D6BF] font-medium leading-snug block">
                           {activeSpec.systemFlow.input}
                         </span>
                       </div>
-                      <div className="rounded-lg bg-[#231118]/45 p-2.5 border border-[#B5728A]/25">
+                      <div className="py-2 sm:py-0 sm:px-3">
                         <span className="block text-[9px] font-mono uppercase tracking-wider text-[#B5728A] mb-0.5">
-                          2. RULE / LOGIC
+                          2. Rule / Logic
                         </span>
                         <span className="text-[#E3D6BF] font-medium leading-snug block">
                           {activeSpec.systemFlow.rule}
                         </span>
                       </div>
-                      <div className="rounded-lg bg-[#231118]/45 p-2.5 border border-[#B5728A]/25">
+                      <div className="py-2 sm:py-0 sm:pl-3">
                         <span className="block text-[9px] font-mono uppercase tracking-wider text-[#AABAAE] mb-0.5">
-                          3. OUTCOME
+                          3. Outcome
                         </span>
                         <span className="text-[#E3D6BF] font-medium leading-snug block">
                           {activeSpec.systemFlow.outcome}
@@ -499,10 +491,10 @@ export default function Skills() {
                   </div>
 
                   {/* Failure Modes & Edge Cases Solved */}
-                  <div className="rounded-xl border border-[#AABAAE]/35 bg-[#231118]/65 p-4">
+                  <div className="pt-4 border-t border-[#B5728A]/35">
                     <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-[#AABAAE] mb-2.5">
                       <ShieldCheck size={13} className="text-[#B5728A]" />
-                      <span>EDGE CASES &amp; FAILURE MODES SOLVED</span>
+                      <span>Edge Cases Solved</span>
                     </div>
                     <ul className="space-y-2 text-xs text-[#E3D6BF]/90 font-sans leading-relaxed">
                       {activeSpec.edgeCasesCaught.map((edgeCase) => (
@@ -516,28 +508,26 @@ export default function Skills() {
                 </div>
 
                 {/* Bottom Instruments & Applied Project Footnote */}
-                <div className="pt-4 border-t border-[#B5728A]/40">
-                  <div className="text-[10px] font-mono uppercase tracking-widest text-[#AABAAE] mb-2 flex items-center gap-1.5">
+                <div className="pt-4 border-t border-[#B5728A]/40 space-y-3">
+                  <div className="text-[10px] font-mono uppercase tracking-widest text-[#AABAAE] flex items-center gap-1.5">
                     <Wrench size={12} className="text-[#B5728A]" />
-                    <span>INSTRUMENTS &amp; TOOLS USED</span>
+                    <span>Instruments</span>
                   </div>
-                  <div className="flex flex-wrap gap-1.5 mb-4">
-                    {activeSpec.instruments.map((tool) => (
-                      <span
-                        key={tool}
-                        className="text-[10px] font-mono px-2.5 py-1 rounded-lg bg-[#E3D6BF]/12 border border-[#B5728A]/50 text-[#E3D6BF]"
-                      >
+                  <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] font-mono text-[#E3D6BF]/90">
+                    {activeSpec.instruments.map((tool, i) => (
+                      <span key={tool}>
                         {tool}
+                        {i < activeSpec.instruments.length - 1 ? ' ·' : ''}
                       </span>
                     ))}
                   </div>
 
-                  <div className="flex items-center justify-between text-[11px] font-mono px-3 py-2 rounded-lg bg-[#E3D6BF] text-[#933B5B]">
-                    <span className="flex items-center gap-1.5 font-semibold">
+                  <div className="flex items-center justify-between text-[11px] font-mono pt-3 border-t border-[#B5728A]/30 text-[#E3D6BF]">
+                    <span className="flex items-center gap-1.5 text-[#AABAAE]">
                       <FolderGit2 size={13} />
-                      <span>APPLIED IN:</span>
+                      <span>APPLIED IN</span>
                     </span>
-                    <span className="truncate ml-2 font-bold">{activeSpec.projectRef}</span>
+                    <span className="truncate ml-2 font-semibold">{activeSpec.projectRef}</span>
                   </div>
                 </div>
               </motion.div>

@@ -4,18 +4,28 @@ import Skills from './components/Skills';
 import Footer from './components/Footer';
 import HomePlatformGame from './components/HomePlatformGame';
 
-// Lazy-load the heavy 3D bookshelf library to keep the initial page bundle lightweight
+// Lazy-load heavy views so the initial landing page stays lightweight
 const ProjectsLibraryView = lazy(() => import('./components/bookshelf/ProjectsLibraryView'));
+const VoicemailBoxView = lazy(() => import('./components/voicemail/VoicemailBoxView'));
+
+function resolveHashRoute() {
+  const h = window.location.hash;
+  if (h === '#library' || h === '#projects-library') return 'library';
+  if (h === '#voicemail' || h === '#vm-box') return 'voicemail';
+  return 'home';
+}
 
 function App() {
-  const [showLibrary, setShowLibrary] = useState(false);
+  const [route, setRoute] = useState(() =>
+    typeof window !== 'undefined' ? resolveHashRoute() : 'home'
+  );
 
   useEffect(() => {
     const handleHashChange = () => {
-      if (window.location.hash === '#library' || window.location.hash === '#projects-library') {
-        setShowLibrary(true);
-      } else {
-        setShowLibrary(false);
+      const next = resolveHashRoute();
+      setRoute(next);
+      if (next !== 'home') {
+        window.scrollTo({ top: 0, behavior: 'auto' });
       }
     };
 
@@ -44,7 +54,7 @@ function App() {
     }
   }, []);
 
-  if (showLibrary) {
+  if (route === 'library') {
     return (
       <Suspense
         fallback={
@@ -55,6 +65,25 @@ function App() {
         }
       >
         <ProjectsLibraryView
+          onBackToPortfolio={() => {
+            window.location.hash = '#home';
+          }}
+        />
+      </Suspense>
+    );
+  }
+
+  if (route === 'voicemail') {
+    return (
+      <Suspense
+        fallback={
+          <div className="min-h-screen bg-[#E3D6BF] flex flex-col items-center justify-center text-[#933B5B] p-6">
+            <div className="w-8 h-8 border-2 border-[#933B5B] border-t-transparent rounded-full animate-spin mb-4" />
+            <span className="font-mono text-xs text-[#933B5B] uppercase tracking-widest">[ LOADING VOICEMAIL BOX // WHISTLE ]</span>
+          </div>
+        }
+      >
+        <VoicemailBoxView
           onBackToPortfolio={() => {
             window.location.hash = '#home';
           }}
@@ -79,7 +108,7 @@ function App() {
               </h1>
             </div>
             <p className="text-[11px] sm:text-sm font-mono text-[#9F9679] max-w-md sm:text-right leading-snug">
-              A live constraint-driven sandbox. Every stage is dynamically solved from jump velocity, gravity, and momentum—no fixed presets.
+              A live constraint-driven sandbox. Every stage is dynamically solved from jump velocity, gravity, and momentum: no fixed presets.
             </p>
           </div>
 

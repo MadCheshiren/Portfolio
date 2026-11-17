@@ -5,6 +5,12 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  optimizeDeps: {
+    exclude: ['cactus-needle'],
+  },
+  worker: {
+    format: 'es',
+  },
   build: {
     chunkSizeWarningLimit: 550,
     rolldownOptions: {

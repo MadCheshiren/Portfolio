@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 const navItems = [
   { id: 'home', label: 'Home' },
   { id: 'library', label: '3D Library', isHashRoute: true },
+  { id: 'voicemail', label: 'VM Box', isHashRoute: true },
   { id: 'skills', label: 'Systems' },
 ];
 
@@ -40,34 +41,34 @@ export default function Navbar() {
         {/* Logo */}
         <a 
           href="#home" 
-          className="text-base sm:text-xl font-bold tracking-tighter text-[#933B5B] hover:text-[#B5728A] transition-colors px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-[#E3D6BF]/90 backdrop-blur-md border border-[#AABAAE]/50 shadow-xs shrink-0"
+          className="text-base sm:text-xl font-bold tracking-tighter text-[#933B5B] hover:text-[#B5728A] transition-colors px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-md bg-[#E3D6BF]/95 border border-[#AABAAE]/70 shrink-0"
         >
           kirren.
         </a>
         
-        {/* Floating Pill Nav (Direct 1-Tap Access on Mobile, Tablet & Desktop) */}
-        <div className="flex items-center gap-0.5 sm:gap-1.5 p-1 sm:p-1.5 rounded-full bg-[#E3D6BF]/90 backdrop-blur-md border border-[#AABAAE]/50 shadow-xs">
+        {/* Flat Editorial Nav */}
+        <div className="flex items-center gap-0.5 sm:gap-1 p-1 rounded-md bg-[#E3D6BF]/95 border border-[#AABAAE]/70">
           {navItems.map((item) => {
             const isActive = active === item.id;
             return (
               <a 
                 key={item.id} 
                 href={`#${item.id}`}
-                className={`px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-[10px] sm:text-xs font-mono uppercase tracking-wider transition-colors duration-200 relative whitespace-nowrap ${
+                className={`px-2.5 sm:px-3.5 py-1.5 rounded-sm text-[10px] sm:text-xs font-mono uppercase tracking-wider transition-colors duration-200 relative whitespace-nowrap ${
                   isActive 
                     ? 'text-[#E3D6BF] font-semibold' 
-                    : 'text-[#933B5B] hover:text-[#933B5B]/80'
+                    : 'text-[#933B5B] hover:text-[#933B5B]/75'
                 }`}
                 onClick={() => setActive(item.id)}
               >
                 {isActive && (
                   <motion.div 
                     layoutId="navbar-active"
-                    className="absolute inset-0 rounded-full -z-10 bg-[#933B5B]"
+                    className="absolute inset-0 rounded-sm z-0 bg-[#933B5B]"
                     transition={{ type: "spring", stiffness: 350, damping: 30 }}
                   />
                 )}
-                {item.label}
+                <span className="relative z-10">{item.label}</span>
               </a>
             );
           })}
